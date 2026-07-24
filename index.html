@@ -83,7 +83,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.85rem;
+    font-size: 1.25rem;
     color: #fff;
     flex-shrink: 0;
   }
@@ -96,7 +96,7 @@
 
   .nav-links a{
     color: var(--text-dim);
-    font-size: 0.95rem;
+    font-size: 1.2rem;
     transition: color 0.15s ease;
   }
 
@@ -111,7 +111,7 @@
 
   .nav-actions .signin{
     color: var(--text-dim);
-    font-size: 0.95rem;
+    font-size: 1.2rem;
   }
 
   .nav-actions .signin:hover{ color: var(--text); }
@@ -306,7 +306,7 @@
 
   .editor-body{
     display: grid;
-    grid-template-columns: 168px 1fr 168px;
+    grid-template-columns: 200px 1fr 168px;
     height: 420px;
   }
 
@@ -352,37 +352,29 @@
     margin-bottom: 12px;
   }
 
-  .editor-stage{
+  .editor-col.editor-stage{
+    position: relative;
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0;
-    padding: 24px;
-    background: radial-gradient(ellipse at top, rgba(110,86,248,0.08), transparent 55%);
+    padding: 28px 20px 24px;
+    background: linear-gradient(180deg, rgba(33,22,81,0.94), rgba(15,10,33,1));
+    border-radius: 28px;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05), 0 24px 54px rgba(0,0,0,0.32);
+    overflow: hidden;
   }
 
-  .stage-bg{
-    width: 110px;
-    height: 56px;
-    background: var(--accent-1);
-    border-radius: 6px 6px 0 0;
-    opacity: 0.9;
-    flex-shrink: 0;
-    margin-bottom: -10px;
-    position: relative;
-    z-index: 0;
-  }
 
   .dialogue-box{
     width: 100%;
-    max-width: 420px;
-    background: rgba(30,27,60,0.75);
-    border: 1px solid rgba(110,86,248,0.25);
-    border-radius: 12px;
-    padding: 22px 24px;
+    max-width: 550px;
+    background: rgba(13, 10, 30, 0.96);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 24px;
+    padding: 28px 26px 24px;
     position: relative;
     z-index: 1;
+    box-shadow: 0 26px 62px rgba(0,0,0,0.24);
   }
 
   .speaker-tag{
@@ -588,15 +580,6 @@
     font-size: 0.85rem;
   }
 
-  /* ---------- Footer ---------- */
-  footer{
-    border-top: 1px solid var(--card-border);
-    padding: 40px 32px;
-    text-align: center;
-    color: var(--text-faint);
-    font-size: 0.85rem;
-  }
-
   /* ---------- CTA ---------- */
   .cta{
     text-align: center;
@@ -626,29 +609,45 @@
   /* ---------- Footer ---------- */
   footer{
     border-top: 1px solid var(--card-border);
-    padding: 28px 32px;
+    padding: 32px 0;
+    background: transparent;
+    color: var(--text-faint);
+    font-size: 0.85rem;
   }
 
   .footer-inner{
-    max-width: var(--max-width);
+    width: 100%;
     margin: 0 auto;
+    padding: 0 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 24px;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
   }
 
-  .footer-logo{ font-size: 1.05rem; }
+  .footer-logo{
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    text-transform: lowercase;
+    flex-shrink: 0;
+  }
 
   .footer-links{
     display: flex;
-    gap: 28px;
+    flex-wrap: wrap;
+    gap: 24px;
+    justify-content: center;
+    flex: 1;
   }
 
   .footer-links a{
     color: var(--text-dim);
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     transition: color 0.15s ease;
   }
 
@@ -656,7 +655,23 @@
 
   .footer-copy{
     color: var(--text-faint);
-    font-size: 0.85rem;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 640px) {
+    .footer-inner{
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      flex-wrap: wrap;
+    }
+
+    .footer-links{
+      justify-content: center;
+      flex: none;
+    }
   }
 
   .help-fab{
@@ -683,13 +698,6 @@
   .help-fab:hover{
     background: rgba(255,255,255,0.1);
     color: var(--text);
-  }
-
-  @media (max-width: 600px){
-    .footer-inner{
-      flex-direction: column;
-      text-align: center;
-    }
   }
 
   /* ---------- Responsive ---------- */
@@ -797,7 +805,6 @@
           <div class="scene-thumb s4"></div>
         </div>
         <div class="editor-col editor-stage">
-          <div class="stage-bg"></div>
           <div class="dialogue-box">
             <span class="speaker-tag"><span class="dot"></span>DR. CHEN</span>
             <p class="dialogue-text">Welcome to the lab! Today we're going to explore something incredible about how science actually works.</p>
