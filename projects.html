@@ -116,7 +116,7 @@
   .notif-empty{ padding:36px 16px; text-align:center; color:var(--text-faint); font-size:13px; }
 
   /* ---------- Main ---------- */
-  main{ padding: 24px 28px 60px; max-width: 980px; margin: 0 auto; }
+  main{ padding: 24px 40px 60px; max-width: 1600px; margin: 0 auto; }
 
   .page-tabs{ display:flex; gap:6px; border-bottom:1px solid var(--border-soft); margin-bottom:26px; }
   .page-tab{
@@ -132,7 +132,7 @@
   }
   .proj-section-label:first-child{ margin-top:0; }
 
-  .proj-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:16px; }
+  .proj-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:18px; }
   @media (max-width:900px){ .proj-grid{ grid-template-columns: repeat(2,1fr); } }
   @media (max-width:600px){ .proj-grid{ grid-template-columns:1fr; } }
 
@@ -155,7 +155,7 @@
   .proj-empty{ color:var(--text-faint); font-size:13px; padding: 6px 2px 18px; }
 
   /* Join panel */
-  .join-panel{ max-width: 420px; margin: 30px auto 0; text-align:center; }
+  .join-panel{ max-width: 480px; margin: 30px auto 0; text-align:center; }
   .join-panel .ic{ width:52px; height:52px; border-radius:14px; margin:0 auto 16px; background: rgba(124,92,255,.14); color:var(--accent-2); display:flex; align-items:center; justify-content:center; font-size:22px; }
   .join-panel h3{ font-family:'Fraunces', serif; font-size:19px; font-weight:600; margin-bottom:6px; }
   .join-panel p{ font-size:13.5px; color:var(--text-faint); margin-bottom:20px; line-height:1.5; }
@@ -258,8 +258,8 @@
     </a>
     <button class="create-btn" title="Create">+</button>
     <nav class="nav">
-      <a class="nav-item" href="storyforge.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
-      <a class="nav-item" href="storyforge.html#templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
+      <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
+      <a class="nav-item" href="homepage.html#templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
       <a class="nav-item active" href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
       <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
       <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>Scenes</a>
