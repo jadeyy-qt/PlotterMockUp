@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StoryForge — Scenes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0a10;
+    --panel: #12121a;
+    --panel-2: #16161f;
+    --border: #232332;
+    --border-soft: #1b1b26;
+    --text: #eceaf5;
+    --text-dim: #9997ac;
+    --text-faint: #66647a;
+    --accent: #7c5cff;
+    --accent-2: #9d84ff;
+    --sci: #34d3d8;
+    --hist: #f0954a;
+    --math: #8a7cf0;
+    --lit: #f06fb0;
+    --radius-lg: 18px;
+    --radius-md: 12px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; cursor:pointer;}
+
+  /* ---------- Layout shell (shared with rest of app) ---------- */
+  .shell{ display:grid; grid-template-columns: 84px 1fr; min-height:100vh; }
+  @media (max-width: 720px){ .shell{ grid-template-columns: 1fr; } .sidebar{ display:none; } }
+
+  .sidebar{
+    background: var(--panel);
+    border-right: 1px solid var(--border-soft);
+    display:flex; flex-direction:column; align-items:center;
+    padding: 20px 0 16px;
+    position:sticky; top:0; height:100vh;
+  }
+  .logo{
+    width:38px; height:38px; border-radius:11px;
+    background: linear-gradient(135deg, #4d8bff, #7c5cff);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 14px rgba(124,92,255,.35);
+  }
+  .logo svg{ width:20px; height:20px; }
+  .create-btn{
+    width:44px; height:44px; border-radius:13px;
+    background: var(--panel-2); border:1px solid var(--border); color: var(--accent-2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; font-weight:600; margin-bottom: 26px;
+  }
+  .nav{ display:flex; flex-direction:column; gap:4px; width:100%; align-items:center; flex:1; }
+  .nav-item{
+    width:64px; display:flex; flex-direction:column; align-items:center; gap:5px;
+    padding: 9px 0 7px; border-radius: 12px; color: var(--text-faint);
+    font-size:11px; font-weight:500; position:relative; background:none; border:none;
+  }
+  .nav-item svg{ width:19px; height:19px; }
+  .nav-item:hover{ color: var(--text-dim); }
+  .nav-item.active{ color: #b7a9ff; background: rgba(124,92,255,.12); }
+  .nav-item.active::before{
+    content:""; position:absolute; left:-1px; top:50%; transform:translateY(-50%);
+    width:3px; height:20px; border-radius:3px; background: var(--accent-2);
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position: sticky; top:0; z-index:20;
+    display:flex; align-items:center; gap:16px;
+    padding: 18px 28px;
+    background: rgba(10,10,16,.85);
+    backdrop-filter: blur(10px);
+  }
+  .page-heading{ font-family:'Fraunces', serif; font-size:20px; font-weight:600; }
+
+  /* ---------- Main ---------- */
+  main{ padding: 24px 40px 60px; max-width: 1600px; margin: 0 auto; }
+
+  /* Filter bar */
+  .filter-bar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
+  .search-input{
+    flex:1; min-width:200px; max-width:340px;
+    background: var(--panel-2); border:1px solid var(--border); border-radius:11px;
+    padding:11px 14px; color:var(--text); font-size:13.5px; font-family:inherit; outline:none;
+  }
+  .search-input:focus{ border-color: var(--accent); }
+  .search-input::placeholder{ color: var(--text-faint); }
+  .proj-select{
+    background: var(--panel-2); border:1px solid var(--border); border-radius:11px;
+    padding:11px 14px; color:var(--text); font-size:13.5px; font-family:inherit; outline:none;
+  }
+  .subject-pills{ display:flex; gap:6px; margin-left:auto; flex-wrap:wrap; }
+  .subject-pill{
+    background: var(--panel-2); border:1px solid var(--border); color: var(--text-dim);
+    font-size:12px; font-weight:700; padding:8px 13px; border-radius:999px;
+    display:flex; align-items:center; gap:6px;
+  }
+  .subject-pill .dot{ width:7px; height:7px; border-radius:50%; }
+  .subject-pill.active{ color: var(--text); border-color: #33334a; background: var(--panel); }
+
+  .proj-section-label{
+    display:flex; align-items:center; gap:8px;
+    font-size:11.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+    color: var(--text-faint); margin: 26px 0 14px;
+  }
+  .proj-section-label:first-child{ margin-top:0; }
+
+  .scene-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:18px; }
+  @media (max-width:900px){ .scene-grid{ grid-template-columns: repeat(2,1fr); } }
+  @media (max-width:600px){ .scene-grid{ grid-template-columns:1fr; } }
+
+  .scene-card{
+    position:relative; border-radius: 14px; border:1px solid var(--border-soft);
+    background: var(--panel-2); overflow:hidden; cursor:pointer;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .scene-card:hover{ border-color:#33334a; transform: translateY(-2px); }
+  .scene-strip{ height:6px; }
+  .scene-body{ padding:16px 16px 15px; }
+  .scene-subject-tag{
+    display:inline-flex; align-items:center; gap:6px; font-size:10.5px; font-weight:700;
+    letter-spacing:.04em; text-transform:uppercase; padding:4px 9px; border-radius:999px;
+    margin-bottom:10px;
+  }
+  .scene-title{ font-size:14.5px; font-weight:700; color:var(--text); margin-bottom:6px; }
+  .scene-meta{ font-size:12px; color:var(--text-faint); display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+  .scene-meta .sep{ opacity:.5; }
+  .scene-meta .proj-link{ color: var(--accent-2); font-weight:600; }
+  .scene-empty{ color:var(--text-faint); font-size:13px; padding: 6px 2px 18px; }
+
+  /* Detail view */
+  .detail-back{ display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--text-dim); background:none; border:none; margin-bottom:18px; }
+  .detail-back:hover{ color:var(--text); }
+  .scene-hero{ border-radius:14px; padding:22px; margin-bottom:24px; background: var(--panel-2); border:1px solid var(--border-soft); }
+  .scene-hero-top{ display:flex; align-items:flex-start; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:6px; }
+  .scene-hero h3{ font-family:'Fraunces', serif; font-size:22px; font-weight:600; }
+  .scene-hero .sub{ font-size:13px; color:var(--text-faint); margin-top:6px; }
+  .scene-hero .sub .proj-link{ color: var(--accent-2); font-weight:600; }
+  .scene-hero-actions{ display:flex; align-items:center; gap:10px; margin-top:14px; }
+  .btn-primary-sm{
+    display:inline-flex; align-items:center; gap:8px;
+    background: linear-gradient(135deg, #7c5cff, #9d6bff); color:#fff; border:none;
+    padding:10px 16px; border-radius:999px; font-size:13px; font-weight:700;
+    box-shadow: 0 8px 20px rgba(124,92,255,.28);
+  }
+  .btn-ghost-sm{
+    background: var(--panel); border:1px solid var(--border); color: var(--text-dim);
+    padding:10px 16px; border-radius:999px; font-size:13px; font-weight:700;
+  }
+  .btn-ghost-sm:hover{ color:var(--text); border-color:#33334a; }
+
+  .beat-list{ display:flex; flex-direction:column; gap:10px; }
+  .beat-item{
+    border:1px solid var(--border-soft); background: var(--panel-2); border-radius:12px;
+    padding:14px 16px;
+  }
+  .beat-speaker{
+    display:inline-flex; align-items:center; gap:6px;
+    background: rgba(124,92,255,.14); color:#c6b9ff;
+    font-size:11px; font-weight:700; letter-spacing:.03em;
+    padding:4px 10px; border-radius:999px; margin-bottom:9px;
+  }
+  .beat-speaker.choice{ background: rgba(240,201,74,.14); color:#f0c94a; }
+  .beat-text{ font-size:13.5px; color:var(--text); line-height:1.55; }
+  .beat-choices{ display:flex; flex-direction:column; gap:6px; margin-top:2px; }
+  .beat-choice{ font-size:13px; color:var(--text-dim); padding:8px 12px; border:1px solid var(--border-soft); border-radius:9px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="sidebar">
+    <a class="logo" href="storyforge.html">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5C4 4.67 4.67 4 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13Z" fill="white" opacity=".9"/><path d="M13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" fill="white" opacity=".55"/></svg>
+    </a>
+    <button class="create-btn" title="Create">+</button>
+    <nav class="nav">
+      <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
+      <a class="nav-item" href="homepage.html#templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
+      <a class="nav-item" href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
+      <a class="nav-item active" href="scenes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>Scenes</a>
+    </nav>
+  </aside>
+
+  <div>
+    <header class="topbar">
+      <div class="page-heading" id="pageHeading">Scenes</div>
+    </header>
+
+    <main>
+      <div class="filter-bar">
+        <input class="search-input" id="sceneSearch" placeholder="Search scenes…">
+        <select class="proj-select" id="projFilter">
+          <option value="">All projects</option>
+        </select>
+        <div class="subject-pills" id="subjectPills"></div>
+      </div>
+      <div id="pageBody"></div>
+    </main>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   DATA
+   ===================================================================== */
+const SUBJECTS = {
+  sci:  { label:'Science',  color:'var(--sci)'  },
+  hist: { label:'History',  color:'var(--hist)' },
+  math: { label:'Math',     color:'var(--math)' },
+  lit:  { label:'Literature', color:'var(--lit)' },
+};
+
+let scenes = [
+  {
+    id:'sc1', title:"The Trial of Galileo", project:'The Scientific Method', projectId:'p1', subject:'sci',
+    updated:'2 hours ago',
+    beats:[
+      { speaker:'NARRATOR', text:'Rome, 1633. Galileo stands before the Inquisition, his telescope confiscated, his theories under fire.' },
+      { speaker:'CARDINAL', text:'You claim the Earth moves around the Sun. Do you recant, or do you stand by heresy?' },
+      { speaker:'CHOICE', choices:[
+          { label:'Recant publicly to survive' },
+          { label:'Defend the evidence, whatever the cost' }
+        ]},
+    ]
+  },
+  {
+    id:'sc2', title:"Newton's Orchard", project:'The Scientific Method', projectId:'p1', subject:'sci',
+    updated:'1 day ago',
+    beats:[
+      { speaker:'NARRATOR', text:'A quiet afternoon in Woolsthorpe. An apple falls, and a question takes root.' },
+      { speaker:'NEWTON', text:'Why straight down? Why not sideways, or up? What is pulling it?' },
+      { speaker:'NARRATOR', text:'The idea that will become gravity begins to take shape.' },
+    ]
+  },
+  {
+    id:'sc3', title:"Ratio Valley Crossroads", project:'Algebra Adventures', projectId:'p3', subject:'math',
+    updated:'3 days ago',
+    beats:[
+      { speaker:'NARRATOR', text:'You arrive at the border of the Ratio Valley, where two paths split before you.' },
+      { speaker:'CHOICE', choices:[
+          { label:'Take the Proportions Path (careful, methodical)' },
+          { label:'Take the Shortcut through Variable Woods (risky)' }
+        ]},
+    ]
+  },
+  {
+    id:'sc4', title:"The Missing Ledger Page", project:'Mystery on Baker Street', projectId:'p4', subject:'lit',
+    updated:'1 week ago',
+    beats:[
+      { speaker:'HOLMES', text:"A curious case, isn't it? Someone has removed a single page from the ledger, and left no trace." },
+      { speaker:'NARRATOR', text:'You examine the study for clues: ink stains, a broken window latch, a muddy footprint by the desk.' },
+      { speaker:'CHOICE', choices:[
+          { label:'Follow the muddy footprint outside' },
+          { label:'Question the household staff first' }
+        ]},
+    ]
+  },
+  {
+    id:'sc5', title:"Fall of the Republic", project:'Ancient Rome: Rise & Fall', projectId:'p2', subject:'hist',
+    updated:'Yesterday',
+    beats:[
+      { speaker:'NARRATOR', text:'The Senate is divided. Legions loyal to rival generals camp at the edges of the city.' },
+      { speaker:'SENATOR', text:'If he crosses the Rubicon with his army, it is war. There is no path back from that river.' },
+      { speaker:'NARRATOR', text:'The die, as they say, will soon be cast.' },
+    ]
+  },
+  {
+    id:'sc6', title:"The Colosseum Riot", project:'Ancient Rome: Rise & Fall', projectId:'p2', subject:'hist',
+    updated:'4 days ago',
+    beats:[
+      { speaker:'NARRATOR', text:'A disputed match, a furious crowd, and guards who are suddenly outnumbered.' },
+      { speaker:'CHOICE', choices:[
+          { label:'Call for reinforcements' },
+          { label:'Let the crowd exhaust itself' }
+        ]},
+    ]
+  },
+];
+
+/* =====================================================================
+   VIEW STATE
+   ===================================================================== */
+let activeSceneId = null;
+let searchQuery = '';
+let projFilterValue = '';
+let subjectFilter = '';
+
+const pageBody = document.getElementById('pageBody');
+const pageHeading = document.getElementById('pageHeading');
+const sceneSearch = document.getElementById('sceneSearch');
+const projFilter = document.getElementById('projFilter');
+const subjectPills = document.getElementById('subjectPills');
+
+/* Populate the project filter dropdown from scene data */
+const uniqueProjects = [...new Map(scenes.map(s => [s.projectId, s.project])).entries()];
+uniqueProjects.forEach(([id, name]) => {
+  const opt = document.createElement('option');
+  opt.value = id; opt.textContent = name;
+  projFilter.appendChild(opt);
+});
+
+/* Populate subject filter pills */
+function renderSubjectPills(){
+  subjectPills.innerHTML = Object.entries(SUBJECTS).map(([key, s]) => `
+    <button class="subject-pill ${subjectFilter===key?'active':''}" data-subject="${key}">
+      <span class="dot" style="background:${s.color}"></span>${s.label}
+    </button>`).join('');
+  subjectPills.querySelectorAll('.subject-pill').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const key = btn.dataset.subject;
+      subjectFilter = (subjectFilter === key) ? '' : key;
+      render();
+    });
+  });
+}
+
+sceneSearch.addEventListener('input', ()=>{ searchQuery = sceneSearch.value.trim().toLowerCase(); render(); });
+projFilter.addEventListener('change', ()=>{ projFilterValue = projFilter.value; render(); });
+
+function render(){
+  renderSubjectPills();
+  const showFilters = !activeSceneId;
+  document.querySelector('.filter-bar').style.display = showFilters ? 'flex' : 'none';
+  pageHeading.textContent = activeSceneId ? 'Scene' : 'Scenes';
+
+  if(activeSceneId){ renderSceneDetail(activeSceneId); return; }
+  renderSceneList();
+}
+
+/* ---------------- Scene list ---------------- */
+function sceneCardHTML(s){
+  const sub = SUBJECTS[s.subject];
+  return `
+  <div class="scene-card" data-id="${s.id}">
+    <div class="scene-strip" style="background:${sub.color}"></div>
+    <div class="scene-body">
+      <span class="scene-subject-tag" style="color:${sub.color}; background:${sub.color}22;">${sub.label}</span>
+      <div class="scene-title">${s.title}</div>
+      <div class="scene-meta">
+        <span class="proj-link">${s.project}</span><span class="sep">·</span>${s.beats.length} beats<span class="sep">·</span>${s.updated}
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderSceneList(){
+  const filtered = scenes.filter(s => {
+    if(searchQuery && !s.title.toLowerCase().includes(searchQuery)) return false;
+    if(projFilterValue && s.projectId !== projFilterValue) return false;
+    if(subjectFilter && s.subject !== subjectFilter) return false;
+    return true;
+  });
+
+  let html = `<div class="proj-section-label">All scenes${filtered.length ? ` (${filtered.length})` : ''}</div>`;
+  html += filtered.length
+    ? `<div class="scene-grid">${filtered.map(sceneCardHTML).join('')}</div>`
+    : `<div class="scene-empty">No scenes match your filters.</div>`;
+
+  pageBody.innerHTML = html;
+
+  pageBody.querySelectorAll('.scene-card').forEach(card=>{
+    card.addEventListener('click', ()=>{
+      activeSceneId = card.dataset.id;
+      render();
+    });
+  });
+}
+
+/* ---------------- Scene detail ---------------- */
+function renderSceneDetail(id){
+  const s = scenes.find(x=>x.id===id);
+  if(!s){ activeSceneId = null; render(); return; }
+  const sub = SUBJECTS[s.subject];
+
+  let html = `<button class="detail-back" id="detailBackBtn">← Back to scenes</button>`;
+  html += `
+    <div class="scene-hero">
+      <div class="scene-hero-top">
+        <div>
+          <h3>${s.title}</h3>
+          <div class="sub">From <span class="proj-link">${s.project}</span> · ${s.beats.length} beats · Edited ${s.updated}</div>
+        </div>
+        <span class="scene-subject-tag" style="color:${sub.color}; background:${sub.color}22;">${sub.label}</span>
+      </div>
+      <div class="scene-hero-actions">
+        <a class="btn-primary-sm" href="workspace.html?id=${s.projectId}&scene=${s.id}">Open in workspace</a>
+        <button class="btn-ghost-sm" id="duplicateBtn">Duplicate into another project</button>
+      </div>
+    </div>`;
+
+  html += `<div class="proj-section-label">Beats</div>`;
+  html += `<div class="beat-list">`;
+  html += s.beats.map(b => {
+    if(b.speaker === 'CHOICE'){
+      return `
+        <div class="beat-item">
+          <span class="beat-speaker choice">CHOICE</span>
+          <div class="beat-choices">
+            ${b.choices.map(c => `<div class="beat-choice">${c.label}</div>`).join('')}
+          </div>
+        </div>`;
+    }
+    return `
+      <div class="beat-item">
+        <span class="beat-speaker">${b.speaker}</span>
+        <div class="beat-text">${b.text}</div>
+      </div>`;
+  }).join('');
+  html += `</div>`;
+
+  pageBody.innerHTML = html;
+
+  document.getElementById('detailBackBtn').addEventListener('click', ()=>{ activeSceneId = null; render(); });
+  const dupBtn = document.getElementById('duplicateBtn');
+  if(dupBtn) dupBtn.addEventListener('click', ()=>{
+    alert(`"${s.title}" would be copied into a project of your choice.`);
+  });
+}
+
+/* ---------------- Init ---------------- */
+render();
+</script>
+</body>
+</html>
