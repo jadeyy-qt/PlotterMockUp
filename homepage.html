@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StoryForge — Templates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0a10;
+    --panel: #12121a;
+    --panel-2: #16161f;
+    --border: #232332;
+    --border-soft: #1b1b26;
+    --text: #eceaf5;
+    --text-dim: #9997ac;
+    --text-faint: #66647a;
+    --accent: #7c5cff;
+    --accent-2: #9d84ff;
+    --sci: #34d3d8;
+    --hist: #f0954a;
+    --math: #8a7cf0;
+    --lit: #f06fb0;
+    --lang: #f0679a;
+    --soc: #4ade9a;
+    --arts: #f0c94a;
+    --health: #4ade9a;
+    --radius-lg: 18px;
+    --radius-md: 12px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; cursor:pointer;}
+
+  /* ---------- Layout shell ---------- */
+  .shell{
+    display:grid;
+    grid-template-columns: 84px 1fr 300px;
+    min-height:100vh;
+  }
+  @media (max-width: 1180px){
+    .shell{ grid-template-columns: 84px 1fr; }
+    .right-rail{ display:none; }
+  }
+  @media (max-width: 720px){
+    .shell{ grid-template-columns: 1fr; }
+    .sidebar{ display:none; }
+  }
+
+  /* ---------- Left sidebar ---------- */
+  .sidebar{
+    background: var(--panel);
+    border-right: 1px solid var(--border-soft);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding: 20px 0 16px;
+    position:sticky; top:0; height:100vh;
+  }
+  .logo{
+    width:38px; height:38px; border-radius:11px;
+    background: linear-gradient(135deg, #4d8bff, #7c5cff);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 14px rgba(124,92,255,.35);
+  }
+  .logo svg{ width:20px; height:20px; }
+
+  .create-btn{
+    width:44px; height:44px; border-radius:13px;
+    background: var(--panel-2);
+    border:1px solid var(--border);
+    color: var(--accent-2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; font-weight:600;
+    margin-bottom: 26px;
+    transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .create-btn:hover{ background:#1c1c29; border-color:#33334a; transform: translateY(-1px); }
+
+  .nav{
+    display:flex; flex-direction:column; gap:4px;
+    width:100%;
+    align-items:center;
+    flex:1;
+  }
+  .nav-item{
+    width:64px;
+    display:flex; flex-direction:column; align-items:center; gap:5px;
+    padding: 9px 0 7px;
+    border-radius: 12px;
+    color: var(--text-faint);
+    font-size:11px; font-weight:500;
+    transition: color .15s ease, background .15s ease;
+    position:relative;
+  }
+  .nav-item svg{ width:19px; height:19px; }
+  .nav-item:hover{ color: var(--text-dim); }
+  .nav-item.active{
+    color: #b7a9ff;
+    background: rgba(124,92,255,.12);
+  }
+  .nav-item.active::before{
+    content:"";
+    position:absolute; left:-1px; top:50%; transform:translateY(-50%);
+    width:3px; height:20px; border-radius:3px;
+    background: var(--accent-2);
+  }
+
+
+  /* ---------- Top bar ---------- */
+  .topbar{
+    position: sticky; top:0; z-index:20;
+    display:flex; align-items:center; gap:16px;
+    padding: 18px 28px;
+    background: rgba(10,10,16,.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+  }
+  .search{
+    flex:1; max-width: 480px;
+    display:flex; align-items:center; gap:10px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 16px;
+    color: var(--text-faint);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .search:hover{ border-color:#2c2c3d; }
+  .search svg{ width:16px; height:16px; flex-shrink:0; }
+  .search input{
+    background:none; border:none; outline:none; color:var(--text);
+    font-size: 14px; width:100%;
+    font-family:inherit;
+  }
+  .search input::placeholder{ color: var(--text-faint); }
+
+  .topbar-icons{ display:flex; align-items:center; gap:16px; margin-left:auto; }
+  .bell{
+    width:38px; height:38px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--text-dim);
+    transition: background .15s ease;
+  }
+  .bell:hover{ background: var(--panel-2); }
+  .bell svg{ width:19px; height:19px; }
+
+  /* ---------- Main column ---------- */
+  main{ padding: 6px 28px 60px; min-width:0; }
+
+  .section-label{
+    display:flex; align-items:center; gap:8px;
+    font-size: 12px; font-weight:700; letter-spacing: .09em;
+    color: var(--accent-2);
+    text-transform: uppercase;
+    margin: 22px 0 16px;
+  }
+  .section-label svg{ width:13px; height:13px; }
+
+  /* staff picks */
+  .staff-row{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:18px;
+    margin-bottom: 8px;
+  }
+  @media (max-width: 900px){ .staff-row{ grid-template-columns: 1fr; } }
+
+  .staff-card{
+    position:relative;
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    min-height: 220px;
+    display:flex; flex-direction:column;
+    overflow:hidden;
+    border: 1px solid rgba(255,255,255,.06);
+    transition: transform .2s ease, box-shadow .2s ease;
+  }
+  .staff-card:hover{ transform: translateY(-3px); box-shadow: 0 14px 30px rgba(0,0,0,.4); }
+  .staff-card::after{
+    content:"";
+    position:absolute; inset:0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.55) 100%);
+    pointer-events:none;
+  }
+  .staff-card > *{ position:relative; z-index:1; }
+
+  .badge{
+    display:inline-flex; align-items:center;
+    font-size: 10.5px; font-weight:700; letter-spacing:.06em;
+    text-transform:uppercase;
+    padding: 4px 9px; border-radius: 999px;
+    width: fit-content;
+    backdrop-filter: blur(4px);
+  }
+
+  .staff-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .author{ display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:#fff; }
+  .author-dot{
+    width:22px; height:22px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:700; color:#fff;
+    flex-shrink:0;
+  }
+  .scene-count{ font-size:12px; color: rgba(255,255,255,.75); font-weight:500; }
+
+  .staff-card .card-title{
+    font-family:'Fraunces', serif;
+    font-size: 21px; font-weight:600; color:#fff;
+    margin-top:auto; margin-bottom:6px;
+    line-height:1.2;
+  }
+  .staff-card .card-desc{ font-size:13px; color: rgba(255,255,255,.8); line-height:1.4; max-width: 92%; }
+
+  /* filter pills */
+  .filters{
+    display:flex; align-items:center; gap:9px;
+    flex-wrap:wrap;
+    margin: 26px 0 20px;
+  }
+  .pill{
+    display:flex; align-items:center; gap:7px;
+    padding: 8px 15px;
+    border-radius: 999px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 13px; font-weight:600;
+    transition: all .15s ease;
+  }
+  .pill:hover{ border-color:#33334a; color:var(--text); }
+  .pill .dot{ width:7px; height:7px; border-radius:50%; }
+  .pill.active{
+    background: var(--accent);
+    border-color: var(--accent);
+    color:#fff;
+  }
+  .pill.active .dot{ background:#fff !important; }
+
+  .grid-meta{
+    display:flex; align-items:center; justify-content:space-between;
+    margin-bottom: 18px;
+  }
+  .grid-meta .count{ font-size:14px; color: var(--text-dim); font-weight:500; }
+  .sort{
+    display:flex; align-items:center; gap:6px;
+    font-size:13px; color:var(--text-dim); font-weight:500;
+  }
+  .sort svg{ width:14px; height:14px; }
+
+  /* template grid */
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap:18px;
+  }
+  @media (max-width: 900px){ .grid{ grid-template-columns: repeat(2,1fr); } }
+  @media (max-width: 600px){ .grid{ grid-template-columns: 1fr; } }
+
+  .tpl-card{
+    border-radius: var(--radius-lg);
+    background: var(--panel);
+    border: 1px solid var(--border-soft);
+    overflow:hidden;
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    display:flex; flex-direction:column;
+  }
+  .tpl-card:hover{
+    transform: translateY(-3px);
+    border-color: #2d2d40;
+    box-shadow: 0 16px 34px rgba(0,0,0,.38);
+  }
+  .tpl-thumb{
+    position:relative;
+    height: 148px;
+    padding: 14px;
+    display:flex; flex-direction:column; justify-content:space-between;
+  }
+  .tpl-thumb .badge{ align-self:flex-start; }
+  .tpl-thumb .scene-count{
+    align-self:flex-end;
+    background: rgba(0,0,0,.35);
+    padding: 3px 9px; border-radius:999px;
+    backdrop-filter: blur(3px);
+  }
+  .tpl-actions{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background: rgba(8,8,14,.55);
+    opacity:0; transition: opacity .18s ease;
+  }
+  .tpl-card:hover .tpl-actions{ opacity:1; }
+  .btn-use{
+    background: var(--accent); color:#fff; border:none;
+    padding: 9px 16px; border-radius: 999px;
+    font-size:13px; font-weight:700;
+    transition: background .15s ease;
+  }
+  .btn-use:hover{ background: var(--accent-2); }
+  .btn-preview{
+    background: rgba(255,255,255,.1); color:#fff; border:1px solid rgba(255,255,255,.3);
+    padding: 9px 16px; border-radius: 999px;
+    font-size:13px; font-weight:700;
+    backdrop-filter: blur(4px);
+  }
+  .btn-preview:hover{ background: rgba(255,255,255,.18); }
+
+  .tpl-body{ padding: 14px 16px 16px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .tpl-body .card-title{ font-size:15.5px; font-weight:700; color:var(--text); line-height:1.3; }
+  .tpl-body .card-desc{ font-size:12.5px; color: var(--text-faint); line-height:1.45; flex:1; }
+  .tpl-author{ display:flex; align-items:center; gap:8px; margin-top:4px; }
+  .tpl-author .author-dot{ width:20px; height:20px; font-size:10px; }
+  .tpl-author span{ font-size:12.5px; color: var(--text-dim); font-weight:500; }
+
+  .empty-state{
+    grid-column: 1 / -1;
+    text-align:center;
+    padding: 60px 20px;
+    color: var(--text-faint);
+    font-size:14px;
+  }
+
+  /* ---------- Right rail ---------- */
+  .right-rail{
+    border-left: 1px solid var(--border-soft);
+    padding: 20px 22px 40px;
+    position:sticky; top:0; height:100vh; overflow-y:auto;
+  }
+  .rr-label{
+    font-size:11px; font-weight:700; letter-spacing:.09em;
+    color: var(--text-faint); text-transform:uppercase;
+    margin: 20px 0 12px;
+  }
+  .rr-label:first-child{ margin-top:4px; }
+
+  .btn-primary{
+    width:100%;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background: linear-gradient(135deg, #7c5cff, #9d6bff);
+    color:#fff; border:none;
+    padding: 13px; border-radius: 12px;
+    font-size:14.5px; font-weight:700;
+    box-shadow: 0 8px 20px rgba(124,92,255,.28);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary:hover{ transform: translateY(-1px); box-shadow: 0 10px 24px rgba(124,92,255,.4); }
+  .btn-primary svg{ width:16px; height:16px; }
+
+  .btn-outline{
+    width:100%; margin-top:10px;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background: transparent; color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 12px; border-radius: 12px;
+    font-size:14px; font-weight:600;
+    transition: all .15s ease;
+  }
+  .btn-outline:hover{ border-color:#33334a; color:var(--text); background: var(--panel-2); }
+
+  .qa-item{
+    display:flex; align-items:center; gap:10px;
+    padding: 9px 4px;
+    font-size:13.5px; color: var(--text-dim); font-weight:500;
+    border-radius: 9px;
+    transition: color .15s ease, background .15s ease;
+  }
+  .qa-item:hover{ color:var(--text); background: var(--panel-2); padding-left:10px; }
+  .qa-item svg{ width:16px; height:16px; flex-shrink:0; color: var(--text-faint); }
+
+  .genre-item{
+    display:flex; align-items:center; justify-content:space-between;
+    padding: 8px 4px;
+    font-size:13.5px; font-weight:500; color: var(--text-dim);
+    border-radius: 9px;
+    transition: background .15s ease, color .15s ease;
+  }
+  .genre-item:hover{ background: var(--panel-2); color:var(--text); padding-left:10px; }
+  .genre-item.active{ color: var(--accent-2); }
+  .genre-left{ display:flex; align-items:center; gap:9px; }
+  .g-dot{ width:8px; height:8px; border-radius:50%; }
+  .genre-item .n{ color: var(--text-faint); font-size:12.5px; }
+
+  .story-item{
+    display:flex; align-items:center; gap:11px;
+    padding: 8px 4px;
+    border-radius: 10px;
+    transition: background .15s ease;
+  }
+  .story-item:hover{ background: var(--panel-2); }
+  .story-thumb{
+    width:36px; height:36px; border-radius:9px; flex-shrink:0;
+  }
+  .story-item .t{ font-size:13.5px; font-weight:600; color:var(--text); line-height:1.25; }
+  .story-item .ts{ font-size:11.5px; color: var(--text-faint); margin-top:2px; }
+
+  .view-all{
+    font-size:13px; font-weight:600; color: var(--accent-2);
+    margin-top:10px; display:inline-block;
+  }
+
+  .help-fab{
+    position:fixed; bottom:22px; right:22px;
+    width:38px; height:38px; border-radius:50%;
+    background: var(--panel-2); border:1px solid var(--border);
+    display:flex; align-items:center; justify-content:center;
+    color: var(--text-dim); font-weight:700; font-size:14px;
+    z-index:30;
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ================= LEFT SIDEBAR ================= -->
+  <aside class="sidebar">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5C4 4.67 4.67 4 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13Z" fill="white" opacity=".9"/><path d="M13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" fill="white" opacity=".55"/></svg>
+    </div>
+    <button class="create-btn" title="Create">+</button>
+    <nav class="nav">
+      <a class="nav-item active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>Scenes</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h11l5 5v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/><path d="M14 4v5h5"/></svg>Brand Kit</a>
+    </nav>
+  </aside>
+
+  <!-- ================= MAIN ================= -->
+  <div>
+    <header class="topbar">
+      <div class="search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+        <input id="searchInput" type="text" placeholder="Search templates or artists…">
+      </div>
+      <div class="topbar-icons">
+        <div class="bell"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></div>
+      </div>
+    </header>
+
+    <main>
+      <div class="section-label">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7-6.2-3.4-6.2 3.4 1.2-7-5-4.9 7.1-.7L12 2z"/></svg>
+        Staff Picks
+      </div>
+
+      <div class="staff-row" id="staffRow"></div>
+
+      <div class="filters" id="filters"></div>
+
+      <div class="grid-meta">
+        <div class="count" id="gridCount">20 templates</div>
+        <div class="sort">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4v16M3 8l4-4 4 4M17 20V4M13 16l4 4 4-4"/></svg>
+          Sort: Popular
+        </div>
+      </div>
+
+      <div class="grid" id="grid"></div>
+    </main>
+  </div>
+
+  <!-- ================= RIGHT RAIL ================= -->
+  <aside class="right-rail">
+    <div class="rr-label">Start Creating</div>
+    <button class="btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>New story</button>
+    <button class="btn-outline">Import story</button>
+
+    <div class="rr-label">Quick Actions</div>
+    <a class="qa-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>Browse by genre</a>
+    <a class="qa-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-9"/></svg>Trending this week</a>
+    <a class="qa-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2z"/></svg>New releases</a>
+    <a class="qa-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg>My saved templates</a>
+
+    <div class="rr-label">Browse by Genre</div>
+    <div id="genreList"></div>
+
+    <div class="rr-label">Your Stories</div>
+    <div id="storyList"></div>
+    <a class="view-all" href="#">View all stories →</a>
+  </aside>
+</div>
+
+<div class="help-fab">?</div>
+
+<script>
+/* ---------------- Data ---------------- */
+const CATS = [
+  { key:'all', label:'All' },
+  { key:'science', label:'Science', color:'var(--sci)' },
+  { key:'history', label:'History', color:'var(--hist)' },
+  { key:'math', label:'Math', color:'var(--math)' },
+  { key:'literature', label:'Literature', color:'var(--lit)' },
+  { key:'languages', label:'Languages', color:'var(--lang)' },
+  { key:'social', label:'Social Studies', color:'var(--soc)' },
+  { key:'arts', label:'Arts', color:'var(--arts)' },
+  { key:'health', label:'Health', color:'var(--health)' },
+];
+
+const AVATAR_COLORS = ['#7c5cff','#e06b3f','#4d8bff','#3fbf87','#e05b9c','#3fa8ff','#e0a83f','#8a7cf0','#4ade9a'];
+function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,1).join(''); }
+function colorFor(seed){ let h=0; for(const c of seed) h = (h*31 + c.charCodeAt(0)) % AVATAR_COLORS.length; return AVATAR_COLORS[h]; }
+
+const GRADIENTS = [
+  'linear-gradient(135deg,#3a2f6b,#1c1533)',
+  'linear-gradient(135deg,#1f5f52,#0f3b34)',
+  'linear-gradient(135deg,#1fae6b,#0c5b3c)',
+  'linear-gradient(135deg,#c9822f,#7a3f0e)',
+  'linear-gradient(135deg,#c23f5c,#5c1a2c)',
+  'linear-gradient(135deg,#233f7a,#0f1c3d)',
+  'linear-gradient(135deg,#4472c4,#8a4fd9)',
+  'linear-gradient(135deg,#5e3fc4,#2a1a5e)',
+  'linear-gradient(135deg,#2f7fc9,#173a5e)',
+  'linear-gradient(135deg,#d98a3f,#a85a2f)',
+  'linear-gradient(135deg,#a83fd9,#5e2f8a)',
+  'linear-gradient(135deg,#1fae8a,#0d5c4a)',
+  'linear-gradient(135deg,#2fa8a3,#124f4d)',
+  'linear-gradient(135deg,#7fce3f,#2f6b0e)',
+];
+
+const templates = [
+  { title:"Journey Through the Solar System", desc:"An immersive voyage from Mercury to Neptune with branching paths for each planet's discovery.", author:"Mira Santos", scenes:14, cat:'science', staff:true },
+  { title:"The DNA Detectives", desc:"Students solve a genetics mystery by learning about dominant and recessive traits.", author:"Caleb Osei", scenes:10, cat:'science' },
+  { title:"Ecosystem Explorer", desc:"Explore rainforest, ocean, and desert ecosystems through the eyes of a young biologist.", author:"Priya Nair", scenes:8, cat:'science' },
+
+  { title:"Ancient Egypt: The Pharaoh's Court", desc:"Navigate life in ancient Egypt as an advisor to a young pharaoh.", author:"Leila Ahmadi", scenes:16, cat:'history', staff:true },
+  { title:"On the Silk Road", desc:"Travel as a merchant across Asia, experiencing trade, culture, and discovery.", author:"Jin Wei", scenes:12, cat:'history' },
+  { title:"The Underground Railroad", desc:"A powerful narrative following freedom seekers on the path to liberation.", author:"Nia Barnes", scenes:11, cat:'history' },
+
+  { title:"The Fraction Kingdom", desc:"A kingdom divided — can you restore order using fractions and ratios?", author:"Owen Park", scenes:9, cat:'math' },
+  { title:"Pythagoras and the Lost Temple", desc:"Use geometry to navigate an ancient temple full of right-triangle puzzles.", author:"Aisha Diallo", scenes:13, cat:'math', staff:true },
+  { title:"Probability Island", desc:"Marooned on an island where every survival choice is a probability problem.", author:"Marcus Lee", scenes:7, cat:'math' },
+
+  { title:"The Poet's Notebook", desc:"Fill the pages of a traveling poet's journal with verses that shape the story.", author:"Elena Cruz", scenes:9, cat:'literature' },
+  { title:"Chapters of Change", desc:"Step into a classic coming-of-age novel and decide how the protagonist grows.", author:"Sam Whitfield", scenes:11, cat:'literature' },
+  { title:"Mystery on Baker Street", desc:"Piece together clues in a Victorian detective story inspired by the classics.", author:"Priya Nair", scenes:10, cat:'literature' },
+
+  { title:"Bonjour, Paris!", desc:"Practice everyday French while navigating cafés, markets, and the metro.", author:"Camille Roy", scenes:8, cat:'languages' },
+  { title:"Tokyo Transit", desc:"Learn conversational Japanese as you find your way across the city.", author:"Haruto Sato", scenes:9, cat:'languages' },
+
+  { title:"Global Citizen", desc:"Navigate cultural exchange and global issues through a world-traveler's lens.", author:"Yuna Kim", scenes:8, cat:'social' },
+  { title:"The Vote That Mattered", desc:"Experience a pivotal election as a citizen weighing civic choices.", author:"Diego Alvarez", scenes:10, cat:'social' },
+
+  { title:"The Impressionist's Eye", desc:"Step into 1870s Paris and learn art history through Monet's atelier.", author:"Isabelle Moreau", scenes:10, cat:'arts' },
+  { title:"Sound & Story", desc:"Learn music theory fundamentals through an interactive band-practice narrative.", author:"Devin Okafor", scenes:7, cat:'arts' },
+
+  { title:"Mind Matters", desc:"A compassionate story that builds mental health literacy and coping strategies.", author:"Dr. Riya Sen", scenes:12, cat:'health' },
+  { title:"The Nutrition Lab", desc:"Students run a school cafeteria and learn about balanced nutrition through choices.", author:"Carlos Mendes", scenes:8, cat:'health' },
+];
+
+const stories = [
+  { title:"The Scientific Method", ts:"2h ago", grad: GRADIENTS[6] },
+  { title:"Ancient Rome: Rise & Fall", ts:"Yesterday", grad: GRADIENTS[3] },
+  { title:"Algebra Adventures", ts:"3 days ago", grad: GRADIENTS[8] },
+];
+
+/* ---------------- Render ---------------- */
+function catMeta(key){ return CATS.find(c=>c.key===key); }
+
+function staffCard(t, idx){
+  const meta = catMeta(t.cat);
+  const grad = GRADIENTS[idx % GRADIENTS.length];
+  return `
+  <div class="staff-card" style="background:${grad}">
+    <div class="staff-top">
+      <span class="badge" style="background:${meta.color}22; color:${meta.color}; border:1px solid ${meta.color}55">${meta.label}</span>
+    </div>
+    <div class="staff-top" style="margin-bottom:0; margin-top:-6px;">
+      <div class="author">
+        <span class="author-dot" style="background:${colorFor(t.author)}">${initials(t.author)}</span>
+        ${t.author}
+      </div>
+      <span class="scene-count">${t.scenes} scenes</span>
+    </div>
+    <div class="card-title">${t.title}</div>
+    <div class="card-desc">${t.desc}</div>
+  </div>`;
+}
+
+function tplCard(t, idx){
+  const meta = catMeta(t.cat);
+  const grad = GRADIENTS[(idx*3) % GRADIENTS.length];
+  return `
+  <div class="tpl-card" data-cat="${t.cat}" data-title="${t.title.toLowerCase()}" data-author="${t.author.toLowerCase()}">
+    <div class="tpl-thumb" style="background:${grad}">
+      <span class="badge" style="background:${meta.color}25; color:${meta.color}; border:1px solid ${meta.color}55">${meta.label}</span>
+      <span class="scene-count">${t.scenes} scenes</span>
+      <div class="tpl-actions">
+        <button class="btn-use">Use template</button>
+        <button class="btn-preview">Preview</button>
+      </div>
+    </div>
+    <div class="tpl-body">
+      <div class="card-title">${t.title}</div>
+      <div class="card-desc">${t.desc}</div>
+      <div class="tpl-author">
+        <span class="author-dot" style="background:${colorFor(t.author)}">${initials(t.author)}</span>
+        <span>${t.author}</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderStaff(){
+  const picks = templates.filter(t=>t.staff);
+  document.getElementById('staffRow').innerHTML = picks.map((t,i)=>staffCard(t,i)).join('');
+}
+
+function renderFilters(){
+  document.getElementById('filters').innerHTML = CATS.map(c => `
+    <button class="pill ${c.key==='all' ? 'active':''}" data-cat="${c.key}">
+      ${c.color ? `<span class="dot" style="background:${c.color}"></span>` : ''}
+      ${c.label}
+    </button>`).join('');
+
+  document.querySelectorAll('.pill').forEach(p=>{
+    p.addEventListener('click', ()=>{
+      document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+      p.classList.add('active');
+      filterGrid(p.dataset.cat, document.getElementById('searchInput').value);
+    });
+  });
+}
+
+function renderGrid(list){
+  const grid = document.getElementById('grid');
+  if(!list.length){
+    grid.innerHTML = `<div class="empty-state">No templates match your search. Try a different keyword or genre.</div>`;
+  } else {
+    grid.innerHTML = list.map((t,i)=>tplCard(t,i)).join('');
+  }
+  document.getElementById('gridCount').textContent = `${list.length} template${list.length===1?'':'s'}`;
+}
+
+function filterGrid(cat, query){
+  const q = (query||'').trim().toLowerCase();
+  const filtered = templates.filter(t=>{
+    const matchesCat = cat==='all' || t.cat===cat;
+    const matchesQuery = !q || t.title.toLowerCase().includes(q) || t.author.toLowerCase().includes(q);
+    return matchesCat && matchesQuery;
+  });
+  renderGrid(filtered);
+}
+
+function renderGenres(){
+  const counts = {};
+  templates.forEach(t => counts[t.cat] = (counts[t.cat]||0) + 1);
+  const list = CATS.filter(c=>c.key!=='all');
+  document.getElementById('genreList').innerHTML = list.map(c => `
+    <div class="genre-item" data-cat="${c.key}">
+      <span class="genre-left"><span class="g-dot" style="background:${c.color}"></span>${c.label}</span>
+      <span class="n">${counts[c.key]||0}</span>
+    </div>`).join('');
+
+  document.querySelectorAll('.genre-item').forEach(g=>{
+    g.addEventListener('click', ()=>{
+      const cat = g.dataset.cat;
+      document.querySelectorAll('.pill').forEach(p=>p.classList.toggle('active', p.dataset.cat===cat));
+      filterGrid(cat, document.getElementById('searchInput').value);
+      document.querySelector('main').scrollIntoView({behavior:'smooth'});
+    });
+  });
+}
+
+function renderStories(){
+  document.getElementById('storyList').innerHTML = stories.map(s => `
+    <div class="story-item">
+      <div class="story-thumb" style="background:${s.grad}"></div>
+      <div>
+        <div class="t">${s.title}</div>
+        <div class="ts">${s.ts}</div>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------------- Init ---------------- */
+renderStaff();
+renderFilters();
+renderGrid(templates);
+renderGenres();
+renderStories();
+
+document.getElementById('searchInput').addEventListener('input', (e)=>{
+  const activeCat = document.querySelector('.pill.active')?.dataset.cat || 'all';
+  filterGrid(activeCat, e.target.value);
+});
+</script>
+</body>
+</html>

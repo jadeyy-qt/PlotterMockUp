@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StoryForge — Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0a10;
+    --panel: #12121a;
+    --panel-2: #16161f;
+    --panel-3: #1b1b26;
+    --border: #232332;
+    --border-soft: #1b1b26;
+    --text: #eceaf5;
+    --text-dim: #9997ac;
+    --text-faint: #66647a;
+    --accent: #7c5cff;
+    --accent-2: #9d84ff;
+    --sci: #34d3d8;
+    --hist: #f0954a;
+    --math: #8a7cf0;
+    --lit: #f06fb0;
+    --lang: #f0679a;
+    --soc: #4ade9a;
+    --arts: #f0c94a;
+    --health: #4ade9a;
+    --ok: #4ade9a;
+    --radius-lg: 18px;
+    --radius-md: 12px;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow:hidden;
+  }
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; cursor:pointer;}
+  textarea, input{font-family:inherit;}
+
+  /* ---------- Shell ---------- */
+  .shell{
+    display:grid;
+    grid-template-columns: 84px 1fr;
+    height:100vh;
+  }
+  @media (max-width: 720px){
+    .shell{ grid-template-columns: 1fr; }
+    .sidebar{ display:none; }
+  }
+
+  /* ---------- Left icon sidebar (shared) ---------- */
+  .sidebar{
+    background: var(--panel);
+    border-right: 1px solid var(--border-soft);
+    display:flex; flex-direction:column; align-items:center;
+    padding: 20px 0 16px;
+  }
+  .logo{
+    width:38px; height:38px; border-radius:11px;
+    background: linear-gradient(135deg, #4d8bff, #7c5cff);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 14px rgba(124,92,255,.35);
+  }
+  .logo svg{ width:20px; height:20px; }
+  .create-btn{
+    width:44px; height:44px; border-radius:13px;
+    background: var(--panel-2);
+    border:1px solid var(--border);
+    color: var(--accent-2);
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; font-weight:600;
+    margin-bottom: 26px;
+    transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .create-btn:hover{ background:#1c1c29; border-color:#33334a; transform: translateY(-1px); }
+  .nav{ display:flex; flex-direction:column; gap:4px; width:100%; align-items:center; flex:1; }
+  .nav-item{
+    width:64px; display:flex; flex-direction:column; align-items:center; gap:5px;
+    padding: 9px 0 7px; border-radius: 12px;
+    color: var(--text-faint); font-size:11px; font-weight:500;
+    transition: color .15s ease, background .15s ease; position:relative;
+  }
+  .nav-item svg{ width:19px; height:19px; }
+  .nav-item:hover{ color: var(--text-dim); }
+  .nav-item.active{ color: #b7a9ff; background: rgba(124,92,255,.12); }
+  .nav-item.active::before{
+    content:""; position:absolute; left:-1px; top:50%; transform:translateY(-50%);
+    width:3px; height:20px; border-radius:3px; background: var(--accent-2);
+  }
+  .side-avatar{
+    width:36px; height:36px; border-radius:50%;
+    background: linear-gradient(135deg, #6f6bff, #3fa8ff);
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:14px; margin-top: 10px; border: 2px solid var(--border-soft);
+  }
+
+  /* ---------- Workspace column ---------- */
+  .workspace{ display:flex; flex-direction:column; height:100vh; min-width:0; }
+
+  /* Top bar */
+  .wtop{
+    display:flex; align-items:center; gap:14px;
+    padding: 14px 22px;
+    border-bottom: 1px solid var(--border-soft);
+    flex-shrink:0;
+  }
+  .back-btn{
+    width:34px; height:34px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--text-dim); background: var(--panel-2); border:1px solid var(--border);
+    transition: all .15s ease;
+  }
+  .back-btn:hover{ color:var(--text); border-color:#33334a; }
+  .back-btn svg{ width:16px; height:16px; }
+
+  .breadcrumb{ display:flex; align-items:center; gap:8px; font-size:14px; min-width:0; }
+  .breadcrumb .story-name{ font-weight:700; color:var(--text); white-space:nowrap; }
+  .breadcrumb .sep{ color: var(--text-faint); }
+  .breadcrumb .scene-name{
+    color: var(--text-dim); font-weight:500;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .badge-mini{
+    font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    padding:3px 8px; border-radius:999px;
+    background: var(--hist)22; color: var(--hist); border:1px solid var(--hist)55;
+    flex-shrink:0;
+  }
+
+  .save-status{
+    display:flex; align-items:center; gap:6px;
+    font-size:12.5px; color: var(--text-faint); font-weight:500;
+    margin-left:4px; flex-shrink:0;
+  }
+  .save-status .dot{ width:6px; height:6px; border-radius:50%; background: var(--ok); box-shadow:0 0 0 3px rgba(74,222,154,.15); }
+
+  .wtop-actions{ margin-left:auto; display:flex; align-items:center; gap:10px; }
+  .icon-btn{
+    width:36px; height:36px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--text-dim); background: var(--panel-2); border:1px solid var(--border);
+    transition: all .15s ease;
+  }
+  .icon-btn:hover{ color:var(--text); border-color:#33334a; }
+  .icon-btn svg{ width:16px; height:16px; }
+  .icon-btn:disabled{ opacity:.35; cursor:not-allowed; }
+
+  .btn-ghost{
+    display:flex; align-items:center; gap:7px;
+    padding: 9px 15px; border-radius: 10px;
+    background: var(--panel-2); border:1px solid var(--border);
+    color: var(--text-dim); font-size:13px; font-weight:600;
+    transition: all .15s ease;
+  }
+  .btn-ghost:hover{ color:var(--text); border-color:#33334a; }
+  .btn-ghost svg{ width:15px; height:15px; }
+
+  .btn-primary-sm{
+    display:flex; align-items:center; gap:7px;
+    padding: 9px 16px; border-radius: 10px;
+    background: linear-gradient(135deg, #7c5cff, #9d6bff);
+    border:none; color:#fff; font-size:13px; font-weight:700;
+    box-shadow: 0 6px 16px rgba(124,92,255,.3);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary-sm:hover{ transform: translateY(-1px); box-shadow: 0 8px 20px rgba(124,92,255,.4); }
+  .btn-primary-sm svg{ width:15px; height:15px; }
+
+  /* Main 3-col editor body */
+  .editor-body{ display:grid; grid-template-columns: 260px 1fr 320px; flex:1; min-height:0; }
+  @media (max-width: 1200px){ .editor-body{ grid-template-columns: 230px 1fr 280px; } }
+  @media (max-width: 980px){ .editor-body{ grid-template-columns: 1fr; } .scene-panel, .inspector{ display:none; } }
+
+  /* ---------- Scene list panel ---------- */
+  .scene-panel{
+    border-right: 1px solid var(--border-soft);
+    display:flex; flex-direction:column; min-height:0;
+  }
+  .panel-head{
+    padding: 14px 16px 10px;
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .panel-head h3{ font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color: var(--text-faint); }
+  .add-scene-btn{
+    width:24px; height:24px; border-radius:7px;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--panel-2); border:1px solid var(--border); color: var(--accent-2);
+    font-size:14px; font-weight:700;
+    transition: all .15s ease;
+  }
+  .add-scene-btn:hover{ border-color: var(--accent); background:#1c1c29; }
+
+  .scene-search{
+    margin: 0 16px 12px;
+    display:flex; align-items:center; gap:8px;
+    background: var(--panel-2); border:1px solid var(--border); border-radius:9px;
+    padding: 8px 11px;
+  }
+  .scene-search svg{ width:13px; height:13px; color: var(--text-faint); flex-shrink:0; }
+  .scene-search input{ background:none; border:none; outline:none; color:var(--text); font-size:12.5px; width:100%; }
+  .scene-search input::placeholder{ color: var(--text-faint); }
+
+  .scene-list{ overflow-y:auto; padding: 0 10px 16px; flex:1; }
+  .scene-node{
+    display:flex; align-items:center; gap:10px;
+    padding: 8px 8px;
+    border-radius: 11px;
+    margin-bottom: 3px;
+    border: 1px solid transparent;
+    cursor:pointer;
+    transition: background .15s ease, border-color .15s ease;
+    position:relative;
+  }
+  .scene-node:hover{ background: var(--panel-2); }
+  .scene-node.active{ background: rgba(124,92,255,.1); border-color: rgba(124,92,255,.35); }
+  .scene-node .n{
+    width:22px; height:22px; border-radius:7px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:10.5px; font-weight:700; color: rgba(255,255,255,.9);
+  }
+  .scene-node .info{ min-width:0; flex:1; }
+  .scene-node .title{ font-size:12.5px; font-weight:600; color: var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .scene-node .meta{ font-size:11px; color: var(--text-faint); display:flex; align-items:center; gap:5px; margin-top:1px; }
+  .scene-node .meta svg{ width:10px; height:10px; }
+  .scene-node.branch::after{
+    content:"";
+    position:absolute; left:19px; bottom:-3px; width:1px; height:6px;
+    background: var(--border);
+  }
+  .scene-node.indent{ margin-left: 18px; width: calc(100% - 18px); }
+  .scene-node.indent::before{
+    content:"";
+    position:absolute; left:-10px; top:50%; width:9px; height:1px; background: var(--border);
+  }
+
+  /* ---------- Canvas / stage ---------- */
+  .canvas-wrap{
+    display:flex; flex-direction:column; min-width:0; min-height:0;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(124,92,255,.06), transparent 40%),
+      var(--bg);
+  }
+  .canvas-toolbar{
+    display:flex; align-items:center; gap:8px;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border-soft);
+    flex-shrink:0;
+  }
+  .seg{
+    display:flex; background: var(--panel-2); border:1px solid var(--border); border-radius:9px; padding:2px;
+  }
+  .seg button{
+    padding: 6px 12px; border-radius:7px; border:none; background:none;
+    color: var(--text-faint); font-size:12px; font-weight:600;
+    transition: all .15s ease;
+  }
+  .seg button.active{ background: var(--panel-3); color: var(--text); }
+  .canvas-toolbar .spacer{ flex:1; }
+  .zoom-ctrl{ display:flex; align-items:center; gap:6px; font-size:12px; color: var(--text-faint); font-weight:600; }
+  .zoom-ctrl button{
+    width:24px; height:24px; border-radius:7px; background:var(--panel-2); border:1px solid var(--border);
+    color: var(--text-dim); display:flex; align-items:center; justify-content:center;
+  }
+
+  .stage-scroll{ flex:1; overflow:auto; display:flex; align-items:center; justify-content:center; padding: 26px; min-height:0; }
+
+  .stage{
+    width: 640px; height: 400px;
+    border-radius: 16px;
+    position:relative;
+    overflow:hidden;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    flex-shrink:0;
+    background: linear-gradient(180deg,#2a3f6b 0%, #c9822f 55%, #8a5a2f 100%);
+  }
+  .stage-sun{
+    position:absolute; top:40px; left:70px; width:70px; height:70px; border-radius:50%;
+    background: radial-gradient(circle, #ffe9b0, #f0c25c 70%, transparent 75%);
+    opacity:.85;
+  }
+  .stage-silhouette{
+    position:absolute; bottom:0; left:0; right:0; height:110px;
+    background: linear-gradient(180deg, transparent, rgba(20,14,8,.55));
+  }
+
+  .sprite{
+    position:absolute; bottom: 78px;
+    width: 130px; height: 240px;
+    border-radius: 10px 10px 0 0;
+    display:flex; align-items:flex-end; justify-content:center;
+    padding-bottom:10px;
+    font-size:11px; font-weight:700; color: rgba(255,255,255,.85);
+    text-shadow: 0 1px 3px rgba(0,0,0,.5);
+    border: 1px dashed rgba(255,255,255,.25);
+    cursor:pointer;
+    transition: outline .15s ease;
+  }
+  .sprite.selected{ outline: 2px solid var(--accent-2); outline-offset:3px; }
+  .sprite.left{ left: 60px; background: linear-gradient(180deg, rgba(154,110,255,.35), rgba(154,110,255,.12)); }
+  .sprite.center{ left:50%; transform:translateX(-50%); background: linear-gradient(180deg, rgba(240,149,74,.4), rgba(240,149,74,.15)); }
+  .sprite.right{ right: 60px; background: linear-gradient(180deg, rgba(74,222,154,.35), rgba(74,222,154,.12)); }
+
+  .dialogue-box{
+    position:absolute; left:16px; right:16px; bottom:14px;
+    background: rgba(10,10,16,.82);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    padding: 12px 16px 14px;
+  }
+  .speaker-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    background: var(--accent); color:#fff; font-size:11.5px; font-weight:700;
+    padding: 4px 10px; border-radius: 8px 8px 0 0;
+    margin: -12px 0 8px -16px;
+    transform: translateY(-100%);
+    position:relative;
+  }
+  .dialogue-text{
+    font-size: 13.5px; line-height:1.55; color: rgba(255,255,255,.92);
+    min-height: 44px;
+  }
+  .choice-list{ display:flex; flex-direction:column; gap:6px; margin-top:10px; }
+  .choice-pill{
+    background: rgba(124,92,255,.16); border:1px solid rgba(124,92,255,.4);
+    color: #d7cdff; font-size: 12.5px; font-weight:600;
+    padding: 8px 12px; border-radius: 9px;
+  }
+
+  /* flow strip at bottom */
+  .flow-strip{
+    border-top: 1px solid var(--border-soft);
+    padding: 12px 18px;
+    flex-shrink:0;
+    overflow-x:auto;
+  }
+  .flow-track{ display:flex; align-items:center; gap:0; min-width:max-content; }
+  .flow-node{
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    width: 74px; flex-shrink:0; cursor:pointer;
+  }
+  .flow-node .chip{
+    width:46px; height:46px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:11px; font-weight:700; color:#fff;
+    border: 2px solid transparent;
+  }
+  .flow-node.active .chip{ border-color: var(--accent-2); }
+  .flow-node .lbl{ font-size:10px; color: var(--text-faint); text-align:center; line-height:1.2; max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .flow-line{ width: 26px; height:2px; background: var(--border); flex-shrink:0; }
+  .flow-branch{ display:flex; flex-direction:column; gap:16px; }
+
+  /* ---------- Inspector ---------- */
+  .inspector{ border-left: 1px solid var(--border-soft); display:flex; flex-direction:column; min-height:0; }
+  .insp-tabs{ display:flex; border-bottom: 1px solid var(--border-soft); flex-shrink:0; }
+  .insp-tab{
+    flex:1; text-align:center; padding: 13px 4px;
+    font-size:12px; font-weight:700; color: var(--text-faint);
+    border-bottom: 2px solid transparent;
+    transition: color .15s ease;
+  }
+  .insp-tab.active{ color: var(--accent-2); border-color: var(--accent-2); }
+  .insp-tab:hover{ color: var(--text-dim); }
+
+  .insp-body{ padding: 16px 18px 30px; overflow-y:auto; flex:1; }
+  .insp-section + .insp-section{ margin-top: 22px; }
+  .insp-label{ font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color: var(--text-faint); margin-bottom:10px; }
+
+  .field{ margin-bottom:14px; }
+  .field label{ display:block; font-size:12px; font-weight:600; color: var(--text-dim); margin-bottom:6px; }
+  .field input[type=text], .field textarea, .field select{
+    width:100%; background: var(--panel-2); border:1px solid var(--border); border-radius:9px;
+    padding: 9px 11px; color: var(--text); font-size:13px; outline:none;
+    transition: border-color .15s ease;
+  }
+  .field input[type=text]:focus, .field textarea:focus, .field select:focus{ border-color: var(--accent); }
+  .field textarea{ resize:vertical; min-height: 90px; line-height:1.5; }
+
+  .bg-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:8px; }
+  .bg-thumb{
+    aspect-ratio: 4/3; border-radius:9px; border: 2px solid transparent; cursor:pointer; position:relative;
+    transition: border-color .15s ease, transform .15s ease;
+  }
+  .bg-thumb:hover{ transform: translateY(-1px); }
+  .bg-thumb.selected{ border-color: var(--accent-2); }
+  .bg-thumb .lbl{
+    position:absolute; bottom:4px; left:5px; font-size:9.5px; font-weight:700; color: rgba(255,255,255,.9);
+    text-shadow: 0 1px 2px rgba(0,0,0,.6);
+  }
+
+  .char-row{
+    display:flex; align-items:center; gap:10px;
+    padding: 9px; border-radius:11px; background: var(--panel-2); border:1px solid var(--border);
+    margin-bottom: 8px;
+  }
+  .char-row .dot{
+    width:30px; height:30px; border-radius:9px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff;
+  }
+  .char-row .cinfo{ flex:1; min-width:0; }
+  .char-row .cname{ font-size:12.5px; font-weight:700; color:var(--text); }
+  .char-row select{
+    font-size:11px; padding:3px 6px; margin-top:3px; width:auto;
+    background: var(--panel-3); border:1px solid var(--border); border-radius:6px; color:var(--text-dim);
+  }
+  .char-row .remove{ color: var(--text-faint); width:22px; height:22px; display:flex; align-items:center; justify-content:center; border-radius:6px; }
+  .char-row .remove:hover{ color:#f0674f; background: rgba(240,103,79,.1); }
+  .add-char-btn{
+    width:100%; padding: 9px; border-radius:9px; border:1px dashed var(--border);
+    background:none; color: var(--text-faint); font-size:12.5px; font-weight:600;
+    transition: all .15s ease;
+  }
+  .add-char-btn:hover{ color: var(--accent-2); border-color: var(--accent); }
+
+  .choice-edit{
+    background: var(--panel-2); border:1px solid var(--border); border-radius:11px;
+    padding: 10px; margin-bottom:9px;
+  }
+  .choice-edit .ce-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
+  .choice-edit .ce-num{
+    font-size:10.5px; font-weight:700; color: var(--accent-2); background: rgba(124,92,255,.14);
+    padding:2px 7px; border-radius:6px;
+  }
+  .choice-edit input[type=text]{
+    width:100%; background: var(--panel-3); border:1px solid var(--border); border-radius:7px;
+    padding: 7px 9px; color:var(--text); font-size:12.5px; margin-bottom:6px; outline:none;
+  }
+  .choice-edit .ce-link{ display:flex; align-items:center; gap:6px; font-size:11.5px; color: var(--text-faint); }
+  .choice-edit .ce-link select{
+    flex:1; background: var(--panel-3); border:1px solid var(--border); border-radius:7px; color:var(--text-dim);
+    font-size:11.5px; padding:5px 7px;
+  }
+  .add-choice-btn{
+    width:100%; padding: 9px; border-radius:9px; border:1px dashed var(--border);
+    background:none; color: var(--text-faint); font-size:12.5px; font-weight:600;
+  }
+  .add-choice-btn:hover{ color: var(--accent-2); border-color: var(--accent); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ============ LEFT ICON SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5C4 4.67 4.67 4 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13Z" fill="white" opacity=".9"/><path d="M13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" fill="white" opacity=".55"/></svg>
+    </div>
+    <button class="create-btn" title="Create">+</button>
+    <nav class="nav">
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
+      <a class="nav-item active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>Scenes</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h11l5 5v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1Z"/><path d="M14 4v5h5"/></svg>Brand Kit</a>
+    </nav>
+    <div class="side-avatar">A</div>
+  </aside>
+
+  <!-- ============ WORKSPACE ============ -->
+  <div class="workspace">
+
+    <!-- Top bar -->
+    <div class="wtop">
+      <button class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="breadcrumb">
+        <span class="story-name">Ancient Egypt: The Pharaoh's Court</span>
+        <span class="badge-mini">History</span>
+        <span class="sep">/</span>
+        <span class="scene-name" id="crumbScene">Meeting the Vizier</span>
+      </div>
+      <div class="save-status"><span class="dot"></span>Saved</div>
+
+      <div class="wtop-actions">
+        <button class="icon-btn" id="undoBtn" title="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 7 4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-1"/></svg></button>
+        <button class="icon-btn" id="redoBtn" title="Redo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 7 5 5-5 5"/><path d="M20 12H9a5 5 0 0 0 0 10h1"/></svg></button>
+        <button class="btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>Preview</button>
+        <button class="btn-primary-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>Publish</button>
+      </div>
+    </div>
+
+    <!-- 3 column editor -->
+    <div class="editor-body">
+
+      <!-- Scene list -->
+      <div class="scene-panel">
+        <div class="panel-head"><h3>Scenes · 16</h3><button class="add-scene-btn">+</button></div>
+        <div class="scene-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Find a scene…">
+        </div>
+        <div class="scene-list" id="sceneList"></div>
+      </div>
+
+      <!-- Canvas -->
+      <div class="canvas-wrap">
+        <div class="canvas-toolbar">
+          <div class="seg">
+            <button class="active">Stage</button>
+            <button>Script</button>
+          </div>
+          <div class="spacer"></div>
+          <div class="seg">
+            <button class="active">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px;"><rect x="4" y="7" width="16" height="10" rx="1.5"/></svg>Desktop
+            </button>
+            <button>
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px;"><rect x="7" y="3" width="10" height="18" rx="1.5"/></svg>Mobile
+            </button>
+          </div>
+          <div class="zoom-ctrl">
+            <button>−</button><span>100%</span><button>+</button>
+          </div>
+        </div>
+
+        <div class="stage-scroll">
+          <div class="stage" id="stage">
+            <div class="stage-sun"></div>
+            <div class="stage-silhouette"></div>
+
+            <div class="sprite left" data-name="Horemheb">Horemheb</div>
+            <div class="sprite center selected" data-name="You">You</div>
+
+            <div class="dialogue-box">
+              <span class="speaker-chip" id="speakerChip">Horemheb</span>
+              <div class="dialogue-text" id="dialogueText" contenteditable="true">"The Pharaoh grows suspicious of the priesthood's counsel. Tell me truly, advisor — where does your loyalty lie?"</div>
+              <div class="choice-list" id="choiceList">
+                <div class="choice-pill">"With the throne, always."</div>
+                <div class="choice-pill">"I serve Ma'at — truth above all."</div>
+                <div class="choice-pill">"That depends on what you're offering."</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- flow / branch map -->
+        <div class="flow-strip">
+          <div class="flow-track" id="flowTrack"></div>
+        </div>
+      </div>
+
+      <!-- Inspector -->
+      <div class="inspector">
+        <div class="insp-tabs" id="inspTabs">
+          <div class="insp-tab active" data-tab="scene">Scene</div>
+          <div class="insp-tab" data-tab="cast">Cast</div>
+          <div class="insp-tab" data-tab="dialogue">Dialogue</div>
+          <div class="insp-tab" data-tab="choices">Choices</div>
+        </div>
+
+        <div class="insp-body">
+
+          <!-- Scene tab -->
+          <div class="insp-panel" data-panel="scene">
+            <div class="insp-section">
+              <div class="insp-label">Scene name</div>
+              <div class="field"><input type="text" value="Meeting the Vizier"></div>
+            </div>
+            <div class="insp-section">
+              <div class="insp-label">Background</div>
+              <div class="bg-grid" id="bgGrid"></div>
+            </div>
+            <div class="insp-section">
+              <div class="insp-label">Ambience</div>
+              <div class="field"><select><option>Desert wind (loop)</option><option>Palace hall murmur</option><option>Nile river flow</option><option>Silence</option></select></div>
+            </div>
+          </div>
+
+          <!-- Cast tab -->
+          <div class="insp-panel" data-panel="cast" style="display:none;">
+            <div class="insp-section">
+              <div class="insp-label">Characters in scene</div>
+              <div id="castList"></div>
+              <button class="add-char-btn">+ Add character to scene</button>
+            </div>
+          </div>
+
+          <!-- Dialogue tab -->
+          <div class="insp-panel" data-panel="dialogue" style="display:none;">
+            <div class="insp-section">
+              <div class="insp-label">Speaker</div>
+              <div class="field"><select id="speakerSelect"><option>Horemheb</option><option>You</option><option>Narrator</option><option>Nefret</option></select></div>
+            </div>
+            <div class="insp-section">
+              <div class="insp-label">Line</div>
+              <div class="field"><textarea id="dialogueEdit">The Pharaoh grows suspicious of the priesthood's counsel. Tell me truly, advisor — where does your loyalty lie?</textarea></div>
+            </div>
+            <div class="insp-section">
+              <div class="insp-label">Delivery</div>
+              <div class="field"><select><option>Neutral</option><option>Suspicious</option><option>Warm</option><option>Threatening</option><option>Whispered</option></select></div>
+            </div>
+          </div>
+
+          <!-- Choices tab -->
+          <div class="insp-panel" data-panel="choices" style="display:none;">
+            <div class="insp-section">
+              <div class="insp-label">Player choices</div>
+              <div id="choiceEditList"></div>
+              <button class="add-choice-btn">+ Add choice</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------------- Data ---------------- */
+const CHAR_COLORS = { "Horemheb":"#e0954a", "You":"#7c5cff", "Nefret":"#e05b9c", "Narrator":"#5a5a70" };
+function initials(n){ return n.split(' ').map(w=>w[0]).slice(0,2).join(''); }
+
+const scenes = [
+  { n:1,  title:"The Palace Gates",        type:"scene",  chars:2, color:"#2f7fc9" },
+  { n:2,  title:"Meeting the Vizier",      type:"branch", chars:2, color:"#c9822f", active:true },
+  { n:3,  title:"Path: Loyal Counsel",     type:"scene",  chars:3, color:"#5e3fc4", indent:true },
+  { n:4,  title:"Path: Secret Alliance",   type:"scene",  chars:2, color:"#c23f5c", indent:true },
+  { n:5,  title:"Path: Silent Observer",   type:"scene",  chars:1, color:"#1fae6b", indent:true },
+  { n:6,  title:"The Flood of the Nile",   type:"scene",  chars:3, color:"#233f7a" },
+  { n:7,  title:"Temple of Ma'at",         type:"branch", chars:2, color:"#a83fd9" },
+  { n:8,  title:"Judgement Hall",          type:"scene",  chars:4, color:"#d98a3f", indent:true },
+  { n:9,  title:"The Whispering Scribe",   type:"scene",  chars:2, color:"#2fa8a3", indent:true },
+  { n:10, title:"Royal Feast",             type:"scene",  chars:5, color:"#7fce3f" },
+  { n:11, title:"A Message in the Sand",   type:"scene",  chars:1, color:"#4472c4" },
+  { n:12, title:"The Vizier's Betrayal",   type:"branch", chars:2, color:"#c23f5c" },
+  { n:13, title:"Ending: Restore the Throne", type:"scene", chars:3, color:"#1fae8a", indent:true },
+  { n:14, title:"Ending: Rule in Shadow",  type:"scene",  chars:2, color:"#5e2f8a", indent:true },
+  { n:15, title:"Ending: Flee the Palace", type:"scene",  chars:1, color:"#7a3f0e", indent:true },
+  { n:16, title:"Epilogue: The Nile Endures", type:"scene", chars:3, color:"#173a5e" },
+];
+
+const castInScene = [
+  { name:"Horemheb", role:"Vizier", pos:"Left" },
+  { name:"You",      role:"Advisor · Protagonist", pos:"Center" },
+];
+
+const backgrounds = [
+  { name:"Palace Gates",  grad:"linear-gradient(160deg,#233f7a,#c9822f 75%)" },
+  { name:"Throne Room",   grad:"linear-gradient(160deg,#5e3fc4,#2a1a5e)", selected:true },
+  { name:"Nile Bank",     grad:"linear-gradient(160deg,#2f7fc9,#1f5f52)" },
+  { name:"Temple Court",  grad:"linear-gradient(160deg,#a83fd9,#5e2f8a)" },
+  { name:"Desert Night",  grad:"linear-gradient(160deg,#0f1c3d,#233f7a)" },
+  { name:"Market Street", grad:"linear-gradient(160deg,#d98a3f,#7a3f0e)" },
+];
+
+const choices = [
+  { text:'"With the throne, always."', target:"Path: Loyal Counsel" },
+  { text:'"I serve Ma\'at — truth above all."', target:"Path: Silent Observer" },
+  { text:'"That depends on what you\'re offering."', target:"Path: Secret Alliance" },
+];
+
+/* ---------------- Render: scene list ---------------- */
+function renderScenes(){
+  document.getElementById('sceneList').innerHTML = scenes.map(s => `
+    <div class="scene-node ${s.active?'active':''} ${s.indent?'indent':''} ${s.type==='branch'?'branch':''}" data-n="${s.n}">
+      <div class="n" style="background:${s.color}">${s.n}</div>
+      <div class="info">
+        <div class="title">${s.title}</div>
+        <div class="meta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+          ${s.chars} · ${s.type==='branch' ? 'branch point' : 'linear'}
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.querySelectorAll('.scene-node').forEach(node => {
+    node.addEventListener('click', () => {
+      document.querySelectorAll('.scene-node').forEach(n=>n.classList.remove('active'));
+      node.classList.add('active');
+      const s = scenes.find(x => x.n == node.dataset.n);
+      document.getElementById('crumbScene').textContent = s.title;
+      document.querySelectorAll('.flow-node').forEach(f=>f.classList.toggle('active', f.dataset.n==node.dataset.n));
+    });
+  });
+}
+
+/* ---------------- Render: flow strip ---------------- */
+function renderFlow(){
+  let html = '';
+  scenes.forEach((s,i) => {
+    html += `
+      <div class="flow-node ${s.active?'active':''}" data-n="${s.n}">
+        <div class="chip" style="background:${s.color}">${s.n}</div>
+        <div class="lbl">${s.title}</div>
+      </div>`;
+    if(i < scenes.length-1) html += `<div class="flow-line"></div>`;
+  });
+  document.getElementById('flowTrack').innerHTML = html;
+  document.querySelectorAll('.flow-node').forEach(node=>{
+    node.addEventListener('click', ()=>{
+      document.querySelector(`.scene-node[data-n="${node.dataset.n}"]`)?.click();
+    });
+  });
+}
+
+/* ---------------- Render: backgrounds ---------------- */
+function renderBackgrounds(){
+  document.getElementById('bgGrid').innerHTML = backgrounds.map(b => `
+    <div class="bg-thumb ${b.selected?'selected':''}" style="background:${b.grad}" title="${b.name}">
+      <span class="lbl">${b.name}</span>
+    </div>`).join('');
+  document.querySelectorAll('.bg-thumb').forEach(t=>{
+    t.addEventListener('click', ()=>{
+      document.querySelectorAll('.bg-thumb').forEach(x=>x.classList.remove('selected'));
+      t.classList.add('selected');
+    });
+  });
+}
+
+/* ---------------- Render: cast ---------------- */
+function renderCast(){
+  document.getElementById('castList').innerHTML = castInScene.map(c => `
+    <div class="char-row">
+      <div class="dot" style="background:${CHAR_COLORS[c.name]||'#5a5a70'}">${initials(c.name)}</div>
+      <div class="cinfo">
+        <div class="cname">${c.name}</div>
+        <select>
+          <option ${c.pos==='Left'?'selected':''}>Left</option>
+          <option ${c.pos==='Center'?'selected':''}>Center</option>
+          <option ${c.pos==='Right'?'selected':''}>Right</option>
+        </select>
+      </div>
+      <div class="remove">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------------- Render: choices editor ---------------- */
+function renderChoiceEditor(){
+  document.getElementById('choiceEditList').innerHTML = choices.map((c,i) => `
+    <div class="choice-edit">
+      <div class="ce-top"><span class="ce-num">Choice ${i+1}</span></div>
+      <input type="text" value="${c.text.replace(/"/g,'&quot;')}">
+      <div class="ce-link">
+        Leads to
+        <select>
+          ${scenes.map(s=>`<option ${s.title===c.target?'selected':''}>${s.title}</option>`).join('')}
+        </select>
+      </div>
+    </div>`).join('');
+}
+
+/* ---------------- Tabs ---------------- */
+function initTabs(){
+  document.querySelectorAll('.insp-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.insp-tab').forEach(t=>t.classList.remove('active'));
+      tab.classList.add('active');
+      const target = tab.dataset.tab;
+      document.querySelectorAll('.insp-panel').forEach(p => {
+        p.style.display = (p.dataset.panel === target) ? 'block' : 'none';
+      });
+    });
+  });
+}
+
+/* ---------------- Sprite selection on stage ---------------- */
+function initSprites(){
+  document.querySelectorAll('.sprite').forEach(sp => {
+    sp.addEventListener('click', () => {
+      document.querySelectorAll('.sprite').forEach(s=>s.classList.remove('selected'));
+      sp.classList.add('selected');
+      document.getElementById('speakerChip').textContent = sp.dataset.name;
+    });
+  });
+}
+
+/* ---------------- Live-link dialogue textarea <-> stage ---------------- */
+function initDialogueSync(){
+  const edit = document.getElementById('dialogueEdit');
+  const stageText = document.getElementById('dialogueText');
+  edit.addEventListener('input', () => { stageText.textContent = edit.value; });
+  stageText.addEventListener('input', () => { edit.value = stageText.textContent; });
+}
+
+/* ---------------- Init ---------------- */
+renderScenes();
+renderFlow();
+renderBackgrounds();
+renderCast();
+renderChoiceEditor();
+initTabs();
+initSprites();
+initDialogueSync();
+</script>
+</body>
+</html>
