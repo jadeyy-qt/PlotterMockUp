@@ -8,39 +8,53 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg: #0a0a10;
-    --panel: #12121a;
-    --panel-2: #16161f;
-    --panel-3: #1b1b26;
-    --border: #232332;
-    --border-soft: #1b1b26;
-    --text: #eceaf5;
-    --text-dim: #9997ac;
-    --text-faint: #66647a;
-    --accent: #7c5cff;
-    --accent-2: #9d84ff;
-    --sci: #34d3d8;
-    --hist: #f0954a;
-    --math: #8a7cf0;
-    --lit: #f06fb0;
-    --lang: #f0679a;
+    --bg: #0a1420;
+    --panel: #0f1f30;
+    --panel-2: #142a3e;
+    --panel-3: #1a3348;
+    --border: #24435f;
+    --border-soft: #1a3049;
+    --text: #eef1e9;
+    --text-dim: #a8bccf;
+    --text-faint: #6d859f;
+    --accent: #c9a24d;
+    --accent-2: #e6c977;
+    --gold: #c9a24d;
+    --gold-bright: #e6c977;
+    --maroon: #7c2331;
+    --maroon-deep: #430f18;
+    --sci: #4a86c9;
+    --hist: #c9a24d;
+    --math: #6f8fc9;
+    --lit: #a9364a;
+    --lang: #c9636f;
     --soc: #4ade9a;
-    --arts: #f0c94a;
+    --arts: #c9a24d;
     --health: #4ade9a;
     --ok: #4ade9a;
     --radius-lg: 18px;
     --radius-md: 12px;
+    --font-display: 'Fraunces', serif;
   }
 
   *{box-sizing:border-box; margin:0; padding:0;}
   html,body{height:100%;}
   body{
-    background: var(--bg);
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(124,35,49,.18), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(201,162,77,.05), transparent 55%),
+      radial-gradient(ellipse 1000px 600px at 50% 100%, rgba(20,50,80,.3), transparent 60%),
+      var(--bg);
     color: var(--text);
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     overflow:hidden;
   }
+  ::selection{ background: rgba(201,162,77,.35); color:#fff; }
+  ::-webkit-scrollbar{ width:9px; height:9px; }
+  ::-webkit-scrollbar-track{ background: transparent; }
+  ::-webkit-scrollbar-thumb{ background: #1e3c56; border-radius:8px; border:2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover{ background: var(--maroon); }
   a{color:inherit; text-decoration:none;}
   button{font-family:inherit; cursor:pointer;}
   textarea, input{font-family:inherit;}
@@ -56,7 +70,7 @@
     .sidebar{ display:none; }
   }
 
-  /* ---------- Left icon sidebar (shared) ---------- */
+  /* ---------- Left icon sidebar (homepage-matched) ---------- */
   .sidebar{
     background: var(--panel);
     border-right: 1px solid var(--border-soft);
@@ -65,42 +79,54 @@
   }
   .logo{
     width:38px; height:38px; border-radius:11px;
-    background: linear-gradient(135deg, #4d8bff, #7c5cff);
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    border: 1px solid rgba(212,175,106,.5);
     display:flex; align-items:center; justify-content:center;
     margin-bottom: 22px;
-    box-shadow: 0 4px 14px rgba(124,92,255,.35);
+    box-shadow: 0 4px 14px rgba(58,10,12,.55), 0 0 0 1px rgba(212,175,106,.15);
   }
+  .logo svg path{ fill: var(--gold) !important; }
   .logo svg{ width:20px; height:20px; }
+
   .create-btn{
     width:44px; height:44px; border-radius:13px;
     background: var(--panel-2);
     border:1px solid var(--border);
-    color: var(--accent-2);
+    color: var(--gold);
     display:flex; align-items:center; justify-content:center;
     font-size:20px; font-weight:600;
     margin-bottom: 26px;
     transition: transform .15s ease, background .15s ease, border-color .15s ease;
   }
-  .create-btn:hover{ background:#1c1c29; border-color:#33334a; transform: translateY(-1px); }
+  .create-btn:hover{ background:#1c3a52; border-color: var(--accent); transform: translateY(-1px); }
+
   .nav{ display:flex; flex-direction:column; gap:4px; width:100%; align-items:center; flex:1; }
   .nav-item{
     width:64px; display:flex; flex-direction:column; align-items:center; gap:5px;
     padding: 9px 0 7px; border-radius: 12px;
     color: var(--text-faint); font-size:11px; font-weight:500;
     transition: color .15s ease, background .15s ease; position:relative;
+    background:none; border:none;
   }
   .nav-item svg{ width:19px; height:19px; }
   .nav-item:hover{ color: var(--text-dim); }
-  .nav-item.active{ color: #b7a9ff; background: rgba(124,92,255,.12); }
+  .nav-item.active{
+    color: var(--gold-bright);
+    background: rgba(212,175,106,.12);
+  }
   .nav-item.active::before{
-    content:""; position:absolute; left:-1px; top:50%; transform:translateY(-50%);
-    width:3px; height:20px; border-radius:3px; background: var(--accent-2);
+    content:"";
+    position:absolute; left:-1px; top:50%; transform:translateY(-50%);
+    width:3px; height:20px; border-radius:3px;
+    background: var(--gold);
   }
   .side-avatar{
     width:36px; height:36px; border-radius:50%;
-    background: linear-gradient(135deg, #6f6bff, #3fa8ff);
+    background: linear-gradient(135deg, var(--maroon), var(--gold));
     display:flex; align-items:center; justify-content:center;
-    font-weight:700; font-size:14px; margin-top: 10px; border: 2px solid var(--border-soft);
+    font-weight:700; font-size:14px; margin-top: 10px;
+    border: 2px solid rgba(212,175,106,.4);
+    color:#fff;
   }
 
   /* ---------- Workspace column ---------- */
@@ -110,7 +136,9 @@
   .wtop{
     display:flex; align-items:center; gap:14px;
     padding: 14px 22px;
-    border-bottom: 1px solid var(--border-soft);
+    background: rgba(13,20,32,.85);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(212,175,106,.15);
     flex-shrink:0;
   }
   .back-btn{
@@ -119,11 +147,14 @@
     color: var(--text-dim); background: var(--panel-2); border:1px solid var(--border);
     transition: all .15s ease;
   }
-  .back-btn:hover{ color:var(--text); border-color:#33334a; }
+  .back-btn:hover{ color:var(--gold-bright); border-color: var(--gold); }
   .back-btn svg{ width:16px; height:16px; }
 
   .breadcrumb{ display:flex; align-items:center; gap:8px; font-size:14px; min-width:0; }
-  .breadcrumb .story-name{ font-weight:700; color:var(--text); white-space:nowrap; }
+  .breadcrumb .story-name{
+    font-family: var(--font-display);
+    font-weight:600; color:var(--text); white-space:nowrap;
+  }
   .breadcrumb .sep{ color: var(--text-faint); }
   .breadcrumb .scene-name{
     color: var(--text-dim); font-weight:500;
@@ -131,8 +162,10 @@
   }
   .badge-mini{
     font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
-    padding:3px 8px; border-radius:999px;
-    background: var(--hist)22; color: var(--hist); border:1px solid var(--hist)55;
+    padding:3px 8px; border-radius:4px;
+    background: rgba(201,162,77,.15); color: var(--gold-bright);
+    border:1px solid rgba(201,162,77,.4);
+    font-family: var(--font-display);
     flex-shrink:0;
   }
 
@@ -150,7 +183,7 @@
     color: var(--text-dim); background: var(--panel-2); border:1px solid var(--border);
     transition: all .15s ease;
   }
-  .icon-btn:hover{ color:var(--text); border-color:#33334a; }
+  .icon-btn:hover{ color:var(--gold-bright); border-color: var(--gold); }
   .icon-btn svg{ width:16px; height:16px; }
   .icon-btn:disabled{ opacity:.35; cursor:not-allowed; }
 
@@ -161,18 +194,19 @@
     color: var(--text-dim); font-size:13px; font-weight:600;
     transition: all .15s ease;
   }
-  .btn-ghost:hover{ color:var(--text); border-color:#33334a; }
+  .btn-ghost:hover{ color:var(--gold-bright); border-color: var(--gold); }
   .btn-ghost svg{ width:15px; height:15px; }
 
   .btn-primary-sm{
     display:flex; align-items:center; gap:7px;
     padding: 9px 16px; border-radius: 10px;
-    background: linear-gradient(135deg, #7c5cff, #9d6bff);
-    border:none; color:#fff; font-size:13px; font-weight:700;
-    box-shadow: 0 6px 16px rgba(124,92,255,.3);
+    background: linear-gradient(135deg, var(--gold), #b88a45);
+    border: 1px solid rgba(230,201,119,.6);
+    color:#2a1608; font-size:13px; font-weight:700;
+    box-shadow: 0 6px 16px rgba(201,162,77,.22);
     transition: transform .15s ease, box-shadow .15s ease;
   }
-  .btn-primary-sm:hover{ transform: translateY(-1px); box-shadow: 0 8px 20px rgba(124,92,255,.4); }
+  .btn-primary-sm:hover{ transform: translateY(-1px); box-shadow: 0 8px 20px rgba(212,175,106,.34); }
   .btn-primary-sm svg{ width:15px; height:15px; }
 
   /* Main 3-col editor body */
@@ -183,28 +217,35 @@
   /* ---------- Scene list panel ---------- */
   .scene-panel{
     border-right: 1px solid var(--border-soft);
+    background: var(--panel);
     display:flex; flex-direction:column; min-height:0;
   }
   .panel-head{
     padding: 14px 16px 10px;
     display:flex; align-items:center; justify-content:space-between;
   }
-  .panel-head h3{ font-size:12px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color: var(--text-faint); }
+  .panel-head h3{
+    font-family: var(--font-display);
+    font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+    color: var(--gold-bright);
+  }
   .add-scene-btn{
     width:24px; height:24px; border-radius:7px;
     display:flex; align-items:center; justify-content:center;
-    background: var(--panel-2); border:1px solid var(--border); color: var(--accent-2);
+    background: var(--panel-2); border:1px solid var(--border); color: var(--gold);
     font-size:14px; font-weight:700;
     transition: all .15s ease;
   }
-  .add-scene-btn:hover{ border-color: var(--accent); background:#1c1c29; }
+  .add-scene-btn:hover{ border-color: var(--gold); background:#1c3a52; }
 
   .scene-search{
     margin: 0 16px 12px;
     display:flex; align-items:center; gap:8px;
     background: var(--panel-2); border:1px solid var(--border); border-radius:9px;
     padding: 8px 11px;
+    transition: border-color .15s ease;
   }
+  .scene-search:hover{ border-color: var(--gold); }
   .scene-search svg{ width:13px; height:13px; color: var(--text-faint); flex-shrink:0; }
   .scene-search input{ background:none; border:none; outline:none; color:var(--text); font-size:12.5px; width:100%; }
   .scene-search input::placeholder{ color: var(--text-faint); }
@@ -221,7 +262,10 @@
     position:relative;
   }
   .scene-node:hover{ background: var(--panel-2); }
-  .scene-node.active{ background: rgba(124,92,255,.1); border-color: rgba(124,92,255,.35); }
+  .scene-node.active{
+    background: rgba(201,162,77,.1);
+    border-color: rgba(201,162,77,.35);
+  }
   .scene-node .n{
     width:22px; height:22px; border-radius:7px; flex-shrink:0;
     display:flex; align-items:center; justify-content:center;
@@ -246,13 +290,15 @@
   .canvas-wrap{
     display:flex; flex-direction:column; min-width:0; min-height:0;
     background:
-      radial-gradient(circle at 20% 0%, rgba(124,92,255,.06), transparent 40%),
+      radial-gradient(ellipse 600px 400px at 30% 0%, rgba(124,35,49,.12), transparent 50%),
+      radial-gradient(ellipse 500px 300px at 80% 100%, rgba(201,162,77,.04), transparent 50%),
       var(--bg);
   }
   .canvas-toolbar{
     display:flex; align-items:center; gap:8px;
     padding: 10px 18px;
     border-bottom: 1px solid var(--border-soft);
+    background: rgba(15,31,48,.5);
     flex-shrink:0;
   }
   .seg{
@@ -263,13 +309,19 @@
     color: var(--text-faint); font-size:12px; font-weight:600;
     transition: all .15s ease;
   }
-  .seg button.active{ background: var(--panel-3); color: var(--text); }
+  .seg button.active{
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    color: var(--gold-bright);
+    border: 1px solid rgba(230,201,119,.3);
+  }
   .canvas-toolbar .spacer{ flex:1; }
   .zoom-ctrl{ display:flex; align-items:center; gap:6px; font-size:12px; color: var(--text-faint); font-weight:600; }
   .zoom-ctrl button{
     width:24px; height:24px; border-radius:7px; background:var(--panel-2); border:1px solid var(--border);
     color: var(--text-dim); display:flex; align-items:center; justify-content:center;
+    transition: all .15s ease;
   }
+  .zoom-ctrl button:hover{ border-color: var(--gold); color: var(--gold-bright); }
 
   .stage-scroll{ flex:1; overflow:auto; display:flex; align-items:center; justify-content:center; padding: 26px; min-height:0; }
 
@@ -278,8 +330,8 @@
     border-radius: 16px;
     position:relative;
     overflow:hidden;
-    border: 1px solid var(--border);
-    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    border: 1px solid rgba(212,175,106,.25);
+    box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(212,175,106,.1);
     flex-shrink:0;
     background: linear-gradient(180deg,#2a3f6b 0%, #c9822f 55%, #8a5a2f 100%);
   }
@@ -305,26 +357,30 @@
     cursor:pointer;
     transition: outline .15s ease;
   }
-  .sprite.selected{ outline: 2px solid var(--accent-2); outline-offset:3px; }
-  .sprite.left{ left: 60px; background: linear-gradient(180deg, rgba(154,110,255,.35), rgba(154,110,255,.12)); }
-  .sprite.center{ left:50%; transform:translateX(-50%); background: linear-gradient(180deg, rgba(240,149,74,.4), rgba(240,149,74,.15)); }
+  .sprite.selected{ outline: 2px solid var(--gold-bright); outline-offset:3px; }
+  .sprite.left{ left: 60px; background: linear-gradient(180deg, rgba(201,162,77,.35), rgba(201,162,77,.12)); }
+  .sprite.center{ left:50%; transform:translateX(-50%); background: linear-gradient(180deg, rgba(124,35,49,.45), rgba(124,35,49,.18)); }
   .sprite.right{ right: 60px; background: linear-gradient(180deg, rgba(74,222,154,.35), rgba(74,222,154,.12)); }
 
   .dialogue-box{
     position:absolute; left:16px; right:16px; bottom:14px;
-    background: rgba(10,10,16,.82);
+    background: rgba(10,20,32,.88);
     backdrop-filter: blur(6px);
-    border: 1px solid rgba(255,255,255,.1);
+    border: 1px solid rgba(212,175,106,.2);
     border-radius: 12px;
     padding: 12px 16px 14px;
   }
   .speaker-chip{
     display:inline-flex; align-items:center; gap:6px;
-    background: var(--accent); color:#fff; font-size:11.5px; font-weight:700;
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    color: var(--gold-bright);
+    font-size:11.5px; font-weight:700;
     padding: 4px 10px; border-radius: 8px 8px 0 0;
     margin: -12px 0 8px -16px;
     transform: translateY(-100%);
     position:relative;
+    border: 1px solid rgba(230,201,119,.4);
+    font-family: var(--font-display);
   }
   .dialogue-text{
     font-size: 13.5px; line-height:1.55; color: rgba(255,255,255,.92);
@@ -332,14 +388,17 @@
   }
   .choice-list{ display:flex; flex-direction:column; gap:6px; margin-top:10px; }
   .choice-pill{
-    background: rgba(124,92,255,.16); border:1px solid rgba(124,92,255,.4);
-    color: #d7cdff; font-size: 12.5px; font-weight:600;
+    background: rgba(201,162,77,.12); border:1px solid rgba(201,162,77,.35);
+    color: var(--gold-bright); font-size: 12.5px; font-weight:600;
     padding: 8px 12px; border-radius: 9px;
+    transition: background .15s ease;
   }
+  .choice-pill:hover{ background: rgba(201,162,77,.2); }
 
   /* flow strip at bottom */
   .flow-strip{
     border-top: 1px solid var(--border-soft);
+    background: rgba(15,31,48,.6);
     padding: 12px 18px;
     flex-shrink:0;
     overflow-x:auto;
@@ -354,27 +413,54 @@
     display:flex; align-items:center; justify-content:center;
     font-size:11px; font-weight:700; color:#fff;
     border: 2px solid transparent;
+    transition: border-color .15s ease, box-shadow .15s ease;
   }
-  .flow-node.active .chip{ border-color: var(--accent-2); }
+  .flow-node.active .chip{
+    border-color: var(--gold-bright);
+    box-shadow: 0 0 0 3px rgba(201,162,77,.2);
+  }
   .flow-node .lbl{ font-size:10px; color: var(--text-faint); text-align:center; line-height:1.2; max-width:70px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .flow-line{ width: 26px; height:2px; background: var(--border); flex-shrink:0; }
   .flow-branch{ display:flex; flex-direction:column; gap:16px; }
 
   /* ---------- Inspector ---------- */
-  .inspector{ border-left: 1px solid var(--border-soft); display:flex; flex-direction:column; min-height:0; }
+  .inspector{
+    border-left: 1px solid var(--border-soft);
+    background: var(--panel);
+    display:flex; flex-direction:column; min-height:0;
+  }
   .insp-tabs{ display:flex; border-bottom: 1px solid var(--border-soft); flex-shrink:0; }
   .insp-tab{
     flex:1; text-align:center; padding: 13px 4px;
     font-size:12px; font-weight:700; color: var(--text-faint);
     border-bottom: 2px solid transparent;
     transition: color .15s ease;
+    font-family: var(--font-display);
+    letter-spacing: .02em;
   }
-  .insp-tab.active{ color: var(--accent-2); border-color: var(--accent-2); }
+  .insp-tab.active{ color: var(--gold-bright); border-color: var(--gold); }
   .insp-tab:hover{ color: var(--text-dim); }
 
   .insp-body{ padding: 16px 18px 30px; overflow-y:auto; flex:1; }
   .insp-section + .insp-section{ margin-top: 22px; }
-  .insp-label{ font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color: var(--text-faint); margin-bottom:10px; }
+
+  /* Banner motif for section labels */
+  .insp-label{
+    position:relative;
+    display:inline-flex; align-items:center; gap:7px;
+    font-family: var(--font-display);
+    font-size: 11px; font-weight:600; letter-spacing: .08em;
+    color: var(--gold-bright);
+    text-transform: uppercase;
+    margin-bottom:12px;
+    padding: 6px 16px 6px 12px;
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    border: 1px solid rgba(230,201,119,.45);
+    border-radius: 2px;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, calc(100% - 10px) 100%, 0 100%);
+    box-shadow: 0 4px 12px rgba(0,0,0,.3);
+  }
+  .insp-label svg{ width:11px; height:11px; fill: var(--gold); }
 
   .field{ margin-bottom:14px; }
   .field label{ display:block; font-size:12px; font-weight:600; color: var(--text-dim); margin-bottom:6px; }
@@ -383,7 +469,7 @@
     padding: 9px 11px; color: var(--text); font-size:13px; outline:none;
     transition: border-color .15s ease;
   }
-  .field input[type=text]:focus, .field textarea:focus, .field select:focus{ border-color: var(--accent); }
+  .field input[type=text]:focus, .field textarea:focus, .field select:focus{ border-color: var(--gold); }
   .field textarea{ resize:vertical; min-height: 90px; line-height:1.5; }
 
   .bg-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:8px; }
@@ -392,7 +478,7 @@
     transition: border-color .15s ease, transform .15s ease;
   }
   .bg-thumb:hover{ transform: translateY(-1px); }
-  .bg-thumb.selected{ border-color: var(--accent-2); }
+  .bg-thumb.selected{ border-color: var(--gold-bright); box-shadow: 0 0 0 2px rgba(201,162,77,.2); }
   .bg-thumb .lbl{
     position:absolute; bottom:4px; left:5px; font-size:9.5px; font-weight:700; color: rgba(255,255,255,.9);
     text-shadow: 0 1px 2px rgba(0,0,0,.6);
@@ -402,7 +488,9 @@
     display:flex; align-items:center; gap:10px;
     padding: 9px; border-radius:11px; background: var(--panel-2); border:1px solid var(--border);
     margin-bottom: 8px;
+    transition: border-color .15s ease;
   }
+  .char-row:hover{ border-color: rgba(201,162,77,.3); }
   .char-row .dot{
     width:30px; height:30px; border-radius:9px; flex-shrink:0;
     display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff;
@@ -420,21 +508,26 @@
     background:none; color: var(--text-faint); font-size:12.5px; font-weight:600;
     transition: all .15s ease;
   }
-  .add-char-btn:hover{ color: var(--accent-2); border-color: var(--accent); }
+  .add-char-btn:hover{ color: var(--gold-bright); border-color: var(--gold); }
 
   .choice-edit{
     background: var(--panel-2); border:1px solid var(--border); border-radius:11px;
     padding: 10px; margin-bottom:9px;
+    transition: border-color .15s ease;
   }
+  .choice-edit:hover{ border-color: rgba(201,162,77,.3); }
   .choice-edit .ce-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:7px; }
   .choice-edit .ce-num{
-    font-size:10.5px; font-weight:700; color: var(--accent-2); background: rgba(124,92,255,.14);
+    font-size:10.5px; font-weight:700; color: var(--gold-bright);
+    background: rgba(201,162,77,.14);
     padding:2px 7px; border-radius:6px;
+    font-family: var(--font-display);
   }
   .choice-edit input[type=text]{
     width:100%; background: var(--panel-3); border:1px solid var(--border); border-radius:7px;
     padding: 7px 9px; color:var(--text); font-size:12.5px; margin-bottom:6px; outline:none;
   }
+  .choice-edit input[type=text]:focus{ border-color: var(--gold); }
   .choice-edit .ce-link{ display:flex; align-items:center; gap:6px; font-size:11.5px; color: var(--text-faint); }
   .choice-edit .ce-link select{
     flex:1; background: var(--panel-3); border:1px solid var(--border); border-radius:7px; color:var(--text-dim);
@@ -444,7 +537,15 @@
     width:100%; padding: 9px; border-radius:9px; border:1px dashed var(--border);
     background:none; color: var(--text-faint); font-size:12.5px; font-weight:600;
   }
-  .add-choice-btn:hover{ color: var(--accent-2); border-color: var(--accent); }
+  .add-choice-btn:hover{ color: var(--gold-bright); border-color: var(--gold); }
+
+  /* subtle banner stripe under top bar */
+  .banner-stripe{
+    height:3px;
+    background: linear-gradient(90deg, var(--maroon-deep), var(--gold), var(--maroon-deep));
+    opacity:.55;
+    flex-shrink:0;
+  }
 </style>
 </head>
 <body>
@@ -463,7 +564,6 @@
       <a class="nav-item active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
       <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
       <a class="nav-item" href="scenes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>Scenes</a>
-
     </nav>
     <div class="side-avatar">A</div>
   </aside>
@@ -489,6 +589,7 @@
         <button class="btn-primary-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>Publish</button>
       </div>
     </div>
+    <div class="banner-stripe"></div>
 
     <!-- 3 column editor -->
     <div class="editor-body">
@@ -564,15 +665,24 @@
           <!-- Scene tab -->
           <div class="insp-panel" data-panel="scene">
             <div class="insp-section">
-              <div class="insp-label">Scene name</div>
+              <div class="insp-label">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7-6.2-3.4-6.2 3.4 1.2-7-5-4.9 7.1-.7L12 2z"/></svg>
+                Scene name
+              </div>
               <div class="field"><input type="text" value="Meeting the Vizier"></div>
             </div>
             <div class="insp-section">
-              <div class="insp-label">Background</div>
+              <div class="insp-label">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z"/></svg>
+                Background
+              </div>
               <div class="bg-grid" id="bgGrid"></div>
             </div>
             <div class="insp-section">
-              <div class="insp-label">Ambience</div>
+              <div class="insp-label">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+                Ambience
+              </div>
               <div class="field"><select><option>Desert wind (loop)</option><option>Palace hall murmur</option><option>Nile river flow</option><option>Silence</option></select></div>
             </div>
           </div>
@@ -580,7 +690,10 @@
           <!-- Cast tab -->
           <div class="insp-panel" data-panel="cast" style="display:none;">
             <div class="insp-section">
-              <div class="insp-label">Characters in scene</div>
+              <div class="insp-label">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg>
+                Characters in scene
+              </div>
               <div id="castList"></div>
               <button class="add-char-btn">+ Add character to scene</button>
             </div>
@@ -589,15 +702,24 @@
           <!-- Dialogue tab -->
           <div class="insp-panel" data-panel="dialogue" style="display:none;">
             <div class="insp-section">
-              <div class="insp-label">Speaker</div>
+              <div class="insp-label">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>
+                Speaker
+              </div>
               <div class="field"><select id="speakerSelect"><option>Horemheb</option><option>You</option><option>Narrator</option><option>Nefret</option></select></div>
             </div>
             <div class="insp-section">
-              <div class="insp-label">Line</div>
+              <div class="insp-label">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z"/></svg>
+                Line
+              </div>
               <div class="field"><textarea id="dialogueEdit">The Pharaoh grows suspicious of the priesthood's counsel. Tell me truly, advisor — where does your loyalty lie?</textarea></div>
             </div>
             <div class="insp-section">
-              <div class="insp-label">Delivery</div>
+              <div class="insp-label">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></svg>
+                Delivery
+              </div>
               <div class="field"><select><option>Neutral</option><option>Suspicious</option><option>Warm</option><option>Threatening</option><option>Whispered</option></select></div>
             </div>
           </div>
@@ -605,7 +727,10 @@
           <!-- Choices tab -->
           <div class="insp-panel" data-panel="choices" style="display:none;">
             <div class="insp-section">
-              <div class="insp-label">Player choices</div>
+              <div class="insp-label">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v2H3V5zm0 6h12v2H3v-2zm0 6h18v2H3v-2z"/></svg>
+                Player choices
+              </div>
               <div id="choiceEditList"></div>
               <button class="add-choice-btn">+ Add choice</button>
             </div>
@@ -620,22 +745,22 @@
 
 <script>
 /* ---------------- Data ---------------- */
-const CHAR_COLORS = { "Horemheb":"#e0954a", "You":"#7c5cff", "Nefret":"#e05b9c", "Narrator":"#5a5a70" };
+const CHAR_COLORS = { "Horemheb":"#c9a24d", "You":"#7c2331", "Nefret":"#a9364a", "Narrator":"#4a86c9" };
 function initials(n){ return n.split(' ').map(w=>w[0]).slice(0,2).join(''); }
 
 const scenes = [
   { n:1,  title:"The Palace Gates",        type:"scene",  chars:2, color:"#2f7fc9" },
   { n:2,  title:"Meeting the Vizier",      type:"branch", chars:2, color:"#c9822f", active:true },
-  { n:3,  title:"Path: Loyal Counsel",     type:"scene",  chars:3, color:"#5e3fc4", indent:true },
-  { n:4,  title:"Path: Secret Alliance",   type:"scene",  chars:2, color:"#c23f5c", indent:true },
+  { n:3,  title:"Path: Loyal Counsel",     type:"scene",  chars:3, color:"#7c2331", indent:true },
+  { n:4,  title:"Path: Secret Alliance",   type:"scene",  chars:2, color:"#a9364a", indent:true },
   { n:5,  title:"Path: Silent Observer",   type:"scene",  chars:1, color:"#1fae6b", indent:true },
   { n:6,  title:"The Flood of the Nile",   type:"scene",  chars:3, color:"#233f7a" },
-  { n:7,  title:"Temple of Ma'at",         type:"branch", chars:2, color:"#a83fd9" },
+  { n:7,  title:"Temple of Ma'at",         type:"branch", chars:2, color:"#c9a24d" },
   { n:8,  title:"Judgement Hall",          type:"scene",  chars:4, color:"#d98a3f", indent:true },
   { n:9,  title:"The Whispering Scribe",   type:"scene",  chars:2, color:"#2fa8a3", indent:true },
   { n:10, title:"Royal Feast",             type:"scene",  chars:5, color:"#7fce3f" },
   { n:11, title:"A Message in the Sand",   type:"scene",  chars:1, color:"#4472c4" },
-  { n:12, title:"The Vizier's Betrayal",   type:"branch", chars:2, color:"#c23f5c" },
+  { n:12, title:"The Vizier's Betrayal",   type:"branch", chars:2, color:"#a9364a" },
   { n:13, title:"Ending: Restore the Throne", type:"scene", chars:3, color:"#1fae8a", indent:true },
   { n:14, title:"Ending: Rule in Shadow",  type:"scene",  chars:2, color:"#5e2f8a", indent:true },
   { n:15, title:"Ending: Flee the Palace", type:"scene",  chars:1, color:"#7a3f0e", indent:true },
@@ -649,9 +774,9 @@ const castInScene = [
 
 const backgrounds = [
   { name:"Palace Gates",  grad:"linear-gradient(160deg,#233f7a,#c9822f 75%)" },
-  { name:"Throne Room",   grad:"linear-gradient(160deg,#5e3fc4,#2a1a5e)", selected:true },
+  { name:"Throne Room",   grad:"linear-gradient(160deg,#7c2331,#2e0708)", selected:true },
   { name:"Nile Bank",     grad:"linear-gradient(160deg,#2f7fc9,#1f5f52)" },
-  { name:"Temple Court",  grad:"linear-gradient(160deg,#a83fd9,#5e2f8a)" },
+  { name:"Temple Court",  grad:"linear-gradient(160deg,#c9a24d,#3d2c14)" },
   { name:"Desert Night",  grad:"linear-gradient(160deg,#0f1c3d,#233f7a)" },
   { name:"Market Street", grad:"linear-gradient(160deg,#d98a3f,#7a3f0e)" },
 ];
