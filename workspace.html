@@ -21,8 +21,8 @@
     --accent-2: #e6c977;
     --gold: #c9a24d;
     --gold-bright: #e6c977;
-    --maroon: #7c2331;
-    --maroon-deep: #430f18;
+    --maroon: #4a6d8c;
+    --maroon-deep: #1c3348;
     --danger: #d9584f;
     --sci: #4a86c9;
     --hist: #c9a24d;
@@ -42,7 +42,7 @@
   html,body{height:100%;}
   body{
     background:
-      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(124,35,49,.18), transparent 60%),
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(74,109,140,.18), transparent 60%),
       radial-gradient(ellipse 700px 500px at 100% 10%, rgba(201,162,77,.05), transparent 55%),
       radial-gradient(ellipse 1000px 600px at 50% 100%, rgba(20,50,80,.3), transparent 60%),
       var(--bg);
@@ -84,7 +84,7 @@
     border: 1px solid rgba(212,175,106,.5);
     display:flex; align-items:center; justify-content:center;
     margin-bottom: 22px;
-    box-shadow: 0 4px 14px rgba(58,10,12,.55), 0 0 0 1px rgba(212,175,106,.15);
+    box-shadow: 0 4px 14px rgba(20,40,58,.55), 0 0 0 1px rgba(212,175,106,.15);
   }
   .logo svg path{ fill: var(--gold) !important; }
   .logo svg{ width:20px; height:20px; }
@@ -295,7 +295,7 @@
   .canvas-wrap{
     display:flex; flex-direction:column; min-width:0; min-height:0;
     background:
-      radial-gradient(ellipse 600px 400px at 30% 0%, rgba(124,35,49,.12), transparent 50%),
+      radial-gradient(ellipse 600px 400px at 30% 0%, rgba(74,109,140,.12), transparent 50%),
       radial-gradient(ellipse 500px 300px at 80% 100%, rgba(201,162,77,.04), transparent 50%),
       var(--bg);
   }
@@ -383,7 +383,7 @@
   }
   .sprite.selected{ outline: 2px solid var(--gold-bright); outline-offset:3px; }
   .sprite.left{ left: 60px; background: linear-gradient(180deg, rgba(201,162,77,.35), rgba(201,162,77,.12)); }
-  .sprite.center{ left:50%; transform:translateX(-50%); background: linear-gradient(180deg, rgba(124,35,49,.45), rgba(124,35,49,.18)); }
+  .sprite.center{ left:50%; transform:translateX(-50%); background: linear-gradient(180deg, rgba(74,109,140,.45), rgba(74,109,140,.18)); }
   .sprite.right{ right: 60px; background: linear-gradient(180deg, rgba(74,222,154,.35), rgba(74,222,154,.12)); }
 
   .dialogue-box{
@@ -769,13 +769,13 @@
 
 <script>
 /* ---------------- Data ---------------- */
-const CHAR_COLORS = { "Horemheb":"#c9a24d", "You":"#7c2331", "Nefret":"#a9364a", "Narrator":"#4a86c9" };
+const CHAR_COLORS = { "Horemheb":"#c9a24d", "You":"#4a6d8c", "Nefret":"#a9364a", "Narrator":"#4a86c9" };
 function initials(n){ return n.split(' ').map(w=>w[0]).slice(0,2).join(''); }
 
 const scenes = [
   { n:1,  title:"The Palace Gates",        type:"scene",  chars:2, color:"#2f7fc9" },
   { n:2,  title:"Meeting the Vizier",      type:"branch", chars:2, color:"#c9822f", active:true },
-  { n:3,  title:"Path: Loyal Counsel",     type:"scene",  chars:3, color:"#7c2331", indent:true },
+  { n:3,  title:"Path: Loyal Counsel",     type:"scene",  chars:3, color:"#4a6d8c", indent:true },
   { n:4,  title:"Path: Secret Alliance",   type:"scene",  chars:2, color:"#a9364a", indent:true },
   { n:5,  title:"Path: Silent Observer",   type:"scene",  chars:1, color:"#1fae6b", indent:true },
   { n:6,  title:"The Flood of the Nile",   type:"scene",  chars:3, color:"#233f7a" },
@@ -798,7 +798,7 @@ const castInScene = [
 
 const backgrounds = [
   { name:"Palace Gates",  grad:"linear-gradient(160deg,#233f7a,#c9822f 75%)" },
-  { name:"Throne Room",   grad:"linear-gradient(160deg,#7c2331,#2e0708)", selected:true },
+  { name:"Throne Room",   grad:"linear-gradient(160deg,#4a6d8c,#2e0708)", selected:true },
   { name:"Nile Bank",     grad:"linear-gradient(160deg,#2f7fc9,#1f5f52)" },
   { name:"Temple Court",  grad:"linear-gradient(160deg,#c9a24d,#3d2c14)" },
   { name:"Desert Night",  grad:"linear-gradient(160deg,#0f1c3d,#233f7a)" },

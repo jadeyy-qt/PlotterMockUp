@@ -21,8 +21,8 @@
     --accent-2: #e6c977;
     --gold: #c9a24d;
     --gold-bright: #e6c977;
-    --maroon: #7c2331;
-    --maroon-deep: #430f18;
+    --maroon: #4a6d8c;
+    --maroon-deep: #1c3348;
     --sci: #4a86c9;
     --hist: #c9a24d;
     --math: #6f8fc9;
@@ -41,7 +41,7 @@
   html,body{height:100%;}
   body{
     background:
-      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(124,35,49,.22), transparent 60%),
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(74,109,140,.22), transparent 60%),
       radial-gradient(ellipse 700px 500px at 100% 10%, rgba(201,162,77,.05), transparent 55%),
       radial-gradient(ellipse 1000px 600px at 50% 100%, rgba(20,50,80,.3), transparent 60%),
       var(--bg);
@@ -74,7 +74,7 @@
     border: 1px solid rgba(212,175,106,.5);
     display:flex; align-items:center; justify-content:center;
     margin-bottom: 22px;
-    box-shadow: 0 4px 14px rgba(58,10,12,.55), 0 0 0 1px rgba(212,175,106,.15);
+    box-shadow: 0 4px 14px rgba(20,40,58,.55), 0 0 0 1px rgba(212,175,106,.15);
   }
   .logo svg path{ fill: var(--gold) !important; }
   .logo svg{ width:20px; height:20px; }
@@ -504,7 +504,7 @@
    ===================================================================== */
 const GRADIENTS = [
   'linear-gradient(135deg,#16324a,#0a1826)',
-  'linear-gradient(135deg,#7c2331,#2e0708)',
+  'linear-gradient(135deg,#4a6d8c,#2e0708)',
   'linear-gradient(135deg,#1f4a5e,#0e2430)',
   'linear-gradient(135deg,#2a4a6e,#12263d)',
   'linear-gradient(135deg,#a9364a,#33101c)',
@@ -512,10 +512,10 @@ const GRADIENTS = [
   'linear-gradient(135deg,#3a5a7a,#182c3d)',
   'linear-gradient(135deg,#7a5522,#3d240d)',
   'linear-gradient(135deg,#22526a,#0e2934)',
-  'linear-gradient(135deg,#7c2331,#430f18)',
+  'linear-gradient(135deg,#4a6d8c,#1c3348)',
   'linear-gradient(135deg,#2e4a6e,#14243a)',
 ];
-const AVATAR_COLORS = ['#7c2331','#c9a24d','#4a86c9','#2f5f8a','#a9364a','#2f5a8a','#b0863c','#3a6690','#3a5f6e'];
+const AVATAR_COLORS = ['#4a6d8c','#c9a24d','#4a86c9','#2f5f8a','#a9364a','#2f5a8a','#b0863c','#3a6690','#3a5f6e'];
 function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,1).join(''); }
 function colorFor(seed){ let h=0; for(const c of seed) h = (h*31 + c.charCodeAt(0)) % AVATAR_COLORS.length; return AVATAR_COLORS[h]; }
 

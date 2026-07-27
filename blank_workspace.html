@@ -21,8 +21,8 @@
     --accent-2: #e6c977;
     --gold: #c9a24d;
     --gold-bright: #e6c977;
-    --maroon: #7c2331;
-    --maroon-deep: #430f18;
+    --maroon: #4a6d8c;
+    --maroon-deep: #1c3348;
     --ok: #4ade9a;
     --danger: #d9584f;
     --radius-lg: 18px;
@@ -34,7 +34,7 @@
   html,body{height:100%;}
   body{
     background:
-      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(124,35,49,.18), transparent 60%),
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(74,109,140,.18), transparent 60%),
       radial-gradient(ellipse 700px 500px at 100% 10%, rgba(201,162,77,.05), transparent 55%),
       radial-gradient(ellipse 1000px 600px at 50% 100%, rgba(20,50,80,.3), transparent 60%),
       var(--bg);
@@ -69,7 +69,7 @@
     border: 1px solid rgba(212,175,106,.5);
     display:flex; align-items:center; justify-content:center;
     margin-bottom: 22px;
-    box-shadow: 0 4px 14px rgba(58,10,12,.55), 0 0 0 1px rgba(212,175,106,.15);
+    box-shadow: 0 4px 14px rgba(20,40,58,.55), 0 0 0 1px rgba(212,175,106,.15);
   }
   .logo svg path{ fill: var(--gold) !important; }
   .logo svg{ width:20px; height:20px; }
@@ -251,7 +251,7 @@
   .canvas-wrap{
     display:flex; flex-direction:column; min-width:0; min-height:0;
     background:
-      radial-gradient(ellipse 600px 400px at 30% 0%, rgba(124,35,49,.12), transparent 50%),
+      radial-gradient(ellipse 600px 400px at 30% 0%, rgba(74,109,140,.12), transparent 50%),
       radial-gradient(ellipse 500px 300px at 80% 100%, rgba(201,162,77,.04), transparent 50%),
       var(--bg);
   }
@@ -589,7 +589,7 @@
 /* ---------------- Backgrounds ---------------- */
 const backgrounds = [
   { name:"Dawn Sky",    grad:"linear-gradient(160deg,#233f7a,#c9822f 75%)" },
-  { name:"Throne Room", grad:"linear-gradient(160deg,#7c2331,#2e0708)" },
+  { name:"Throne Room", grad:"linear-gradient(160deg,#4a6d8c,#2e0708)" },
   { name:"River Bank",  grad:"linear-gradient(160deg,#2f7fc9,#1f5f52)" },
   { name:"Temple",      grad:"linear-gradient(160deg,#c9a24d,#3d2c14)" },
   { name:"Night",       grad:"linear-gradient(160deg,#0f1c3d,#233f7a)" },
@@ -600,7 +600,7 @@ document.getElementById('bgSwatchList').innerHTML = backgrounds.map((b,i) => `
     <span>${b.name}</span>
   </div>`).join('');
 
-const SPRITE_COLORS = ['#c9a24d','#7c2331','#4a86c9','#4ade9a','#a9364a','#8a5a2f'];
+const SPRITE_COLORS = ['#c9a24d','#4a6d8c','#4a86c9','#4ade9a','#a9364a','#8a5a2f'];
 
 /* ---------------- State ---------------- */
 const stage = document.getElementById('stage');
