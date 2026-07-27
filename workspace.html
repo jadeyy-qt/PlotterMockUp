@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StoryForge — Workspace</title>
+<title>Plotter — Workspace</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
 <style>
@@ -23,6 +23,7 @@
     --gold-bright: #e6c977;
     --maroon: #7c2331;
     --maroon-deep: #430f18;
+    --danger: #d9584f;
     --sci: #4a86c9;
     --hist: #c9a24d;
     --math: #6f8fc9;
@@ -57,7 +58,7 @@
   ::-webkit-scrollbar-thumb:hover{ background: var(--maroon); }
   a{color:inherit; text-decoration:none;}
   button{font-family:inherit; cursor:pointer;}
-  textarea, input{font-family:inherit;}
+  textarea, input, select{font-family:inherit;}
 
   /* ---------- Shell ---------- */
   .shell{
@@ -155,6 +156,9 @@
     font-family: var(--font-display);
     font-weight:600; color:var(--text); white-space:nowrap;
   }
+  .breadcrumb .story-name[contenteditable]{ outline:none; border-bottom:1px dashed transparent; }
+  .breadcrumb .story-name[contenteditable]:hover{ border-bottom-color: var(--border); }
+  .breadcrumb .story-name[contenteditable]:focus{ border-bottom-color: var(--gold); }
   .breadcrumb .sep{ color: var(--text-faint); }
   .breadcrumb .scene-name{
     color: var(--text-dim); font-weight:500;
@@ -174,7 +178,8 @@
     font-size:12.5px; color: var(--text-faint); font-weight:500;
     margin-left:4px; flex-shrink:0;
   }
-  .save-status .dot{ width:6px; height:6px; border-radius:50%; background: var(--ok); box-shadow:0 0 0 3px rgba(74,222,154,.15); }
+  .save-status .dot{ width:6px; height:6px; border-radius:50%; background: var(--text-faint); box-shadow:0 0 0 3px rgba(168,188,207,.12); }
+  .save-status.saved .dot{ background: var(--ok); box-shadow:0 0 0 3px rgba(74,222,154,.15); }
 
   .wtop-actions{ margin-left:auto; display:flex; align-items:center; gap:10px; }
   .icon-btn{
@@ -210,8 +215,8 @@
   .btn-primary-sm svg{ width:15px; height:15px; }
 
   /* Main 3-col editor body */
-  .editor-body{ display:grid; grid-template-columns: 260px 1fr 320px; flex:1; min-height:0; }
-  @media (max-width: 1200px){ .editor-body{ grid-template-columns: 230px 1fr 280px; } }
+  .editor-body{ display:grid; grid-template-columns: 250px 1fr 300px; flex:1; min-height:0; }
+  @media (max-width: 1200px){ .editor-body{ grid-template-columns: 220px 1fr 260px; } }
   @media (max-width: 980px){ .editor-body{ grid-template-columns: 1fr; } .scene-panel, .inspector{ display:none; } }
 
   /* ---------- Scene list panel ---------- */
@@ -239,7 +244,7 @@
   .add-scene-btn:hover{ border-color: var(--gold); background:#1c3a52; }
 
   .scene-search{
-    margin: 0 16px 12px;
+    margin: 12px 16px;
     display:flex; align-items:center; gap:8px;
     background: var(--panel-2); border:1px solid var(--border); border-radius:9px;
     padding: 8px 11px;
@@ -314,7 +319,25 @@
     color: var(--gold-bright);
     border: 1px solid rgba(230,201,119,.3);
   }
+  .mode-btn-group{ display:flex; align-items:center; gap:8px; }
+  .mode-btn{
+    padding: 7px 14px; border-radius:9px; border:1px solid var(--border);
+    background: var(--panel-2); color: var(--text-faint); font-size:12px; font-weight:600;
+    transition: all .15s ease;
+  }
+  .mode-btn:hover{ color: var(--text-dim); border-color: var(--accent); }
+  .mode-btn.active{
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    color: var(--gold-bright); border-color: rgba(230,201,119,.4);
+  }
   .canvas-toolbar .spacer{ flex:1; }
+  .clear-btn{
+    display:flex; align-items:center; gap:6px; padding: 7px 12px; border-radius:8px;
+    background: var(--panel-2); border:1px solid var(--border); color: var(--text-faint); font-size:12px; font-weight:600;
+    transition: all .15s ease;
+  }
+  .clear-btn:hover{ color:#ffb0a8; border-color: var(--danger); }
+  .clear-btn svg{ width:13px; height:13px; }
   .zoom-ctrl{ display:flex; align-items:center; gap:6px; font-size:12px; color: var(--text-faint); font-weight:600; }
   .zoom-ctrl button{
     width:24px; height:24px; border-radius:7px; background:var(--panel-2); border:1px solid var(--border);
@@ -322,6 +345,7 @@
     transition: all .15s ease;
   }
   .zoom-ctrl button:hover{ border-color: var(--gold); color: var(--gold-bright); }
+  .zoom-ctrl span{ width:36px; text-align:center; }
 
   .stage-scroll{ flex:1; overflow:auto; display:flex; align-items:center; justify-content:center; padding: 26px; min-height:0; }
 
@@ -539,13 +563,15 @@
   }
   .add-choice-btn:hover{ color: var(--gold-bright); border-color: var(--gold); }
 
-  /* subtle banner stripe under top bar */
-  .banner-stripe{
-    height:3px;
-    background: linear-gradient(90deg, var(--maroon-deep), var(--gold), var(--maroon-deep));
-    opacity:.55;
-    flex-shrink:0;
+
+  .panel-back-btn{
+    width:24px; height:24px; border-radius:7px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--panel-2); border:1px solid var(--border); color: var(--text-dim);
+    transition: all .15s ease;
   }
+  .panel-back-btn:hover{ color:var(--gold-bright); border-color: var(--gold); }
+  .panel-back-btn svg{ width:12px; height:12px; }
 </style>
 </head>
 <body>
@@ -559,9 +585,9 @@
     </div>
     <button class="create-btn" title="Create">+</button>
     <nav class="nav">
-      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
-      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
-      <a class="nav-item active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
+      <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
+      <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
+      <a class="nav-item active" href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
       <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
       <a class="nav-item" href="scenes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>Scenes</a>
     </nav>
@@ -575,12 +601,12 @@
     <div class="wtop">
       <button class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
       <div class="breadcrumb">
-        <span class="story-name">Ancient Egypt: The Pharaoh's Court</span>
-        <span class="badge-mini">History</span>
+        <span class="story-name" contenteditable="true" spellcheck="false">Ancient Egypt: The Pharaoh's Court</span>
+        <!-- <span class="badge-mini">History</span> -->
         <span class="sep">/</span>
-        <span class="scene-name" id="crumbScene">Meeting the Vizier</span>
+        <span class="scene-name" id="crumbScene">Scene Map</span>
       </div>
-      <div class="save-status"><span class="dot"></span>Saved</div>
+      <div class="save-status saved" id="saveStatus"><span class="dot"></span>Saved</div>
 
       <div class="wtop-actions">
         <button class="icon-btn" id="undoBtn" title="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 7 4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-1"/></svg></button>
@@ -589,14 +615,16 @@
         <button class="btn-primary-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>Publish</button>
       </div>
     </div>
-    <div class="banner-stripe"></div>
+
 
     <!-- 3 column editor -->
     <div class="editor-body">
 
       <!-- Scene list -->
       <div class="scene-panel">
-        <div class="panel-head"><h3>Scenes · 16</h3><button class="add-scene-btn">+</button></div>
+        
+        <div class="panel-head"><button class="panel-back-btn" id="sceneBackBtn" title="Back to Stage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <h3>Scenes · 16</h3><button class="add-scene-btn">+</button></div>
         <div class="scene-search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
           <input type="text" placeholder="Find a scene…">
@@ -607,19 +635,15 @@
       <!-- Canvas -->
       <div class="canvas-wrap">
         <div class="canvas-toolbar">
-          <div class="seg">
-            <button class="active">Stage</button>
-            <button>Script</button>
+          <div class="mode-btn-group">
+            <button class="mode-btn active">Stage</button>
+            <button class="mode-btn">Script</button>
           </div>
           <div class="spacer"></div>
-          <div class="seg">
-            <button class="active">
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px;"><rect x="4" y="7" width="16" height="10" rx="1.5"/></svg>Desktop
-            </button>
-            <button>
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:-2px; margin-right:4px;"><rect x="7" y="3" width="10" height="18" rx="1.5"/></svg>Mobile
-            </button>
-          </div>
+          <button class="clear-btn" id="clearBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/></svg>
+            Clear canvas
+          </button>
           <div class="zoom-ctrl">
             <button>−</button><span>100%</span><button>+</button>
           </div>
@@ -908,8 +932,39 @@ function initSprites(){
 function initDialogueSync(){
   const edit = document.getElementById('dialogueEdit');
   const stageText = document.getElementById('dialogueText');
-  edit.addEventListener('input', () => { stageText.textContent = edit.value; });
-  stageText.addEventListener('input', () => { edit.value = stageText.textContent; });
+  edit.addEventListener('input', () => { stageText.textContent = edit.value; markDirty(); });
+  stageText.addEventListener('input', () => { edit.value = stageText.textContent; markDirty(); });
+}
+
+/* ---------------- Save status ---------------- */
+const saveStatus = document.getElementById('saveStatus');
+function markDirty(){
+  saveStatus.classList.remove('saved');
+  saveStatus.innerHTML = '<span class="dot"></span>Unsaved changes';
+  clearTimeout(markDirty._t);
+  markDirty._t = setTimeout(() => {
+    saveStatus.classList.add('saved');
+    saveStatus.innerHTML = '<span class="dot"></span>Saved';
+  }, 900);
+}
+function initDirtyTracking(){
+  document.querySelector('.story-name').addEventListener('input', markDirty);
+  document.querySelectorAll('.field input[type="text"], .field textarea, .field select').forEach(f => {
+    f.addEventListener('input', markDirty);
+    f.addEventListener('change', markDirty);
+  });
+}
+
+/* ---------------- Clear canvas ---------------- */
+function initClearCanvas(){
+  document.getElementById('clearBtn').addEventListener('click', () => {
+    const stage = document.getElementById('stage');
+    const hasContent = stage.querySelector('.sprite, .dialogue-box');
+    if(!hasContent) return;
+    if(!confirm('Clear this scene\'s stage? This removes all characters and the dialogue box.')) return;
+    stage.querySelectorAll('.sprite, .dialogue-box').forEach(el => el.remove());
+    markDirty();
+  });
 }
 
 /* ---------------- Init ---------------- */
@@ -921,6 +976,8 @@ renderChoiceEditor();
 initTabs();
 initSprites();
 initDialogueSync();
+initDirtyTracking();
+initClearCanvas();
 </script>
 </body>
 </html>

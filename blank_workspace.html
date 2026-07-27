@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plotter — Blank Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a1420;
+    --panel: #0f1f30;
+    --panel-2: #142a3e;
+    --panel-3: #1a3348;
+    --border: #24435f;
+    --border-soft: #1a3049;
+    --text: #eef1e9;
+    --text-dim: #a8bccf;
+    --text-faint: #6d859f;
+    --accent: #c9a24d;
+    --accent-2: #e6c977;
+    --gold: #c9a24d;
+    --gold-bright: #e6c977;
+    --maroon: #7c2331;
+    --maroon-deep: #430f18;
+    --ok: #4ade9a;
+    --danger: #d9584f;
+    --radius-lg: 18px;
+    --radius-md: 12px;
+    --font-display: 'Fraunces', serif;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(124,35,49,.18), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(201,162,77,.05), transparent 55%),
+      radial-gradient(ellipse 1000px 600px at 50% 100%, rgba(20,50,80,.3), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow:hidden;
+  }
+  ::selection{ background: rgba(201,162,77,.35); color:#fff; }
+  ::-webkit-scrollbar{ width:9px; height:9px; }
+  ::-webkit-scrollbar-track{ background: transparent; }
+  ::-webkit-scrollbar-thumb{ background: #1e3c56; border-radius:8px; border:2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover{ background: var(--maroon); }
+  a{color:inherit; text-decoration:none;}
+  button{font-family:inherit; cursor:pointer;}
+  textarea, input, select{font-family:inherit;}
+
+  /* ---------- Shell ---------- */
+  .shell{ display:grid; grid-template-columns: 84px 1fr; height:100vh; }
+  @media (max-width: 720px){ .shell{ grid-template-columns: 1fr; } .sidebar{ display:none; } }
+
+  /* ---------- Left icon sidebar ---------- */
+  .sidebar{
+    background: var(--panel);
+    border-right: 1px solid var(--border-soft);
+    display:flex; flex-direction:column; align-items:center;
+    padding: 20px 0 16px;
+  }
+  .logo{
+    width:38px; height:38px; border-radius:11px;
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    border: 1px solid rgba(212,175,106,.5);
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 14px rgba(58,10,12,.55), 0 0 0 1px rgba(212,175,106,.15);
+  }
+  .logo svg path{ fill: var(--gold) !important; }
+  .logo svg{ width:20px; height:20px; }
+  .create-btn{
+    width:44px; height:44px; border-radius:13px;
+    background: var(--panel-2); border:1px solid var(--border); color: var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px; font-weight:600; margin-bottom: 26px;
+    transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  }
+  .create-btn:hover{ background:#1c3a52; border-color: var(--accent); transform: translateY(-1px); }
+  .nav{ display:flex; flex-direction:column; gap:4px; width:100%; align-items:center; flex:1; }
+  .nav-item{
+    width:64px; display:flex; flex-direction:column; align-items:center; gap:5px;
+    padding: 9px 0 7px; border-radius: 12px;
+    color: var(--text-faint); font-size:11px; font-weight:500;
+    transition: color .15s ease, background .15s ease; position:relative;
+    background:none; border:none;
+  }
+  .nav-item svg{ width:19px; height:19px; }
+  .nav-item:hover{ color: var(--text-dim); }
+  .nav-item.active{ color: var(--gold-bright); background: rgba(212,175,106,.12); }
+  .nav-item.active::before{
+    content:""; position:absolute; left:-1px; top:50%; transform:translateY(-50%);
+    width:3px; height:20px; border-radius:3px; background: var(--gold);
+  }
+  .side-avatar{
+    width:36px; height:36px; border-radius:50%;
+    background: linear-gradient(135deg, var(--maroon), var(--gold));
+    display:flex; align-items:center; justify-content:center;
+    font-weight:700; font-size:14px; margin-top: 10px;
+    border: 2px solid rgba(212,175,106,.4); color:#fff;
+  }
+
+  /* ---------- Workspace column ---------- */
+  .workspace{ display:flex; flex-direction:column; height:100vh; min-width:0; }
+  .wtop{
+    display:flex; align-items:center; gap:14px; padding: 14px 22px;
+    background: rgba(13,20,32,.85); backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(212,175,106,.15); flex-shrink:0;
+  }
+  .back-btn{
+    width:34px; height:34px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--text-dim); background: var(--panel-2); border:1px solid var(--border);
+    transition: all .15s ease;
+  }
+  .back-btn:hover{ color:var(--gold-bright); border-color: var(--gold); }
+  .back-btn svg{ width:16px; height:16px; }
+  .breadcrumb{ display:flex; align-items:center; gap:8px; font-size:14px; min-width:0; }
+  .breadcrumb .story-name{ font-family: var(--font-display); font-weight:600; color:var(--text); white-space:nowrap; }
+  .breadcrumb .story-name[contenteditable]{ outline:none; border-bottom:1px dashed transparent; }
+  .breadcrumb .story-name[contenteditable]:hover{ border-bottom-color: var(--border); }
+  .breadcrumb .story-name[contenteditable]:focus{ border-bottom-color: var(--gold); }
+  .badge-mini{
+    font-size:10px; font-weight:700; letter-spacing:.05em; text-transform:uppercase;
+    padding:3px 8px; border-radius:4px;
+    background: rgba(201,162,77,.15); color: var(--gold-bright);
+    border:1px solid rgba(201,162,77,.4); font-family: var(--font-display); flex-shrink:0;
+  }
+  .save-status{ display:flex; align-items:center; gap:6px; font-size:12.5px; color: var(--text-faint); font-weight:500; margin-left:4px; flex-shrink:0; }
+  .save-status .dot{ width:6px; height:6px; border-radius:50%; background: var(--text-faint); box-shadow:0 0 0 3px rgba(168,188,207,.12); }
+  .save-status.saved .dot{ background: var(--ok); box-shadow:0 0 0 3px rgba(74,222,154,.15); }
+  .wtop-actions{ margin-left:auto; display:flex; align-items:center; gap:10px; }
+  .icon-btn{
+    width:36px; height:36px; border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    color: var(--text-dim); background: var(--panel-2); border:1px solid var(--border);
+    transition: all .15s ease;
+  }
+  .icon-btn:hover{ color:var(--gold-bright); border-color: var(--gold); }
+  .icon-btn svg{ width:16px; height:16px; }
+  .btn-ghost{
+    display:flex; align-items:center; gap:7px; padding: 9px 15px; border-radius: 10px;
+    background: var(--panel-2); border:1px solid var(--border); color: var(--text-dim);
+    font-size:13px; font-weight:600; transition: all .15s ease;
+  }
+  .btn-ghost:hover{ color:var(--gold-bright); border-color: var(--gold); }
+  .btn-ghost svg{ width:15px; height:15px; }
+  .btn-primary-sm{
+    display:flex; align-items:center; gap:7px; padding: 9px 16px; border-radius: 10px;
+    background: linear-gradient(135deg, var(--gold), #b88a45);
+    border: 1px solid rgba(230,201,119,.6); color:#2a1608; font-size:13px; font-weight:700;
+    box-shadow: 0 6px 16px rgba(201,162,77,.22); transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn-primary-sm:hover{ transform: translateY(-1px); box-shadow: 0 8px 20px rgba(212,175,106,.34); }
+  .btn-primary-sm svg{ width:15px; height:15px; }
+
+  /* Main 3-col editor body */
+  .editor-body{ display:grid; grid-template-columns: 250px 1fr 300px; flex:1; min-height:0; }
+  @media (max-width: 1200px){ .editor-body{ grid-template-columns: 220px 1fr 260px; } }
+  @media (max-width: 980px){ .editor-body{ grid-template-columns: 1fr; } .elements-panel, .inspector{ display:none; } }
+
+  /* ---------- Elements panel ---------- */
+  .elements-panel{ border-right: 1px solid var(--border-soft); background: var(--panel); display:flex; flex-direction:column; min-height:0; }
+  .panel-head{ padding: 14px 16px 10px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .panel-head h3{
+    font-family: var(--font-display); font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color: var(--gold-bright);
+  }
+  .panel-sub{ padding: 0 16px 10px; font-size:11.5px; color: var(--text-faint); line-height:1.5; }
+
+  .el-group{ padding: 4px 14px 6px; }
+  .el-group-title{ font-size:10.5px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color: var(--text-faint); margin: 10px 4px 8px; }
+  .el-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:8px; }
+  .el-card{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+    background: var(--panel-2); border:1px solid var(--border); border-radius: 11px;
+    padding: 12px 6px; cursor:grab; user-select:none;
+    transition: border-color .15s ease, background .15s ease, transform .1s ease;
+  }
+  .el-card:hover{ border-color: var(--gold); background:#1c3a52; }
+  .el-card:active{ cursor:grabbing; transform: scale(.97); }
+  .el-card svg{ width:18px; height:18px; color: var(--gold-bright); }
+  .el-card span{ font-size:10.5px; font-weight:600; color: var(--text-dim); text-align:center; }
+  .el-card.dragging{ opacity:.4; }
+
+  .bg-swatch-list{ display:grid; grid-template-columns: 1fr 1fr; gap:8px; }
+  .bg-swatch{
+    height:44px; border-radius:9px; cursor:grab; position:relative; overflow:hidden;
+    border: 1px solid var(--border); transition: border-color .15s ease, transform .1s ease;
+  }
+  .bg-swatch:hover{ border-color: var(--gold); }
+  .bg-swatch:active{ cursor:grabbing; transform: scale(.97); }
+  .bg-swatch span{
+    position:absolute; left:6px; bottom:5px; font-size:9.5px; font-weight:700; color:#fff;
+    text-shadow: 0 1px 3px rgba(0,0,0,.6);
+  }
+
+  /* ---------- Scene panel (Scene mode) ---------- */
+  .scene-panel{ border-right: 1px solid var(--border-soft); background: var(--panel); display:flex; flex-direction:column; min-height:0; }
+  .scene-panel-head h3{ flex:1; text-align:center; }
+  .panel-back-btn{
+    width:24px; height:24px; border-radius:7px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--panel-2); border:1px solid var(--border); color: var(--text-dim);
+    transition: all .15s ease;
+  }
+  .panel-back-btn:hover{ color:var(--gold-bright); border-color: var(--gold); }
+  .panel-back-btn svg{ width:12px; height:12px; }
+  .add-scene-btn{
+    width:24px; height:24px; border-radius:7px;
+    display:flex; align-items:center; justify-content:center;
+    background: var(--panel-2); border:1px solid var(--border); color: var(--gold);
+    font-size:14px; font-weight:700; transition: all .15s ease;
+  }
+  .add-scene-btn:hover{ border-color: var(--gold); background:#1c3a52; }
+  .scene-search{
+    margin: 12px 16px; display:flex; align-items:center; gap:8px;
+    background: var(--panel-2); border:1px solid var(--border); border-radius:9px; padding: 8px 11px;
+    transition: border-color .15s ease;
+  }
+  .scene-search:hover{ border-color: var(--gold); }
+  .scene-search svg{ width:13px; height:13px; color: var(--text-faint); flex-shrink:0; }
+  .scene-search input{ background:none; border:none; outline:none; color:var(--text); font-size:12.5px; width:100%; }
+  .scene-search input::placeholder{ color: var(--text-faint); }
+  .scene-list{ overflow-y:auto; padding: 0 10px 16px; flex:1; }
+  .scene-list-empty{
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    text-align:center; color: var(--text-faint); padding: 30px 22px; height:100%;
+  }
+  .scene-list-empty svg{ width:28px; height:28px; opacity:.5; }
+  .scene-list-empty .t1{ font-family: var(--font-display); font-size:13.5px; font-weight:600; color: var(--text-dim); }
+  .scene-list-empty .t2{ font-size:11.5px; line-height:1.5; }
+
+  /* ---------- Canvas mode buttons ---------- */
+  .mode-btn-group{ display:flex; align-items:center; gap:8px; }
+  .mode-btn{
+    padding: 7px 14px; border-radius:9px; border:1px solid var(--border);
+    background: var(--panel-2); color: var(--text-faint); font-size:12px; font-weight:600;
+    transition: all .15s ease;
+  }
+  .mode-btn:hover{ color: var(--text-dim); border-color: var(--accent); }
+  .mode-btn.active{
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
+    color: var(--gold-bright); border-color: rgba(230,201,119,.4);
+  }
+
+  /* ---------- Canvas / stage ---------- */
+  .canvas-wrap{
+    display:flex; flex-direction:column; min-width:0; min-height:0;
+    background:
+      radial-gradient(ellipse 600px 400px at 30% 0%, rgba(124,35,49,.12), transparent 50%),
+      radial-gradient(ellipse 500px 300px at 80% 100%, rgba(201,162,77,.04), transparent 50%),
+      var(--bg);
+  }
+  .canvas-toolbar{
+    display:flex; align-items:center; gap:8px; padding: 10px 18px;
+    border-bottom: 1px solid var(--border-soft); background: rgba(15,31,48,.5); flex-shrink:0;
+  }
+  .seg{ display:flex; background: var(--panel-2); border:1px solid var(--border); border-radius:9px; padding:2px; }
+  .seg button{ padding: 6px 12px; border-radius:7px; border:none; background:none; color: var(--text-faint); font-size:12px; font-weight:600; transition: all .15s ease; }
+  .seg button.active{ background: linear-gradient(135deg, var(--maroon), var(--maroon-deep)); color: var(--gold-bright); border: 1px solid rgba(230,201,119,.3); }
+  .canvas-toolbar .spacer{ flex:1; }
+  .clear-btn{
+    display:flex; align-items:center; gap:6px; padding: 7px 12px; border-radius:8px;
+    background: var(--panel-2); border:1px solid var(--border); color: var(--text-faint); font-size:12px; font-weight:600;
+    transition: all .15s ease;
+  }
+  .clear-btn:hover{ color:#ffb0a8; border-color: var(--danger); }
+  .clear-btn svg{ width:13px; height:13px; }
+  .zoom-ctrl{ display:flex; align-items:center; gap:6px; font-size:12px; color: var(--text-faint); font-weight:600; }
+  .zoom-ctrl button{
+    width:24px; height:24px; border-radius:7px; background:var(--panel-2); border:1px solid var(--border);
+    color: var(--text-dim); display:flex; align-items:center; justify-content:center; transition: all .15s ease;
+  }
+  .zoom-ctrl button:hover{ border-color: var(--gold); color: var(--gold-bright); }
+  .zoom-ctrl span{ width:36px; text-align:center; }
+
+  .stage-scroll{ flex:1; overflow:auto; display:flex; align-items:center; justify-content:center; padding: 26px; min-height:0; }
+
+  .stage{
+    width: 640px; height: 400px;
+    border-radius: 16px;
+    position:relative;
+    overflow:hidden;
+    border: 1px dashed rgba(212,175,106,.35);
+    box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(212,175,106,.06);
+    flex-shrink:0;
+    background: var(--panel-2);
+    transition: background .2s ease, border-color .15s ease, transform .12s ease;
+  }
+  .stage.drag-over{ border-color: var(--gold-bright); box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 0 3px rgba(201,162,77,.25); }
+
+  .stage-empty{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
+    color: var(--text-faint); text-align:center; padding: 0 40px; pointer-events:none;
+  }
+  .stage-empty svg{ width:34px; height:34px; opacity:.5; }
+  .stage-empty .t1{ font-family: var(--font-display); font-size:15px; font-weight:600; color: var(--text-dim); }
+  .stage-empty .t2{ font-size:12px; line-height:1.5; }
+
+  /* placed elements */
+  .placed{
+    position:absolute; cursor:grab; touch-action:none;
+  }
+  .placed:active{ cursor:grabbing; }
+  .placed.selected .placed-shell{ outline: 2px solid var(--gold-bright); outline-offset:3px; }
+  .placed-del{
+    position:absolute; top:-11px; right:-11px; width:20px; height:20px; border-radius:50%;
+    background: var(--maroon); border: 1px solid rgba(230,201,119,.5); color:#fff;
+    display:none; align-items:center; justify-content:center; z-index:5;
+  }
+  .placed-del svg{ width:10px; height:10px; }
+  .placed.selected .placed-del{ display:flex; }
+
+  .p-sprite .placed-shell{
+    width: 110px; height: 200px; border-radius: 10px 10px 0 0;
+    display:flex; align-items:flex-end; justify-content:center; padding-bottom:8px;
+    font-size:11px; font-weight:700; color: rgba(255,255,255,.9);
+    text-shadow: 0 1px 3px rgba(0,0,0,.5);
+    border: 1px dashed rgba(255,255,255,.3);
+  }
+  .p-dialogue .placed-shell{
+    width: 420px; min-height:70px;
+    background: rgba(10,20,32,.9); backdrop-filter: blur(6px);
+    border: 1px solid rgba(212,175,106,.25); border-radius: 12px; padding: 12px 16px 14px;
+  }
+  .p-dialogue .sp-chip{
+    display:inline-flex; align-items:center; gap:6px;
+    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep)); color: var(--gold-bright);
+    font-size:11px; font-weight:700; padding: 4px 10px; border-radius: 8px 8px 0 0;
+    margin: -12px 0 8px -16px; border: 1px solid rgba(230,201,119,.4); font-family: var(--font-display);
+    display:inline-block; min-width: 40px;
+  }
+  .p-dialogue .txt{ font-size: 13px; line-height:1.5; color: rgba(255,255,255,.92); outline:none; min-height:20px; }
+  .p-choice .placed-shell{
+    background: rgba(201,162,77,.14); border:1px solid rgba(201,162,77,.4); color: var(--gold-bright);
+    font-size: 12.5px; font-weight:600; padding: 9px 14px; border-radius: 9px; outline:none; white-space:nowrap;
+  }
+  .p-text .placed-shell{
+    font-size: 15px; font-weight:600; color: var(--text); outline:none; min-width:30px; padding:2px 4px;
+  }
+  .p-prop .placed-shell{
+    width:64px; height:64px; border-radius:50%;
+    background: radial-gradient(circle, #ffe9b0, #f0c25c 70%, transparent 75%); opacity:.9;
+  }
+  .p-box .placed-shell{
+    width:120px; height:80px; border-radius:10px; border: 1px dashed rgba(255,255,255,.35);
+    background: rgba(255,255,255,.06);
+  }
+
+  /* ---------- Inspector ---------- */
+  .inspector{ border-left: 1px solid var(--border-soft); background: var(--panel); display:flex; flex-direction:column; min-height:0; }
+  .insp-head{ padding: 15px 18px 12px; border-bottom: 1px solid var(--border-soft); flex-shrink:0; }
+  .insp-head h3{ font-family: var(--font-display); font-size:12px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color: var(--gold-bright); }
+  .insp-body{ padding: 16px 18px 30px; overflow-y:auto; flex:1; }
+
+  .insp-tabs{ display:flex; border-bottom: 1px solid var(--border-soft); flex-shrink:0; }
+  .insp-tab{
+    flex:1; text-align:center; padding: 13px 4px;
+    font-size:12px; font-weight:700; color: var(--text-faint);
+    border-bottom: 2px solid transparent; transition: color .15s ease;
+    font-family: var(--font-display); letter-spacing: .02em; background:none; border-top:none; border-left:none; border-right:none;
+  }
+  .insp-tab.active{ color: var(--gold-bright); border-color: var(--gold); }
+  .insp-tab:hover{ color: var(--text-dim); }
+  .insp-panel-empty{ color: var(--text-faint); font-size:12.5px; line-height:1.6; text-align:center; padding: 30px 6px; }
+  .insp-panel-empty svg{ width:24px; height:24px; opacity:.5; margin-bottom:10px; }
+
+  .insp-empty{ color: var(--text-faint); font-size:12.5px; line-height:1.6; padding-top: 6px; }
+
+  .insp-section + .insp-section{ margin-top: 20px; }
+  .insp-label{
+    font-family: var(--font-display); font-size: 11px; font-weight:600; letter-spacing: .06em;
+    color: var(--gold-bright); text-transform: uppercase; margin-bottom:10px; display:block;
+  }
+  .field{ margin-bottom: 4px; }
+  .field input[type="text"], .field textarea, .field select{
+    width:100%; background: var(--panel-2); border:1px solid var(--border); border-radius:9px;
+    padding: 9px 11px; color: var(--text); font-size:13px; outline:none; transition: border-color .15s ease;
+  }
+  .field input[type="text"]:focus, .field textarea:focus, .field select:focus{ border-color: var(--gold); }
+  .field textarea{ resize:vertical; min-height:64px; line-height:1.5; }
+
+  .swatch-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .swatch{
+    width:26px; height:26px; border-radius:50%; border:2px solid transparent; cursor:pointer;
+    transition: border-color .15s ease, transform .1s ease;
+  }
+  .swatch:hover{ transform: scale(1.08); }
+  .swatch.selected{ border-color: var(--gold-bright); }
+
+  .del-full-btn{
+    display:flex; align-items:center; justify-content:center; gap:7px; width:100%;
+    padding: 10px; border-radius: 10px; margin-top: 22px;
+    background: rgba(217,88,79,.12); border:1px solid rgba(217,88,79,.4); color:#ff9d95;
+    font-size:12.5px; font-weight:700; transition: background .15s ease;
+  }
+  .del-full-btn:hover{ background: rgba(217,88,79,.2); }
+  .del-full-btn svg{ width:14px; height:14px; }
+
+  .pos-readout{ font-size:11px; color: var(--text-faint); margin-top:8px; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- ============ LEFT ICON SIDEBAR ============ -->
+  <aside class="sidebar">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5C4 4.67 4.67 4 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13Z" fill="white" opacity=".9"/><path d="M13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" fill="white" opacity=".55"/></svg>
+    </div>
+    <button class="create-btn" title="Create">+</button>
+    <nav class="nav">
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
+      <a class="nav-item active" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
+      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>Scenes</a>
+    </nav>
+    <div class="side-avatar">A</div>
+  </aside>
+
+  <!-- ============ WORKSPACE ============ -->
+  <div class="workspace">
+
+    <!-- Top bar -->
+    <div class="wtop">
+      <button class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <div class="breadcrumb">
+        <span class="story-name" contenteditable="true" spellcheck="false">Untitled Project</span>
+        <!-- <span class="badge-mini">Draft</span> -->
+        <span class="sep">/</span>
+        <span class="scene-name" id="crumbScene">Blank Canvas</span>
+      </div>
+      <div class="save-status" id="saveStatus"><span class="dot"></span>Empty canvas</div>
+
+      <div class="wtop-actions">
+        <button class="icon-btn" id="undoBtn" title="Undo" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 7 4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-1"/></svg></button>
+        <button class="icon-btn" id="redoBtn" title="Redo" disabled><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 7 5 5-5 5"/><path d="M20 12H9a5 5 0 0 0 0 10h1"/></svg></button>
+        <button class="btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>Preview</button>
+        <button class="btn-primary-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>Publish</button>
+      </div>
+    </div>
+
+    <!-- 3 column editor -->
+    <div class="editor-body">
+
+      <!-- Elements palette -->
+      <div class="elements-panel">
+        <div class="panel-head"><h3>Elements</h3></div>
+        <div class="panel-sub">Drag anything onto the canvas to place it.</div>
+
+        <div class="el-group">
+          <div class="el-group-title">Characters</div>
+          <div class="el-grid">
+            <div class="el-card" draggable="true" data-type="sprite">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+              <span>Character</span>
+            </div>
+            <div class="el-card" draggable="true" data-type="box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"/></svg>
+              <span>Shape</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="el-group">
+          <div class="el-group-title">Interface</div>
+          <div class="el-grid">
+            <div class="el-card" draggable="true" data-type="dialogue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              <span>Dialogue box</span>
+            </div>
+            <div class="el-card" draggable="true" data-type="choice">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="4"/></svg>
+              <span>Choice pill</span>
+            </div>
+            <div class="el-card" draggable="true" data-type="text">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 6h14M12 6v14"/></svg>
+              <span>Text label</span>
+            </div>
+            <div class="el-card" draggable="true" data-type="prop">
+              <svg viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+              <span>Prop</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="el-group">
+          <div class="el-group-title">Backgrounds</div>
+          <div class="bg-swatch-list" id="bgSwatchList"></div>
+        </div>
+      </div>
+
+      <!-- Scene panel (Scene mode) -->
+      <div class="scene-panel" id="scenePanel" style="display:none;">
+        <div class="panel-head scene-panel-head">
+          <button class="panel-back-btn" id="sceneBackBtn" title="Back to Stage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <h3 id="sceneCountLabel">Scenes · 0</h3>
+          <button class="add-scene-btn" title="Add scene">+</button>
+        </div>
+        <div class="scene-search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
+          <input type="text" placeholder="Find a scene…">
+        </div>
+        <div class="scene-list" id="sceneList">
+          <div class="scene-list-empty">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>
+            <div class="t1">No scenes yet</div>
+            <div class="t2">Add a scene to start<br>mapping your story.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Canvas -->
+      <div class="canvas-wrap">
+        <div class="canvas-toolbar">
+          <div class="mode-btn-group">
+            <button class="mode-btn active" id="tabStage">Stage</button>
+            <button class="mode-btn" id="tabScene">Scene</button>
+          </div>
+          <div class="spacer"></div>
+          <button class="clear-btn" id="clearBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/></svg>
+            Clear canvas
+          </button>
+          <div class="zoom-ctrl">
+            <button id="zoomOut">−</button><span id="zoomLabel">100%</span><button id="zoomIn">+</button>
+          </div>
+        </div>
+
+        <div class="stage-scroll" id="stageScroll">
+          <div class="stage" id="stage">
+            <div class="stage-empty" id="stageEmpty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"/><path d="M9 9h6v6H9z"/></svg>
+              <div class="t1">Empty canvas</div>
+              <div class="t2">Drag elements from the left panel<br>and drop them here to start building.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inspector -->
+      <div class="inspector">
+        <div id="inspStageMode">
+          <div class="insp-head"><h3>Properties</h3></div>
+          <div class="insp-body" id="inspBody">
+            <div class="insp-empty" id="inspEmpty">Select an element on the canvas to edit its properties, or drag a new one in from the left.</div>
+          </div>
+        </div>
+
+        <div id="inspSceneMode" style="display:none;">
+          <div class="insp-tabs">
+            <button class="insp-tab active" data-tab="scene">Scene</button>
+            <button class="insp-tab" data-tab="cast">Cast</button>
+            <button class="insp-tab" data-tab="dialogue">Dialogue</button>
+            <button class="insp-tab" data-tab="choices">Choices</button>
+          </div>
+          <div class="insp-body">
+            <div class="insp-panel-empty" data-panel="scene">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7-6.2-3.4-6.2 3.4 1.2-7-5-4.9 7.1-.7L12 2z"/></svg><br>
+              No scene selected. Add or choose a scene to edit its name, background, and ambience.
+            </div>
+            <div class="insp-panel-empty" data-panel="cast" style="display:none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><br>
+              No scene selected. Choose a scene to manage its cast.
+            </div>
+            <div class="insp-panel-empty" data-panel="dialogue" style="display:none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><br>
+              No scene selected. Choose a scene to write its dialogue.
+            </div>
+            <div class="insp-panel-empty" data-panel="choices" style="display:none;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="8" width="18" height="8" rx="4"/></svg><br>
+              No scene selected. Choose a scene to edit its choices.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------------- Backgrounds ---------------- */
+const backgrounds = [
+  { name:"Dawn Sky",    grad:"linear-gradient(160deg,#233f7a,#c9822f 75%)" },
+  { name:"Throne Room", grad:"linear-gradient(160deg,#7c2331,#2e0708)" },
+  { name:"River Bank",  grad:"linear-gradient(160deg,#2f7fc9,#1f5f52)" },
+  { name:"Temple",      grad:"linear-gradient(160deg,#c9a24d,#3d2c14)" },
+  { name:"Night",       grad:"linear-gradient(160deg,#0f1c3d,#233f7a)" },
+  { name:"Market",      grad:"linear-gradient(160deg,#d98a3f,#7a3f0e)" },
+];
+document.getElementById('bgSwatchList').innerHTML = backgrounds.map((b,i) => `
+  <div class="bg-swatch" draggable="true" data-type="background" data-grad="${i}" style="background:${b.grad}">
+    <span>${b.name}</span>
+  </div>`).join('');
+
+const SPRITE_COLORS = ['#c9a24d','#7c2331','#4a86c9','#4ade9a','#a9364a','#8a5a2f'];
+
+/* ---------------- State ---------------- */
+const stage = document.getElementById('stage');
+const stageEmpty = document.getElementById('stageEmpty');
+const stageScroll = document.getElementById('stageScroll');
+const saveStatus = document.getElementById('saveStatus');
+let selectedEl = null;
+let placedCount = 0;
+let zoom = 1;
+let idSeq = 1;
+
+function markDirty(){
+  saveStatus.classList.remove('saved');
+  saveStatus.innerHTML = '<span class="dot"></span>Unsaved changes';
+  clearTimeout(markDirty._t);
+  markDirty._t = setTimeout(()=>{
+    saveStatus.classList.add('saved');
+    saveStatus.innerHTML = '<span class="dot"></span>Saved';
+  }, 900);
+}
+
+function updateEmptyState(){
+  stageEmpty.style.display = placedCount === 0 ? 'flex' : 'none';
+}
+
+/* ---------------- Drag from palette ---------------- */
+document.querySelectorAll('.el-card, .bg-swatch').forEach(card => {
+  card.addEventListener('dragstart', e => {
+    e.dataTransfer.setData('type', card.dataset.type);
+    if(card.dataset.grad !== undefined) e.dataTransfer.setData('grad', card.dataset.grad);
+    e.dataTransfer.effectAllowed = 'copy';
+    card.classList.add('dragging');
+  });
+  card.addEventListener('dragend', () => card.classList.remove('dragging'));
+});
+
+stage.addEventListener('dragover', e => { e.preventDefault(); e.dataTransfer.dropEffect='copy'; stage.classList.add('drag-over'); });
+stage.addEventListener('dragleave', e => { if(e.target === stage) stage.classList.remove('drag-over'); });
+stage.addEventListener('drop', e => {
+  e.preventDefault();
+  stage.classList.remove('drag-over');
+  const type = e.dataTransfer.getData('type');
+  if(!type) return;
+  const rect = stage.getBoundingClientRect();
+  const x = (e.clientX - rect.left) / zoom;
+  const y = (e.clientY - rect.top) / zoom;
+
+  if(type === 'background'){
+    const grad = backgrounds[+e.dataTransfer.getData('grad')].grad;
+    stage.style.background = grad;
+    markDirty();
+    return;
+  }
+  createPlaced(type, x, y);
+  markDirty();
+});
+
+/* ---------------- Create placed element ---------------- */
+function createPlaced(type, x, y){
+  const el = document.createElement('div');
+  const uid = 'el' + (idSeq++);
+  el.className = 'placed p-' + type;
+  el.dataset.type = type;
+  el.dataset.id = uid;
+  el.dataset.color = SPRITE_COLORS[placedCount % SPRITE_COLORS.length];
+
+  let shellHTML = '';
+  if(type === 'sprite'){
+    shellHTML = `<div class="placed-shell" style="background:linear-gradient(180deg, ${el.dataset.color}66, ${el.dataset.color}22)">Character</div>`;
+    el.dataset.label = 'Character';
+  } else if(type === 'dialogue'){
+    shellHTML = `<div class="placed-shell">
+        <span class="sp-chip" contenteditable="true" spellcheck="false">Speaker</span>
+        <div class="txt" contenteditable="true" spellcheck="false">Type a line of dialogue…</div>
+      </div>`;
+    el.dataset.label = 'Speaker';
+  } else if(type === 'choice'){
+    shellHTML = `<div class="placed-shell" contenteditable="true" spellcheck="false">"A choice the player can make…"</div>`;
+  } else if(type === 'text'){
+    shellHTML = `<div class="placed-shell" contenteditable="true" spellcheck="false">Text label</div>`;
+  } else if(type === 'prop'){
+    shellHTML = `<div class="placed-shell"></div>`;
+  } else if(type === 'box'){
+    shellHTML = `<div class="placed-shell"></div>`;
+  }
+  el.innerHTML = `<div class="placed-del" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"/></svg></div>` + shellHTML;
+
+  stage.appendChild(el);
+  placedCount++;
+  updateEmptyState();
+
+  // position centered on drop point, clamped
+  requestAnimationFrame(() => {
+    const w = el.offsetWidth, h = el.offsetHeight;
+    const sw = stage.clientWidth, sh = stage.clientHeight;
+    let left = Math.min(Math.max(0, x - w/2), Math.max(0, sw - w));
+    let top  = Math.min(Math.max(0, y - h/2), Math.max(0, sh - h));
+    el.style.left = left + 'px';
+    el.style.top = top + 'px';
+  });
+
+  wirePlaced(el);
+  selectPlaced(el);
+  return el;
+}
+
+/* ---------------- Move / select placed elements ---------------- */
+function wirePlaced(el){
+  let dragging = false, sx=0, sy=0, ox=0, oy=0;
+
+  el.addEventListener('pointerdown', e => {
+    if(e.target.closest('.placed-del')) return;
+    if(e.target.isContentEditable && el.classList.contains('selected')) return; // allow text editing when already selected
+    e.stopPropagation();
+    selectPlaced(el);
+    if(e.target.isContentEditable) return;
+    dragging = true;
+    el.setPointerCapture(e.pointerId);
+    sx = e.clientX; sy = e.clientY;
+    ox = parseFloat(el.style.left)||0; oy = parseFloat(el.style.top)||0;
+  });
+  el.addEventListener('pointermove', e => {
+    if(!dragging) return;
+    const dx = (e.clientX - sx)/zoom, dy = (e.clientY - sy)/zoom;
+    const sw = stage.clientWidth, sh = stage.clientHeight;
+    let left = Math.min(Math.max(0, ox+dx), Math.max(0, sw - el.offsetWidth));
+    let top  = Math.min(Math.max(0, oy+dy), Math.max(0, sh - el.offsetHeight));
+    el.style.left = left + 'px';
+    el.style.top = top + 'px';
+    if(selectedEl === el) renderInspector(el);
+  });
+  el.addEventListener('pointerup', e => {
+    if(dragging){ dragging=false; markDirty(); }
+  });
+  el.querySelector('.placed-del').addEventListener('click', e => {
+    e.stopPropagation();
+    el.remove();
+    placedCount--;
+    updateEmptyState();
+    if(selectedEl === el) deselect();
+    markDirty();
+  });
+  el.querySelectorAll('[contenteditable]').forEach(ed => {
+    ed.addEventListener('input', markDirty);
+    ed.addEventListener('pointerdown', e => e.stopPropagation());
+  });
+}
+
+function selectPlaced(el){
+  if(selectedEl) selectedEl.classList.remove('selected');
+  selectedEl = el;
+  el.classList.add('selected');
+  renderInspector(el);
+}
+function deselect(){
+  if(selectedEl) selectedEl.classList.remove('selected');
+  selectedEl = null;
+  document.getElementById('inspBody').innerHTML = '<div class="insp-empty" id="inspEmpty">Select an element on the canvas to edit its properties, or drag a new one in from the left.</div>';
+}
+stage.addEventListener('pointerdown', e => { if(e.target === stage) deselect(); });
+document.addEventListener('keydown', e => {
+  if((e.key === 'Delete' || e.key === 'Backspace') && selectedEl && document.activeElement.tagName !== 'INPUT' && !document.activeElement.isContentEditable){
+    selectedEl.querySelector('.placed-del').click();
+  }
+});
+
+/* ---------------- Inspector ---------------- */
+function renderInspector(el){
+  const type = el.dataset.type;
+  const body = document.getElementById('inspBody');
+  let html = '';
+
+  if(type === 'sprite'){
+    const shell = el.querySelector('.placed-shell');
+    html += `<div class="insp-section">
+      <label class="insp-label">Character name</label>
+      <div class="field"><input type="text" id="fLabel" value="${shell.textContent.replace(/"/g,'&quot;')}"></div>
+    </div>
+    <div class="insp-section">
+      <label class="insp-label">Color</label>
+      <div class="swatch-row" id="fSwatches"></div>
+    </div>`;
+  } else if(type === 'dialogue'){
+    html += `<div class="insp-section">
+      <label class="insp-label">Speaker</label>
+      <div class="field"><input type="text" id="fSpeaker" value="${el.querySelector('.sp-chip').textContent.replace(/"/g,'&quot;')}"></div>
+    </div>
+    <div class="insp-section">
+      <label class="insp-label">Line</label>
+      <div class="field"><textarea id="fTxt">${el.querySelector('.txt').textContent}</textarea></div>
+    </div>`;
+  } else if(type === 'choice'){
+    html += `<div class="insp-section">
+      <label class="insp-label">Choice text</label>
+      <div class="field"><textarea id="fTxt">${el.querySelector('.placed-shell').textContent}</textarea></div>
+    </div>`;
+  } else if(type === 'text'){
+    html += `<div class="insp-section">
+      <label class="insp-label">Text content</label>
+      <div class="field"><textarea id="fTxt">${el.querySelector('.placed-shell').textContent}</textarea></div>
+    </div>`;
+  } else if(type === 'prop' || type === 'box'){
+    html += `<div class="insp-section">
+      <label class="insp-label">Color</label>
+      <div class="swatch-row" id="fSwatches"></div>
+    </div>`;
+  }
+
+  html += `<div class="pos-readout">x: ${Math.round(parseFloat(el.style.left)||0)}px · y: ${Math.round(parseFloat(el.style.top)||0)}px</div>`;
+  html += `<button class="del-full-btn" id="fDelete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2m2 0-1 14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1L5 6"/></svg>Remove element</button>`;
+
+  body.innerHTML = html;
+
+  const fLabel = document.getElementById('fLabel');
+  if(fLabel) fLabel.addEventListener('input', () => { el.querySelector('.placed-shell').textContent = fLabel.value || 'Character'; markDirty(); });
+
+  const fSpeaker = document.getElementById('fSpeaker');
+  if(fSpeaker) fSpeaker.addEventListener('input', () => { el.querySelector('.sp-chip').textContent = fSpeaker.value || 'Speaker'; markDirty(); });
+
+  const fTxt = document.getElementById('fTxt');
+  if(fTxt){
+    const target = el.querySelector('.txt') || el.querySelector('.placed-shell');
+    fTxt.addEventListener('input', () => { target.textContent = fTxt.value; markDirty(); });
+  }
+
+  const fSwatches = document.getElementById('fSwatches');
+  if(fSwatches){
+    fSwatches.innerHTML = SPRITE_COLORS.map(c => `<div class="swatch ${c===el.dataset.color?'selected':''}" data-c="${c}" style="background:${c}"></div>`).join('');
+    fSwatches.querySelectorAll('.swatch').forEach(sw => {
+      sw.addEventListener('click', () => {
+        el.dataset.color = sw.dataset.c;
+        fSwatches.querySelectorAll('.swatch').forEach(s=>s.classList.remove('selected'));
+        sw.classList.add('selected');
+        const shell = el.querySelector('.placed-shell');
+        if(type === 'sprite') shell.style.background = `linear-gradient(180deg, ${sw.dataset.c}66, ${sw.dataset.c}22)`;
+        else shell.style.background = `radial-gradient(circle, ${sw.dataset.c}, ${sw.dataset.c}88 70%, transparent 75%)`;
+        markDirty();
+      });
+    });
+  }
+
+  document.getElementById('fDelete').addEventListener('click', () => el.querySelector('.placed-del').click());
+}
+
+/* ---------------- Toolbar: clear / zoom / tabs ---------------- */
+document.getElementById('clearBtn').addEventListener('click', () => {
+  if(placedCount === 0) return;
+  if(!confirm('Clear the entire canvas? This removes every placed element.')) return;
+  stage.querySelectorAll('.placed').forEach(e=>e.remove());
+  stage.style.background = 'var(--panel-2)';
+  placedCount = 0;
+  deselect();
+  updateEmptyState();
+  markDirty();
+});
+
+function applyZoom(){
+  stage.style.transform = `scale(${zoom})`;
+  document.getElementById('zoomLabel').textContent = Math.round(zoom*100) + '%';
+}
+document.getElementById('zoomIn').addEventListener('click', () => { zoom = Math.min(1.5, +(zoom+0.1).toFixed(2)); applyZoom(); });
+document.getElementById('zoomOut').addEventListener('click', () => { zoom = Math.max(0.5, +(zoom-0.1).toFixed(2)); applyZoom(); });
+
+/* ---------------- Stage / Scene mode switching ---------------- */
+const tabStage = document.getElementById('tabStage'), tabScene = document.getElementById('tabScene');
+const elementsPanel = document.querySelector('.elements-panel');
+const scenePanel = document.getElementById('scenePanel');
+const inspStageMode = document.getElementById('inspStageMode');
+const inspSceneMode = document.getElementById('inspSceneMode');
+const crumbScene = document.getElementById('crumbScene');
+
+function setMode(mode){
+  deselect();
+  if(mode === 'scene'){
+    tabScene.classList.add('active'); tabStage.classList.remove('active');
+    elementsPanel.style.display = 'none';
+    scenePanel.style.display = 'flex';
+    inspStageMode.style.display = 'none';
+    inspSceneMode.style.display = 'block';
+    crumbScene.textContent = 'Scene Map';
+  } else {
+    tabStage.classList.add('active'); tabScene.classList.remove('active');
+    elementsPanel.style.display = 'flex';
+    scenePanel.style.display = 'none';
+    inspStageMode.style.display = 'block';
+    inspSceneMode.style.display = 'none';
+    crumbScene.textContent = 'Blank Canvas';
+  }
+}
+tabStage.addEventListener('click', () => setMode('stage'));
+tabScene.addEventListener('click', () => setMode('scene'));
+document.getElementById('sceneBackBtn').addEventListener('click', () => setMode('stage'));
+
+document.querySelectorAll('#inspSceneMode .insp-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('#inspSceneMode .insp-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    const target = tab.dataset.tab;
+    document.querySelectorAll('#inspSceneMode .insp-panel-empty').forEach(p => {
+      p.style.display = (p.dataset.panel === target) ? 'block' : 'none';
+    });
+  });
+});
+</script>
+</body>
+</html>
