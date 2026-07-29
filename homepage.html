@@ -606,10 +606,11 @@
    Default pattern tried: images/<slug>.<ext>
 */
 const IMAGE_DIR = 'images';
-const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif']; // tried in this order
+const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']; // tried in this order
 
 const IMAGE_NAME_OVERRIDES = {
-  "Journey Through the Solar System": "journeytothesolarsystem"
+  "Journey Through the Solar System": "journeytothesolarsystem",
+  "The DNA Detectives": "dna_"
 };
 
 function slugify(title){
