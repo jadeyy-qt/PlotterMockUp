@@ -1182,7 +1182,190 @@
             <span>Notifications</span>
             <button class="clear" id="notifClear" type="button">Mark all read</button>
         </div>
+<<<<<<< Updated upstream
         <div id="notifList"></div>
+=======
+      </div>
+
+      <div class="grid" id="grid"></div>
+    </main>
+  </div>
+
+  <!-- ================= RIGHT RAIL ================= -->
+  <aside class="right-rail">
+    <div class="rr-label">Start Creating</div>
+    <button class="btn-primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"/></svg>New story</button>
+    <button class="btn-outline">Import story</button>
+
+    <div class="rr-label">Quick Actions</div>
+    <a class="qa-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>Browse by genre</a>
+    <a class="qa-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-9"/></svg>Trending this week</a>
+    <a class="qa-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l1.5 4.5L18 8l-4.5 1.5L12 14l-1.5-4.5L6 8l4.5-1.5L12 2z"/></svg>New releases</a>
+    <a class="qa-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3h12a1 1 0 0 1 1 1v17l-7-4-7 4V4a1 1 0 0 1 1-1Z"/></svg>My saved templates</a>
+
+    <div class="rr-label">Browse by Genre</div>
+    <div id="genreList"></div>
+
+    <div class="rr-label">Your Stories</div>
+    <div id="storyList"></div>
+    <a class="view-all" href="#">View all stories →</a>
+  </aside>
+</div>
+
+<div class="help-fab">?</div>
+
+<script>
+/* ---------------- Cover art ----------------
+   Cover images live in the /images folder (same directory as this page,
+   inside your "PlotterMockUp-1" folder). For each template, the loader
+   tries the slugified title with several extensions in turn (jpg, jpeg,
+   png, webp, gif) and uses whichever file actually exists. If a template's
+   file name doesn't match the default slug, add an entry to
+   IMAGE_NAME_OVERRIDES with just the base filename (no extension).
+   Default pattern tried: images/<slug>.<ext>
+*/
+const IMAGE_DIR = 'images';
+const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif', 'svg']; // tried in this order
+
+const IMAGE_NAME_OVERRIDES = {
+  "Journey Through the Solar System": "journeytothesolarsystem",
+  "The DNA Detectives": "dna",
+  "Ecosystem Explorer": "explores",
+  "Ancient Egypt: The Pharaoh's Court": "egypt",
+  "The Underground Railroad": "rail",
+  "The Fraction Kingdom": "fraction",
+  "Pythagoras and the Lost Temple": "pyt"
+};
+
+function slugify(title){
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function baseImageName(title){
+  return IMAGE_NAME_OVERRIDES[title] || slugify(title);
+}
+
+/* Tries each extension in turn for a given title; calls onFound(url) the
+   first time an image actually loads. If none load, onFound is never called
+   and the element just keeps its gradient background. */
+function findCoverImage(title, onFound){
+  const base = baseImageName(title);
+  let i = 0;
+
+  function tryNext(){
+    if(i >= IMAGE_EXTENSIONS.length) return; // no matching file found — keep gradient
+    const ext = IMAGE_EXTENSIONS[i++];
+    const url = `${IMAGE_DIR}/${base}.${ext}`;
+    const img = new Image();
+    img.onload = () => onFound(url);
+    img.onerror = tryNext;
+    img.src = url;
+  }
+  tryNext();
+}
+
+/* Called after cards are rendered: finds every element carrying
+   data-img-title and layers its real cover photo over the gradient
+   once (if ever) it's found. */
+function hydrateImages(){
+  document.querySelectorAll('[data-img-title]').forEach(el => {
+    const title = el.dataset.imgTitle;
+    findCoverImage(title, (url) => {
+      const grad = el.dataset.grad || '';
+      el.style.background = `url('${url}') center/cover no-repeat${grad ? ', ' + grad : ''}`;
+    });
+  });
+}
+
+/* ---------------- Data ---------------- */
+const CATS = [
+  { key:'all', label:'All' },
+  { key:'science', label:'Science', color:'var(--sci)' },
+  { key:'history', label:'History', color:'var(--hist)' },
+  { key:'math', label:'Math', color:'var(--math)' },
+  { key:'literature', label:'Literature', color:'var(--lit)' },
+  { key:'languages', label:'Languages', color:'var(--lang)' },
+  { key:'social', label:'Social Studies', color:'var(--soc)' },
+  { key:'arts', label:'Arts', color:'var(--arts)' },
+  { key:'health', label:'Health', color:'var(--health)' },
+];
+
+const AVATAR_COLORS = ['#4a6d8c','#c9a24d','#4a86c9','#2f5f8a','#a9364a','#2f5a8a','#b0863c','#3a6690','#3a5f6e'];
+function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,1).join(''); }
+function colorFor(seed){ let h=0; for(const c of seed) h = (h*31 + c.charCodeAt(0)) % AVATAR_COLORS.length; return AVATAR_COLORS[h]; }
+
+const GRADIENTS = [
+  'linear-gradient(135deg,#16324a,#0a1826)',
+  'linear-gradient(135deg,#4a6d8c,#2e0708)',
+  'linear-gradient(135deg,#1f4a5e,#0e2430)',
+  'linear-gradient(135deg,#2a4a6e,#12263d)',
+  'linear-gradient(135deg,#a9364a,#33101c)',
+  'linear-gradient(135deg,#1a3a52,#0c1e2c)',
+  'linear-gradient(135deg,#3a5a7a,#182c3d)',
+  'linear-gradient(135deg,#7a5522,#3d240d)',
+  'linear-gradient(135deg,#22526a,#0e2934)',
+  'linear-gradient(135deg,#4a6d8c,#1c3348)',
+  'linear-gradient(135deg,#2e4a6e,#14243a)',
+  'linear-gradient(135deg,#1c4658,#0d222c)',
+  'linear-gradient(135deg,#b0863c,#3d2c14)',
+  'linear-gradient(135deg,#274b6e,#122336)',
+];
+
+const templates = [
+  { title:"Journey Through the Solar System", desc:"An immersive voyage from Mercury to Neptune with branching paths for each planet's discovery.", author:"Mira Santos", scenes:14, cat:'science', staff:true },
+  { title:"The DNA Detectives", desc:"Students solve a genetics mystery by learning about dominant and recessive traits.", author:"Caleb Osei", scenes:10, cat:'science' },
+  { title:"Ecosystem Explorer", desc:"Explore rainforest, ocean, and desert ecosystems through the eyes of a young biologist.", author:"Priya Nair", scenes:8, cat:'science' },
+
+  { title:"Ancient Egypt: The Pharaoh's Court", desc:"Navigate life in ancient Egypt as an advisor to a young pharaoh.", author:"Leila Ahmadi", scenes:16, cat:'history', staff:true },
+{ title:"The Fraction Kingdom", desc:"A kingdom divided — can you restore order using fractions and ratios?", author:"Owen Park", scenes:9, cat:'math' },
+  { title:"The Underground Railroad", desc:"A powerful narrative following freedom seekers on the path to liberation.", author:"Nia Barnes", scenes:11, cat:'history' },
+
+  
+    { title:"On the Silk Road", desc:"Travel as a merchant across Asia, experiencing trade, culture, and discovery.", author:"Jin Wei", scenes:12, cat:'history' },
+  { title:"Pythagoras and the Lost Temple", desc:"Use geometry to navigate an ancient temple full of right-triangle puzzles.", author:"Aisha Diallo", scenes:13, cat:'math', staff:true },
+  { title:"Probability Island", desc:"Marooned on an island where every survival choice is a probability problem.", author:"Marcus Lee", scenes:7, cat:'math' },
+
+  { title:"The Poet's Notebook", desc:"Fill the pages of a traveling poet's journal with verses that shape the story.", author:"Elena Cruz", scenes:9, cat:'literature' },
+  { title:"Chapters of Change", desc:"Step into a classic coming-of-age novel and decide how the protagonist grows.", author:"Sam Whitfield", scenes:11, cat:'literature' },
+  { title:"Mystery on Baker Street", desc:"Piece together clues in a Victorian detective story inspired by the classics.", author:"Priya Nair", scenes:10, cat:'literature' },
+
+  { title:"Bonjour, Paris!", desc:"Practice everyday French while navigating cafés, markets, and the metro.", author:"Camille Roy", scenes:8, cat:'languages' },
+  { title:"Tokyo Transit", desc:"Learn conversational Japanese as you find your way across the city.", author:"Haruto Sato", scenes:9, cat:'languages' },
+
+  { title:"Global Citizen", desc:"Navigate cultural exchange and global issues through a world-traveler's lens.", author:"Yuna Kim", scenes:8, cat:'social' },
+  { title:"The Vote That Mattered", desc:"Experience a pivotal election as a citizen weighing civic choices.", author:"Diego Alvarez", scenes:10, cat:'social' },
+
+  { title:"The Impressionist's Eye", desc:"Step into 1870s Paris and learn art history through Monet's atelier.", author:"Isabelle Moreau", scenes:10, cat:'arts' },
+  { title:"Sound & Story", desc:"Learn music theory fundamentals through an interactive band-practice narrative.", author:"Devin Okafor", scenes:7, cat:'arts' },
+
+  { title:"Mind Matters", desc:"A compassionate story that builds mental health literacy and coping strategies.", author:"Dr. Riya Sen", scenes:12, cat:'health' },
+  { title:"The Nutrition Lab", desc:"Students run a school cafeteria and learn about balanced nutrition through choices.", author:"Carlos Mendes", scenes:8, cat:'health' },
+];
+
+const stories = [
+  { title:"The Scientific Method", ts:"2h ago", grad: GRADIENTS[6] },
+  { title:"Ancient Rome: Rise & Fall", ts:"Yesterday", grad: GRADIENTS[3] },
+  { title:"Algebra Adventures", ts:"3 days ago", grad: GRADIENTS[8] },
+];
+
+/* ---------------- Render ---------------- */
+function catMeta(key){ return CATS.find(c=>c.key===key); }
+
+/* Returns just the gradient fallback (as a CSS background string) for a
+   card. The real photo (if one exists on disk) is layered on top of this
+   later by hydrateImages(), once it's confirmed to load. */
+function gradFor(idx, multiplier){
+  return GRADIENTS[(idx*(multiplier||1)) % GRADIENTS.length];
+}
+
+function staffCard(t, idx){
+  const meta = catMeta(t.cat);
+  const grad = gradFor(idx, 1);
+  return `
+  <div class="staff-card" data-img-title="${t.title}" data-grad="${grad}" style="background:${grad}">
+    <div class="staff-top">
+      <span class="badge" style="background:${meta.color}22; color:${meta.color}; border:1px solid ${meta.color}55">${meta.label}</span>
+>>>>>>> Stashed changes
     </div>
 
     <!-- ====== SIDEBAR TEMPLATE (fallback) ====== -->
