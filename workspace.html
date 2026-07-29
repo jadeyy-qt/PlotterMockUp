@@ -385,6 +385,20 @@
   .sprite.left{ left: 60px; background: linear-gradient(180deg, rgba(201,162,77,.35), rgba(201,162,77,.12)); }
   .sprite.center{ left:50%; transform:translateX(-50%); background: linear-gradient(180deg, rgba(74,109,140,.45), rgba(74,109,140,.18)); }
   .sprite.right{ right: 60px; background: linear-gradient(180deg, rgba(74,222,154,.35), rgba(74,222,154,.12)); }
+  .sprite.has-image{
+    background-image: var(--sprite-img);
+    background-size: cover;
+    background-position: top center;
+    border-style: solid;
+    border-color: rgba(255,255,255,.15);
+  }
+  .sprite.has-image::after{
+    content:"";
+    position:absolute; left:0; right:0; bottom:0; height:56px;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,.55));
+    border-radius: 0 0 10px 10px;
+  }
+  .sprite.has-image span{ position:relative; z-index:1; }
 
   .dialogue-box{
     position:absolute; left:16px; right:16px; bottom:14px;
@@ -636,8 +650,8 @@
       <div class="canvas-wrap">
         <div class="canvas-toolbar">
           <div class="mode-btn-group">
-            <button class="mode-btn active">Stage</button>
-            <button class="mode-btn">Script</button>
+            <button class="mode-btn">Stage</button>
+            <button class="mode-btn active">Scene</button>
           </div>
           <div class="spacer"></div>
           <button class="clear-btn" id="clearBtn">
@@ -654,8 +668,8 @@
             <div class="stage-sun"></div>
             <div class="stage-silhouette"></div>
 
-            <div class="sprite left" data-name="Horemheb">Horemheb</div>
-            <div class="sprite center selected" data-name="You">You</div>
+            <div class="sprite left has-image" data-name="Horemheb" style="--sprite-img:url('images/characters/pharaoh.png')"><span></span></div>
+
 
             <div class="dialogue-box">
               <span class="speaker-chip" id="speakerChip">Horemheb</span>
@@ -793,7 +807,6 @@ const scenes = [
 
 const castInScene = [
   { name:"Horemheb", role:"Vizier", pos:"Left" },
-  { name:"You",      role:"Advisor · Protagonist", pos:"Center" },
 ];
 
 const backgrounds = [
