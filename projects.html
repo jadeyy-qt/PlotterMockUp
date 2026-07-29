@@ -3,489 +3,1080 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StoryForge — Projects</title>
+<title>Plotter — Projects</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg: #0a1420;
-    --panel: #0f1f30;
-    --panel-2: #142a3e;
-    --panel-3: #1a3348;
-    --border: #24435f;
-    --border-soft: #1a3049;
-    --text: #eef1e9;
-    --text-dim: #a8bccf;
-    --text-faint: #6d859f;
-    --accent: #c9a24d;
-    --accent-2: #e6c977;
-    --gold: #c9a24d;
-    --gold-bright: #e6c977;
-    --maroon: #4a6d8c;
-    --maroon-deep: #1c3348;
-    --sci: #4a86c9;
-    --hist: #c9a24d;
-    --math: #6f8fc9;
-    --lit: #a9364a;
-    --lang: #c9636f;
-    --soc: #4ade9a;
-    --arts: #c9a24d;
-    --health: #4ade9a;
-    --ok: #4ade9a;
-    --radius-lg: 18px;
-    --radius-md: 12px;
-    --font-display: 'Fraunces', serif;
+  /* ---------- reset / base ---------- */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
-
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html,body{height:100%;}
-  body{
-    background:
-      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(74,109,140,.22), transparent 60%),
-      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(201,162,77,.05), transparent 55%),
-      radial-gradient(ellipse 1000px 600px at 50% 100%, rgba(20,50,80,.3), transparent 60%),
-      var(--bg);
-    color: var(--text);
+  html, body {
+    height: 100%;
+  }
+  body {
+    background: #0a1420;
+    color: #eef1e9;
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  ::selection{ background: rgba(201,162,77,.35); color:#fff; }
-  ::-webkit-scrollbar{ width:9px; height:9px; }
-  ::-webkit-scrollbar-track{ background: transparent; }
-  ::-webkit-scrollbar-thumb{ background: #1e3c56; border-radius:8px; border:2px solid var(--bg); }
-  ::-webkit-scrollbar-thumb:hover{ background: var(--maroon); }
-  a{color:inherit; text-decoration:none;}
-  button{font-family:inherit; cursor:pointer;}
-
-  /* ---------- Layout shell ---------- */
-  .shell{ display:grid; grid-template-columns: 84px 1fr; min-height:100vh; }
-  @media (max-width: 720px){ .shell{ grid-template-columns: 1fr; } .sidebar{ display:none; } }
-
-  .sidebar{
-    background: var(--panel);
-    border-right: 1px solid var(--border-soft);
-    display:flex; flex-direction:column; align-items:center;
-    padding: 20px 0 16px;
-    position:sticky; top:0; height:100vh;
+  ::selection {
+    background: rgba(201, 162, 77, .35);
+    color: #fff;
   }
-  .logo{
-    width:38px; height:38px; border-radius:11px;
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    border: 1px solid rgba(212,175,106,.5);
-    display:flex; align-items:center; justify-content:center;
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e3c56;
+    border-radius: 8px;
+    border: 2px solid #0a1420;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4a6d8c;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+
+  /* ---------- page layout ---------- */
+  .app {
+    display: flex;
+    min-height: 100vh;
+    padding: 20px 24px 24px 24px;
+    gap: 24px;
+    position: relative;
+  }
+
+  /* ---------- SIDEBAR (exactly like homepage) ---------- */
+  #sidebar-container {
+    flex-shrink: 0;
+    z-index: 50;
+  }
+  .sidebar {
+    width: 76px;
+    background: #0f1f30;
+    border: 1px solid rgba(212, 175, 106, .20);
+    border-radius: 20px;
+    padding: 18px 0 14px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, .55);
+    backdrop-filter: blur(4px);
+    height: calc(100vh - 48px);
+    min-height: 460px;
+    position: sticky;
+    top: 20px;
+    transition: transform .25s ease, opacity .25s ease;
+  }
+  .sidebar-logo {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    margin-bottom: 18px;
+    flex-shrink: 0;
+  }
+  .sidebar-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .sidebar-logo .logo-placeholder {
+    font-size: 18px;
+    font-weight: 700;
+    color: #c9a24d;
+    letter-spacing: -.5px;
+  }
+  .sidebar-create {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #142a3e;
+    border: 1px solid #24435f;
+    color: #c9a24d;
+    font-size: 22px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 22px;
-    box-shadow: 0 4px 14px rgba(20,40,58,.55), 0 0 0 1px rgba(212,175,106,.15);
+    transition: background .15s ease, border-color .15s ease, transform .15s ease;
+    flex-shrink: 0;
   }
-  .logo svg path{ fill: var(--gold) !important; }
-  .logo svg{ width:20px; height:20px; }
-  .create-btn{
-    width:44px; height:44px; border-radius:13px;
-    background: var(--panel-2); border:1px solid var(--border); color: var(--gold);
-    display:flex; align-items:center; justify-content:center;
-    font-size:20px; font-weight:600; margin-bottom: 26px;
-    transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  .sidebar-create:hover {
+    background: #1c3a52;
+    border-color: #c9a24d;
+    transform: translateY(-1px);
   }
-  .create-btn:hover{ background:#1c3a52; border-color: var(--accent); transform: translateY(-1px); }
-  .nav{ display:flex; flex-direction:column; gap:4px; width:100%; align-items:center; flex:1; }
-  .nav-item{
-    width:64px; display:flex; flex-direction:column; align-items:center; gap:5px;
-    padding: 9px 0 7px; border-radius: 12px; color: var(--text-faint);
-    font-size:11px; font-weight:500; position:relative; background:none; border:none;
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    align-items: center;
+    flex: 1;
+    padding: 0 4px;
+  }
+  .sidebar-nav .nav-item {
+    width: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 0 6px;
+    border-radius: 12px;
+    color: #6d859f;
+    font-size: 10px;
+    font-weight: 500;
     transition: color .15s ease, background .15s ease;
+    position: relative;
+    border: none;
+    background: none;
+    text-align: center;
   }
-  .nav-item svg{ width:19px; height:19px; }
-  .nav-item:hover{ color: var(--text-dim); }
-  .nav-item.active{
-    color: var(--gold-bright);
-    background: rgba(212,175,106,.12);
+  .sidebar-nav .nav-item svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
   }
-  .nav-item.active::before{
-    content:""; position:absolute; left:-1px; top:50%; transform:translateY(-50%);
-    width:3px; height:20px; border-radius:3px; background: var(--gold);
+  .sidebar-nav .nav-item:hover {
+    color: #a8bccf;
+  }
+  .sidebar-nav .nav-item.active {
+    color: #e6c977;
+    background: rgba(212, 175, 106, .10);
+  }
+  .sidebar-nav .nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    border-radius: 3px;
+    background: #c9a24d;
+  }
+  .sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 12px;
+    width: 100%;
+    border-top: 1px solid rgba(36, 67, 95, .45);
+  }
+  .sidebar-bottom .bell-btn {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6d859f;
+    transition: color .15s ease, background .15s ease;
+    background: none;
+    border: none;
+  }
+  .sidebar-bottom .bell-btn:hover {
+    color: #e6c977;
+    background: rgba(212, 175, 106, .08);
+  }
+  .sidebar-bottom .bell-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  .sidebar-bottom .bell-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #a9364a;
+    border: 2px solid #0f1f30;
+    display: none;
+  }
+  .sidebar-bottom .bell-btn.has-unread .bell-dot {
+    display: block;
+  }
+  .sidebar-bottom .help-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6d859f;
+    font-weight: 700;
+    font-size: 16px;
+    transition: color .15s ease, background .15s ease;
+    background: none;
+    border: none;
+  }
+  .sidebar-bottom .help-btn:hover {
+    color: #e6c977;
+    background: rgba(212, 175, 106, .08);
   }
 
-  /* ---------- Top bar ---------- */
-  .topbar{
-    position: sticky; top:0; z-index:20;
-    display:flex; align-items:center; gap:16px;
+  /* ---------- NOTIFICATION POPOVER ---------- */
+  .notif-pop {
+    position: fixed;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 360px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #0f1f30;
+    border: 1px solid rgba(212, 175, 106, .25);
+    border-radius: 14px;
+    box-shadow: 0 20px 56px rgba(0, 0, 0, .6);
+    z-index: 70;
+    display: none;
+  }
+  .notif-pop.open {
+    display: block;
+  }
+  .notif-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #1a3049;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #eef1e9;
+  }
+  .notif-head .clear {
+    font-size: 12px;
+    font-weight: 600;
+    color: #c9a24d;
+    background: none;
+    border: none;
+  }
+  .notif-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px 16px;
+    border-bottom: 1px solid #1a3049;
+  }
+  .notif-item:last-child {
+    border-bottom: none;
+  }
+  .notif-item .ic {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 106, .12);
+    color: #c9a24d;
+    font-size: 14px;
+  }
+  .notif-item .txt {
+    font-size: 13px;
+    color: #a8bccf;
+    line-height: 1.4;
+  }
+  .notif-item.unread .txt {
+    color: #eef1e9;
+  }
+  .notif-item .when {
+    font-size: 11px;
+    color: #6d859f;
+    margin-top: 3px;
+  }
+  .notif-empty {
+    padding: 36px 16px;
+    text-align: center;
+    color: #6d859f;
+    font-size: 13px;
+  }
+
+  /* ---------- main content ---------- */
+  .main-wrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: rgba(13,20,32,.4);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(212,175,106,.08);
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     padding: 18px 28px;
     background: rgba(13,20,32,.85);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(212,175,106,.15);
+    flex-shrink: 0;
   }
-  .page-heading{
-    font-family: var(--font-display);
-    font-size:20px; font-weight:600;
-    color: var(--text);
+  .page-heading {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #eef1e9;
   }
-  .topbar-icons{ display:flex; align-items:center; gap:16px; margin-left:auto; }
-  .bell{
-    position:relative; width:38px; height:38px; border-radius:10px;
-    display:flex; align-items:center; justify-content:center; color: var(--text-dim);
-    background:none; border:none;
-    transition: background .15s ease, color .15s ease;
+  .banner-stripe {
+    height: 3px;
+    background: linear-gradient(90deg, #1c3348, #c9a24d, #1c3348);
+    opacity: .55;
+    flex-shrink: 0;
   }
-  .bell:hover{ background: var(--panel-2); color: var(--gold); }
-  .bell svg{ width:19px; height:19px; }
-  .bell-dot{
-    position:absolute; top:6px; right:6px; width:8px; height:8px; border-radius:50%;
-    background: var(--lit); border:2px solid var(--bg); display:none;
-  }
-  .bell.has-unread .bell-dot{ display:block; }
-
-  .notif-pop{
-    position:absolute; top:66px; right:28px; width:340px; max-height:420px; overflow-y:auto;
-    background: var(--panel); border:1px solid rgba(212,175,106,.25);
-    border-radius: var(--radius-md);
-    box-shadow: 0 20px 50px rgba(0,0,0,.5); z-index:60; display:none;
-  }
-  .notif-pop.open{ display:block; }
-  .notif-head{
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 16px; border-bottom:1px solid var(--border-soft);
-    font-size:13.5px; font-weight:700;
-  }
-  .notif-head .clear{ font-size:12px; font-weight:600; color:var(--gold); background:none; border:none; }
-  .notif-item{ display:flex; gap:10px; align-items:flex-start; padding:12px 16px; border-bottom:1px solid var(--border-soft); }
-  .notif-item:last-child{ border-bottom:none; }
-  .notif-item .ic{
-    width:30px; height:30px; border-radius:9px; flex-shrink:0;
-    display:flex; align-items:center; justify-content:center;
-    background: rgba(201,162,77,.15); color:var(--gold); font-size:14px;
-  }
-  .notif-item .txt{ font-size:13px; color:var(--text-dim); line-height:1.4; }
-  .notif-item.unread .txt{ color:var(--text); }
-  .notif-item .when{ font-size:11px; color:var(--text-faint); margin-top:3px; }
-  .notif-empty{ padding:36px 16px; text-align:center; color:var(--text-faint); font-size:13px; }
-
-  /* subtle banner stripe */
-  .banner-stripe{
-    height:3px;
-    background: linear-gradient(90deg, var(--maroon-deep), var(--gold), var(--maroon-deep));
-    opacity:.55;
+  main {
+    padding: 24px 32px 40px;
+    flex: 1;
+    overflow-y: auto;
   }
 
-  /* ---------- Main ---------- */
-  main{ padding: 24px 40px 60px; max-width: 1600px; margin: 0 auto; }
-
-  .page-tabs{ display:flex; gap:6px; border-bottom:1px solid var(--border-soft); margin-bottom:26px; }
-  .page-tab{
-    background:none; border:none; padding:10px 6px 14px; margin-right:20px;
-    font-size:14px; font-weight:700; color: var(--text-faint);
-    border-bottom:2px solid transparent;
+  .page-tabs {
+    display: flex;
+    gap: 6px;
+    border-bottom: 1px solid #1a3049;
+    margin-bottom: 26px;
+  }
+  .page-tab {
+    background: none;
+    border: none;
+    padding: 10px 6px 14px;
+    margin-right: 20px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #6d859f;
+    border-bottom: 2px solid transparent;
     transition: color .15s ease, border-color .15s ease;
-    font-family: var(--font-display);
+    font-family: 'Fraunces', serif;
     letter-spacing: .02em;
   }
-  .page-tab:hover{ color: var(--text-dim); }
-  .page-tab.active{ color: var(--gold-bright); border-bottom-color: var(--gold); }
+  .page-tab:hover {
+    color: #a8bccf;
+  }
+  .page-tab.active {
+    color: #e6c977;
+    border-bottom-color: #c9a24d;
+  }
 
-  /* Banner-style section labels */
-  .proj-section-label{
-    position:relative;
-    display:inline-flex; align-items:center; gap:8px;
-    font-family: var(--font-display);
-    font-size: 12px; font-weight:600; letter-spacing: .08em;
-    color: var(--gold-bright);
+  .proj-section-label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Fraunces', serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    color: #e6c977;
     text-transform: uppercase;
     margin: 26px 0 16px;
     padding: 8px 20px 8px 14px;
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    border: 1px solid rgba(230,201,119,.5);
+    background: linear-gradient(135deg, #4a6d8c, #1c3348);
+    border: 1px solid rgba(230, 201, 119, .5);
     border-radius: 3px;
     clip-path: polygon(0 0, 100% 0, 100% 70%, calc(100% - 12px) 100%, 0 100%);
-    box-shadow: 0 6px 16px rgba(0,0,0,.35);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .35);
   }
-  .proj-section-label:first-child{ margin-top:0; }
-  .proj-section-label svg{ width:12px; height:12px; fill: var(--gold); }
+  .proj-section-label:first-child {
+    margin-top: 0;
+  }
+  .proj-section-label svg {
+    width: 12px;
+    height: 12px;
+    fill: #c9a24d;
+  }
 
-  .proj-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:18px; }
-  @media (max-width:900px){ .proj-grid{ grid-template-columns: repeat(2,1fr); } }
-  @media (max-width:600px){ .proj-grid{ grid-template-columns:1fr; } }
+  .proj-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+  }
+  @media (max-width: 900px) {
+    .proj-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 600px) {
+    .proj-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 
-  .proj-card{
-    position:relative; border-radius: var(--radius-lg);
-    border:1px solid var(--border-soft);
-    background: var(--panel);
-    overflow:hidden; cursor:pointer;
+  .proj-card {
+    position: relative;
+    border-radius: 18px;
+    border: 1px solid #1a3049;
+    background: #0f1f30;
+    overflow: hidden;
+    cursor: pointer;
     transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
   }
-  .proj-card:hover{
-    border-color: var(--gold);
+  .proj-card:hover {
+    border-color: #c9a24d;
     transform: translateY(-3px);
-    box-shadow: 0 16px 34px rgba(0,0,0,.38), 0 0 0 1px rgba(212,175,106,.15);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, .38), 0 0 0 1px rgba(212, 175, 106, .15);
   }
-  a.proj-card{ display:block; }
-  .proj-thumb{
-    height:88px;
-    display:flex; align-items:flex-start; justify-content:space-between;
-    padding:12px 14px;
+  a.proj-card {
+    display: block;
   }
-  .proj-fav{
-    background: rgba(0,0,0,.4); border:none; color:rgba(255,255,255,.7);
-    width:28px; height:28px; border-radius:8px;
-    display:flex; align-items:center; justify-content:center; font-size:14px;
+  .proj-thumb {
+    height: 88px;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 12px 14px;
+  }
+  .proj-fav {
+    background: rgba(0, 0, 0, .4);
+    border: none;
+    color: rgba(255, 255, 255, .7);
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
     backdrop-filter: blur(3px);
     transition: color .15s ease, background .15s ease;
   }
-  .proj-fav:hover{ color: var(--gold-bright); }
-  .proj-fav.is-fav{ color: var(--gold-bright); }
-  .proj-code-tag{
-    background: rgba(0,0,0,.4); color:#fff;
-    font-size:10.5px; font-weight:700; letter-spacing:.04em;
-    padding:4px 10px; border-radius:999px;
+  .proj-fav:hover {
+    color: #e6c977;
+  }
+  .proj-fav.is-fav {
+    color: #e6c977;
+  }
+  .proj-code-tag {
+    background: rgba(0, 0, 0, .4);
+    color: #fff;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 4px 10px;
+    border-radius: 999px;
     backdrop-filter: blur(3px);
-    border: 1px solid rgba(255,255,255,.1);
+    border: 1px solid rgba(255, 255, 255, .1);
   }
-  .proj-body{ padding:14px 16px 16px; }
-  .proj-title{
-    font-size:15px; font-weight:700; color:var(--text);
-    margin-bottom:6px; line-height:1.3;
+  .proj-body {
+    padding: 14px 16px 16px;
   }
-  .proj-meta{
-    font-size:12px; color:var(--text-faint);
-    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  .proj-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #eef1e9;
+    margin-bottom: 6px;
+    line-height: 1.3;
   }
-  .proj-meta .sep{ opacity:.5; }
-  .proj-pill{
-    display:inline-flex; align-items:center; gap:4px;
-    font-size:10.5px; font-weight:700;
-    color: var(--gold-bright);
-    background: rgba(201,162,77,.14);
-    padding:2px 8px; border-radius:999px;
-    border: 1px solid rgba(201,162,77,.25);
+  .proj-meta {
+    font-size: 12px;
+    color: #6d859f;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
   }
-  .proj-pill.play{
-    color: var(--ok);
-    background: rgba(74,222,154,.12);
-    border-color: rgba(74,222,154,.25);
+  .proj-meta .sep {
+    opacity: .5;
   }
-  .proj-empty{ color:var(--text-faint); font-size:13px; padding: 6px 2px 18px; }
+  .proj-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    color: #e6c977;
+    background: rgba(201, 162, 77, .14);
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(201, 162, 77, .25);
+  }
+  .proj-pill.play {
+    color: #4ade9a;
+    background: rgba(74, 222, 154, .12);
+    border-color: rgba(74, 222, 154, .25);
+  }
+  .proj-empty {
+    color: #6d859f;
+    font-size: 13px;
+    padding: 6px 2px 18px;
+  }
 
-  /* Join panel */
-  .join-panel{ max-width: 480px; margin: 40px auto 0; text-align:center; }
-  .join-panel .ic{
-    width:56px; height:56px; border-radius:14px; margin:0 auto 18px;
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    border: 1px solid rgba(230,201,119,.4);
-    color: var(--gold-bright);
-    display:flex; align-items:center; justify-content:center; font-size:22px;
-    box-shadow: 0 8px 20px rgba(0,0,0,.3);
+  .join-panel {
+    max-width: 480px;
+    margin: 40px auto 0;
+    text-align: center;
   }
-  .join-panel h3{
-    font-family: var(--font-display);
-    font-size:20px; font-weight:600; margin-bottom:8px;
-    color: var(--text);
+  .join-panel .ic {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    margin: 0 auto 18px;
+    background: linear-gradient(135deg, #4a6d8c, #1c3348);
+    border: 1px solid rgba(230, 201, 119, .4);
+    color: #e6c977;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, .3);
   }
-  .join-panel p{ font-size:13.5px; color:var(--text-faint); margin-bottom:22px; line-height:1.55; }
-  .join-input{
-    width:100%; text-align:center; letter-spacing:.12em; text-transform:uppercase;
-    background: var(--panel-2); border:1px solid var(--border); border-radius:12px;
-    padding:14px; color:var(--text); font-size:15px; font-weight:700;
-    font-family:inherit; outline:none; margin-bottom:12px;
+  .join-panel h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #eef1e9;
+  }
+  .join-panel p {
+    font-size: 13.5px;
+    color: #6d859f;
+    margin-bottom: 22px;
+    line-height: 1.55;
+  }
+  .join-input {
+    width: 100%;
+    text-align: center;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    background: #142a3e;
+    border: 1px solid #24435f;
+    border-radius: 12px;
+    padding: 14px;
+    color: #eef1e9;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: inherit;
+    outline: none;
+    margin-bottom: 12px;
     transition: border-color .15s ease;
   }
-  .join-input:focus{ border-color: var(--gold); }
-  .btn-primary{
-    display:flex; align-items:center; justify-content:center; gap:8px;
-    background: linear-gradient(135deg, var(--gold), #b88a45);
-    color:#2a1608; border: 1px solid rgba(230,201,119,.6);
-    padding: 13px; border-radius: 12px; font-size:14.5px; font-weight:700;
-    box-shadow: 0 8px 20px rgba(201,162,77,.22); width:100%;
+  .join-input:focus {
+    border-color: #c9a24d;
+  }
+  .btn-primary {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #c9a24d, #b88a45);
+    color: #2a1608;
+    border: 1px solid rgba(230, 201, 119, .6);
+    padding: 13px;
+    border-radius: 12px;
+    font-size: 14.5px;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(201, 162, 77, .22);
+    width: 100%;
     transition: transform .15s ease, box-shadow .15s ease;
   }
-  .btn-primary:hover{ transform: translateY(-1px); box-shadow: 0 10px 24px rgba(212,175,106,.34); }
-  .join-status{ font-size:13px; margin-top:14px; min-height:18px; }
-  .join-status.ok{ color: var(--ok); }
-  .join-status.err{ color: var(--lit); }
-  .join-status.pending{ color: var(--gold-bright); }
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px rgba(212, 175, 106, .34);
+  }
+  .join-status {
+    font-size: 13px;
+    margin-top: 14px;
+    min-height: 18px;
+  }
+  .join-status.ok {
+    color: #4ade9a;
+  }
+  .join-status.err {
+    color: #a9364a;
+  }
+  .join-status.pending {
+    color: #e6c977;
+  }
 
-  /* Detail view */
-  .detail-back{
-    display:inline-flex; align-items:center; gap:6px;
-    font-size:13px; font-weight:600; color:var(--text-dim);
-    background:none; border:none; margin-bottom:18px;
+  .detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #a8bccf;
+    background: none;
+    border: none;
+    margin-bottom: 18px;
     transition: color .15s ease;
   }
-  .detail-back:hover{ color: var(--gold-bright); }
-  .detail-hero{
-    display:flex; align-items:center; justify-content:space-between; gap:16px;
-    border-radius: var(--radius-lg); padding:24px; margin-bottom:24px; flex-wrap:wrap;
-    border: 1px solid rgba(212,175,106,.2);
-    box-shadow: 0 12px 32px rgba(0,0,0,.3);
+  .detail-back:hover {
+    color: #e6c977;
   }
-  .detail-hero h3{
-    font-family: var(--font-display);
-    font-size:24px; color:#fff; font-weight:600;
+
+  .detail-hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-radius: 18px;
+    padding: 24px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    border: 1px solid rgba(212, 175, 106, .2);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, .3);
   }
-  .detail-hero .code{ font-size:12.5px; color: rgba(255,255,255,.8); margin-top:6px; }
-  .detail-hero .code b{ letter-spacing:.06em; color:#fff; }
-  .detail-hero-actions{ display:flex; align-items:center; gap:10px; }
-  .btn-play{
-    background: linear-gradient(135deg, var(--gold), #b88a45);
-    color:#2a1608; border: 1px solid rgba(230,201,119,.5);
-    padding:11px 20px; border-radius:999px;
-    font-size:13.5px; font-weight:800;
-    display:flex; align-items:center; gap:8px;
-    box-shadow: 0 6px 16px rgba(201,162,77,.25);
+  .detail-hero h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    color: #fff;
+    font-weight: 600;
+  }
+  .detail-hero .code {
+    font-size: 12.5px;
+    color: rgba(255, 255, 255, .8);
+    margin-top: 6px;
+  }
+  .detail-hero .code b {
+    letter-spacing: .06em;
+    color: #fff;
+  }
+  .detail-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .btn-play {
+    background: linear-gradient(135deg, #c9a24d, #b88a45);
+    color: #2a1608;
+    border: 1px solid rgba(230, 201, 119, .5);
+    padding: 11px 20px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 6px 16px rgba(201, 162, 77, .25);
     transition: transform .15s ease, box-shadow .15s ease;
   }
-  .btn-play:hover{ transform: translateY(-1px); box-shadow: 0 8px 20px rgba(212,175,106,.35); }
+  .btn-play:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(212, 175, 106, .35);
+  }
 
-  .req-item, .acc-item{
-    display:flex; align-items:center; gap:12px;
-    padding:12px 8px; border-bottom:1px solid var(--border-soft);
+  .req-item, .acc-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 8px;
+    border-bottom: 1px solid #1a3049;
     border-radius: 8px;
     transition: background .15s ease;
   }
-  .req-item:hover, .acc-item:hover{ background: var(--panel-2); }
-  .req-item:last-child, .acc-item:last-child{ border-bottom:none; }
-  .req-name{ font-size:13.5px; font-weight:600; color:var(--text); flex:1; }
-  .req-actions{ display:flex; gap:8px; }
-  .btn-accept{
-    background: rgba(74,222,154,.12); color: var(--ok);
-    border:1px solid rgba(74,222,154,.35);
-    font-size:12.5px; font-weight:700; padding:7px 13px; border-radius:999px;
+  .req-item:hover, .acc-item:hover {
+    background: #142a3e;
+  }
+  .req-item:last-child, .acc-item:last-child {
+    border-bottom: none;
+  }
+  .req-name {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: #eef1e9;
+    flex: 1;
+  }
+  .req-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .btn-accept {
+    background: rgba(74, 222, 154, .12);
+    color: #4ade9a;
+    border: 1px solid rgba(74, 222, 154, .35);
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 7px 13px;
+    border-radius: 999px;
     transition: background .15s ease;
   }
-  .btn-accept:hover{ background: rgba(74,222,154,.2); }
-  .btn-decline{
-    background: rgba(169,54,74,.12); color: var(--lit);
-    border:1px solid rgba(169,54,74,.3);
-    font-size:12.5px; font-weight:700; padding:7px 13px; border-radius:999px;
+  .btn-accept:hover {
+    background: rgba(74, 222, 154, .2);
+  }
+  .btn-decline {
+    background: rgba(169, 54, 74, .12);
+    color: #a9364a;
+    border: 1px solid rgba(169, 54, 74, .3);
+    font-size: 12.5px;
+    font-weight: 700;
+    padding: 7px 13px;
+    border-radius: 999px;
     transition: background .15s ease;
   }
-  .btn-decline:hover{ background: rgba(169,54,74,.2); }
-  .acc-item .stat{ font-size:12.5px; color:var(--text-dim); font-weight:600; min-width:70px; text-align:right; }
-  .acc-item .stat b{ color:var(--text); }
-  .acc-item .bar-wrap{ flex:1; height:6px; border-radius:99px; background:var(--border-soft); overflow:hidden; }
-  .acc-item .bar-fill{
-    height:100%;
-    background: linear-gradient(90deg, var(--maroon), var(--gold));
-    border-radius:99px;
+  .btn-decline:hover {
+    background: rgba(169, 54, 74, .2);
   }
-  .acc-item .score-tag{
-    font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px;
-    background: rgba(201,162,77,.15); color: var(--gold-bright);
-    min-width:52px; text-align:center;
-    border: 1px solid rgba(201,162,77,.25);
+  .acc-item .stat {
+    font-size: 12.5px;
+    color: #a8bccf;
+    font-weight: 600;
+    min-width: 70px;
+    text-align: right;
   }
-  .score-tag.none{ background: var(--border-soft); color:var(--text-faint); border-color: transparent; }
+  .acc-item .stat b {
+    color: #eef1e9;
+  }
+  .acc-item .bar-wrap {
+    flex: 1;
+    height: 6px;
+    border-radius: 99px;
+    background: #1a3049;
+    overflow: hidden;
+  }
+  .acc-item .bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4a6d8c, #c9a24d);
+    border-radius: 99px;
+  }
+  .acc-item .score-tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(201, 162, 77, .15);
+    color: #e6c977;
+    min-width: 52px;
+    text-align: center;
+    border: 1px solid rgba(201, 162, 77, .25);
+  }
+  .score-tag.none {
+    background: #1a3049;
+    color: #6d859f;
+    border-color: transparent;
+  }
 
-  /* ---------- Player ---------- */
-  .player-shell{
+  .player-shell {
     border-radius: 24px;
     padding: 40px 24px;
-    display:flex; align-items:center; justify-content:center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     min-height: 420px;
-    position:relative;
-    overflow:hidden;
-    border: 1px solid rgba(212,175,106,.2);
-    box-shadow: 0 20px 50px rgba(0,0,0,.4);
+    position: relative;
+    overflow: hidden;
+    border: 1px solid rgba(212, 175, 106, .2);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .4);
   }
-  .player-progress{
-    position:absolute; top:0; left:0; right:0; height:4px;
-    background: rgba(0,0,0,.25);
+  .player-progress {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(0, 0, 0, .25);
   }
-  .player-progress-fill{
-    height:100%;
-    background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+  .player-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #c9a24d, #e6c977);
     transition: width .3s ease;
   }
-  .dialogue-box{
-    width:100%; max-width:560px;
-    background: rgba(10,20,32,.92);
-    border: 1px solid rgba(212,175,106,.2);
+  .dialogue-box {
+    width: 100%;
+    max-width: 560px;
+    background: rgba(10, 20, 32, .92);
+    border: 1px solid rgba(212, 175, 106, .2);
     border-radius: 22px;
     padding: 28px 26px 24px;
-    box-shadow: 0 26px 62px rgba(0,0,0,.35);
+    box-shadow: 0 26px 62px rgba(0, 0, 0, .35);
   }
-  .speaker-tag{
-    display:inline-flex; align-items:center; gap:6px;
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    color: var(--gold-bright);
-    font-size:11.5px; font-weight:700; letter-spacing:.04em;
-    padding:5px 12px; border-radius:999px; margin-bottom:14px;
-    border: 1px solid rgba(230,201,119,.35);
-    font-family: var(--font-display);
+  .speaker-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #4a6d8c, #1c3348);
+    color: #e6c977;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    border: 1px solid rgba(230, 201, 119, .35);
+    font-family: 'Fraunces', serif;
   }
-  .dialogue-text{ font-size:16px; color:#fff; line-height:1.55; margin-bottom:20px; }
-  .dialogue-controls{ display:flex; justify-content:flex-end; }
-  .continue-btn{
-    background: linear-gradient(135deg, var(--gold), #b88a45);
-    color:#2a1608; border: 1px solid rgba(230,201,119,.5);
-    padding:10px 20px; border-radius:999px;
-    font-size:13.5px; font-weight:800;
-    box-shadow: 0 4px 12px rgba(201,162,77,.25);
+  .dialogue-text {
+    font-size: 16px;
+    color: #fff;
+    line-height: 1.55;
+    margin-bottom: 20px;
+  }
+  .dialogue-controls {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .continue-btn {
+    background: linear-gradient(135deg, #c9a24d, #b88a45);
+    color: #2a1608;
+    border: 1px solid rgba(230, 201, 119, .5);
+    padding: 10px 20px;
+    border-radius: 999px;
+    font-size: 13.5px;
+    font-weight: 800;
+    box-shadow: 0 4px 12px rgba(201, 162, 77, .25);
     transition: transform .15s ease;
   }
-  .continue-btn:hover{ transform: translateY(-1px); }
-  .choice-list{ display:flex; flex-direction:column; gap:10px; }
-  .choice-btn{
-    text-align:left;
-    background: rgba(201,162,77,.08); color:#fff;
-    border:1px solid rgba(201,162,77,.3); border-radius:12px; padding:13px 16px;
-    font-size:14px; font-weight:600;
+  .continue-btn:hover {
+    transform: translateY(-1px);
+  }
+  .choice-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .choice-btn {
+    text-align: left;
+    background: rgba(201, 162, 77, .08);
+    color: #fff;
+    border: 1px solid rgba(201, 162, 77, .3);
+    border-radius: 12px;
+    padding: 13px 16px;
+    font-size: 14px;
+    font-weight: 600;
     transition: background .15s ease, border-color .15s ease;
   }
-  .choice-btn:hover{
-    background: rgba(201,162,77,.16);
-    border-color: rgba(201,162,77,.5);
+  .choice-btn:hover {
+    background: rgba(201, 162, 77, .16);
+    border-color: rgba(201, 162, 77, .5);
   }
 
-  .end-card{ text-align:center; }
-  .end-card .big-ic{ font-size:40px; margin-bottom:12px; }
-  .end-card h4{
-    font-family: var(--font-display);
-    font-size:22px; color:#fff; margin-bottom:8px;
+  .end-card {
+    text-align: center;
   }
-  .end-card p{ color: rgba(255,255,255,.75); font-size:13.5px; margin-bottom:18px; }
-  .end-stats{ display:flex; gap:12px; justify-content:center; margin-bottom:22px; }
-  .end-stat{
-    background: rgba(201,162,77,.1);
-    border: 1px solid rgba(201,162,77,.25);
-    border-radius:12px; padding:12px 18px; min-width:90px;
+  .end-card .big-ic {
+    font-size: 40px;
+    margin-bottom: 12px;
   }
-  .end-stat .n{ font-size:19px; font-weight:800; color: var(--gold-bright); }
-  .end-stat .l{ font-size:11px; color: rgba(255,255,255,.65); text-transform:uppercase; letter-spacing:.05em; margin-top:2px; }
+  .end-card h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .end-card p {
+    color: rgba(255, 255, 255, .75);
+    font-size: 13.5px;
+    margin-bottom: 18px;
+  }
+  .end-stats {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-bottom: 22px;
+  }
+  .end-stat {
+    background: rgba(201, 162, 77, .1);
+    border: 1px solid rgba(201, 162, 77, .25);
+    border-radius: 12px;
+    padding: 12px 18px;
+    min-width: 90px;
+  }
+  .end-stat .n {
+    font-size: 19px;
+    font-weight: 800;
+    color: #e6c977;
+  }
+  .end-stat .l {
+    font-size: 11px;
+    color: rgba(255, 255, 255, .65);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-top: 2px;
+  }
+
+  @media (max-width: 768px) {
+    .app {
+      padding: 12px;
+      flex-direction: column;
+      align-items: center;
+    }
+    #sidebar-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .sidebar {
+      width: 100%;
+      max-width: 460px;
+      height: auto;
+      min-height: unset;
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      border-radius: 16px;
+      gap: 4px 0;
+      position: relative;
+      top: 0;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .4);
+    }
+    .sidebar-logo {
+      margin-bottom: 0;
+      margin-right: 12px;
+      width: 36px;
+      height: 36px;
+    }
+    .sidebar-create {
+      margin-bottom: 0;
+      margin-right: 8px;
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+    }
+    .sidebar-nav {
+      flex-direction: row;
+      flex: 1;
+      justify-content: flex-start;
+      gap: 0;
+      padding: 0;
+      flex-wrap: wrap;
+    }
+    .sidebar-nav .nav-item {
+      width: auto;
+      padding: 6px 10px;
+      flex-direction: row;
+      gap: 5px;
+      font-size: 11px;
+    }
+    .sidebar-nav .nav-item svg {
+      width: 16px;
+      height: 16px;
+    }
+    .sidebar-nav .nav-item.active::before {
+      display: none;
+    }
+    .sidebar-bottom {
+      flex-direction: row;
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+      width: auto;
+      gap: 4px;
+      border-left: 1px solid rgba(36, 67, 95, .35);
+      padding-left: 10px;
+    }
+    .sidebar-bottom .bell-btn,
+    .sidebar-bottom .help-btn {
+      width: 34px;
+      height: 34px;
+    }
+    .main-wrap {
+      width: 100%;
+      max-width: 800px;
+    }
+    main {
+      padding: 16px 16px 30px;
+    }
+    .topbar {
+      padding: 14px 18px;
+    }
+    .page-tabs {
+      flex-wrap: wrap;
+    }
+    .page-tab {
+      margin-right: 10px;
+      font-size: 13px;
+    }
+    .detail-hero {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .notif-pop {
+      width: 90vw;
+      max-width: 360px;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+  @media (max-width: 480px) {
+    .proj-grid {
+      grid-template-columns: 1fr;
+    }
+    .sidebar-nav .nav-item span {
+      display: none;
+    }
+  }
 </style>
 </head>
 <body>
 
-<div class="shell">
-  <aside class="sidebar">
-    <a class="logo" href="homepage.html">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5C4 4.67 4.67 4 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13Z" fill="white" opacity=".9"/><path d="M13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" fill="white" opacity=".55"/></svg>
-    </a>
-    <button class="create-btn" title="Create">+</button>
-    <nav class="nav">
-      <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
-      <a class="nav-item" href=".html#templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
-      <a class="nav-item active" href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
-      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
-      <a class="nav-item" href="workspace.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>Scenes</a>
-    </nav>
-  </aside>
+<div class="app">
 
-  <div>
-    <header class="topbar">
-      <div class="page-heading" id="pageHeading">Projects</div>
-      <div class="topbar-icons">
-        <button class="bell" id="notifBell" type="button">
+  <!-- ====== SIDEBAR ====== -->
+  <div id="sidebar-container">
+    <nav class="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="sidebar-logo" id="sidebarLogo">
+        <img src="images/sidebar-logo.png" alt="Logo" id="sidebarLogoImg" />
+        <span class="logo-placeholder" id="sidebarLogoPlaceholder" style="display:none;">SF</span>
+      </div>
+      <button class="sidebar-create" id="sidebarCreateBtn" title="Create new">+</button>
+      <div class="sidebar-nav">
+        <a class="nav-item" href="homepage.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+          <span>Home</span>
+        </a>
+        <a class="nav-item" href="templates.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span>Templates</span>
+        </a>
+        <a class="nav-item active" href="projects.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>
+          <span>Projects</span>
+        </a>
+        <a class="nav-item" href="characters.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+          <span>Characters</span>
+        </a>
+        <a class="nav-item" href="scenes.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>
+          <span>Scenes</span>
+        </a>
+      </div>
+      <div class="sidebar-bottom">
+        <button class="bell-btn" id="sidebarBell" type="button" aria-label="Notifications">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
-          <span class="bell-dot" id="bellDot"></span>
+          <span class="bell-dot" id="sidebarBellDot"></span>
         </button>
+        <button class="help-btn" id="sidebarHelp" type="button" aria-label="Help">?</button>
       </div>
-    </header>
-    <div class="banner-stripe"></div>
+    </nav>
+  </div>
 
-    <div class="notif-pop" id="notifPop">
-      <div class="notif-head">
-        <span>Notifications</span>
-        <button class="clear" id="notifClear" type="button">Mark all read</button>
-      </div>
-      <div id="notifList"></div>
+  <!-- ====== MAIN ====== -->
+  <div class="main-wrap">
+    <div class="topbar">
+      <div class="page-heading" id="pageHeading">Projects</div>
     </div>
+    <div class="banner-stripe"></div>
 
     <main>
       <div class="page-tabs" id="pageTabs">
@@ -496,454 +1087,464 @@
       <div id="pageBody"></div>
     </main>
   </div>
+
+</div>
+
+<!-- ====== NOTIFICATION POPOVER ====== -->
+<div class="notif-pop" id="notifPop">
+  <div class="notif-head">
+    <span>Notifications</span>
+    <button class="clear" id="notifClear" type="button">Mark all read</button>
+  </div>
+  <div id="notifList"></div>
 </div>
 
 <script>
-/* =====================================================================
-   DATA
-   ===================================================================== */
-const GRADIENTS = [
-  'linear-gradient(135deg,#16324a,#0a1826)',
-  'linear-gradient(135deg,#4a6d8c,#2e0708)',
-  'linear-gradient(135deg,#1f4a5e,#0e2430)',
-  'linear-gradient(135deg,#2a4a6e,#12263d)',
-  'linear-gradient(135deg,#a9364a,#33101c)',
-  'linear-gradient(135deg,#1a3a52,#0c1e2c)',
-  'linear-gradient(135deg,#3a5a7a,#182c3d)',
-  'linear-gradient(135deg,#7a5522,#3d240d)',
-  'linear-gradient(135deg,#22526a,#0e2934)',
-  'linear-gradient(135deg,#4a6d8c,#1c3348)',
-  'linear-gradient(135deg,#2e4a6e,#14243a)',
-];
-const AVATAR_COLORS = ['#4a6d8c','#c9a24d','#4a86c9','#2f5f8a','#a9364a','#2f5a8a','#b0863c','#3a6690','#3a5f6e'];
-function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,1).join(''); }
-function colorFor(seed){ let h=0; for(const c of seed) h = (h*31 + c.charCodeAt(0)) % AVATAR_COLORS.length; return AVATAR_COLORS[h]; }
-
-const ALGEBRA_SCRIPT = [
-  { speaker:'DR. CHEN', text:"Welcome back to Algebra Adventures! Last time, the Fraction Kingdom was in chaos. Ready to continue?" },
-  { speaker:'NARRATOR', text:"You arrive at the border of the Ratio Valley, where two paths split before you." },
-  { speaker:'CHOICE', choices:[
-      { label:'Take the Proportions Path (careful, methodical)', score:92 },
-      { label:'Take the Shortcut through Variable Woods (risky)', score:74 }
-    ]},
-  { speaker:'NARRATOR', text:"You solve the final equation and the kingdom's bridges reconnect. The Fraction Kingdom is whole again." }
-];
-const MYSTERY_SCRIPT = [
-  { speaker:'HOLMES', text:"A curious case, isn't it? Someone has removed a single page from the ledger — and left no trace." },
-  { speaker:'NARRATOR', text:"You examine the study for clues: ink stains, a broken window latch, and a muddy footprint by the desk." },
-  { speaker:'CHOICE', choices:[
-      { label:'Follow the muddy footprint outside', score:95 },
-      { label:'Question the household staff first', score:80 }
-    ]},
-  { speaker:'HOLMES', text:"Elementary, once you see it clearly. The case is closed." }
-];
-function genericScript(title){
-  return [
-    { speaker:'NARRATOR', text:`You open "${title}" and step back into the story where you last left off.` },
-    { speaker:'CHOICE', choices:[
-        { label:'Proceed carefully', score:90 },
-        { label:'Proceed boldly', score:78 }
-      ]},
-    { speaker:'NARRATOR', text:"The scene resolves, and your choices are recorded." }
+  /* ---------------- Sidebar functionality ---------------- */
+  const notifications = [
+    { id: 'n1', text: 'Elena Cruz accepted your invite to "Ancient Rome: Rise & Fall."', when: 'Yesterday', read: false },
   ];
-}
 
-let projects = [
-  {
-    id:'p1', code:'SCI-4821', title:'The Scientific Method', grad:GRADIENTS[6],
-    scenes:12, createdByMe:true, favorite:true, lastOpened:'2 hours ago',
-    requests:[ { name:'Jordan Blake' }, { name:'Ravi Chandran' } ],
-    accepted:[
-      { name:'Amara Ndoye', completion:82, score:91 },
-      { name:'Tom Fischer', completion:45, score:null }
-    ]
-  },
-  {
-    id:'p2', code:'HIS-2093', title:'Ancient Rome: Rise & Fall', grad:GRADIENTS[3],
-    scenes:8, createdByMe:true, favorite:false, lastOpened:'Yesterday',
-    requests:[],
-    accepted:[
-      { name:'Elena Cruz', completion:100, score:97 },
-      { name:'Sam Whitfield', completion:30, score:null }
-    ]
-  },
-  {
-    id:'p3', code:'MTH-5510', title:'Algebra Adventures', grad:GRADIENTS[8],
-    scenes:15, createdByMe:false, favorite:false, lastOpened:'3 days ago',
-    owner:'Owen Park', myCompletion:63, myScore:null, script: ALGEBRA_SCRIPT
-  },
-  {
-    id:'p4', code:'LIT-3387', title:"Mystery on Baker Street", grad:GRADIENTS[10],
-    scenes:10, createdByMe:false, favorite:true, lastOpened:'1 week ago',
-    owner:'Priya Nair', myCompletion:100, myScore:88, script: MYSTERY_SCRIPT
-  },
-];
+  function renderNotifications() {
+    const hasUnread = notifications.some(n => !n.read);
+    const dot = document.getElementById('sidebarBellDot');
+    const bell = document.getElementById('sidebarBell');
+    if (dot) dot.style.display = hasUnread ? 'block' : 'none';
+    if (bell) bell.classList.toggle('has-unread', hasUnread);
 
-let workspaceProjects = [
-  { id:'p1', title:'Ancient Egypt: The Pharaoh\'s Court', grad:GRADIENTS[1], scenes:12, lastEdited:'2 hours ago' },
-  { id:'p2', title:'Ancient Rome: Rise & Fall', grad:GRADIENTS[3], scenes:8, lastEdited:'Yesterday' },
-  { id:'w3', title:'Untitled Story', grad:GRADIENTS[0], scenes:0, lastEdited:'3 days ago' },
-];
-
-let notifications = [
-  { id:'n1', text:'Elena Cruz accepted your invite to "Ancient Rome: Rise & Fall."', when:'Yesterday', read:false },
-];
-
-/* =====================================================================
-   VIEW STATE
-   ===================================================================== */
-let activeTab = 'workspace';
-let activeProjectId = null;
-let playState = null;
-
-const pageBody = document.getElementById('pageBody');
-const pageTabs = document.getElementById('pageTabs');
-const pageHeading = document.getElementById('pageHeading');
-
-function syncTabs(){
-  const showTabs = !activeProjectId && !playState;
-  pageTabs.style.display = showTabs ? 'flex' : 'none';
-  pageTabs.querySelectorAll('.page-tab').forEach(b=>{
-    b.classList.toggle('active', b.dataset.tab === activeTab);
-  });
-  pageHeading.textContent = playState ? 'Playing' : (activeProjectId ? 'Project' : 'Projects');
-}
-
-pageTabs.addEventListener('click', (e)=>{
-  const btn = e.target.closest('.page-tab');
-  if(!btn) return;
-  activeTab = btn.dataset.tab;
-  activeProjectId = null;
-  playState = null;
-  render();
-});
-
-function render(){
-  syncTabs();
-  if(playState){ renderPlayer(); return; }
-  if(activeProjectId){ renderProjectDetail(activeProjectId); return; }
-  if(activeTab === 'join'){ renderJoinPanel(); return; }
-  if(activeTab === 'workspace'){ renderWorkspaceList(); return; }
-  renderProjectList();
-}
-
-/* ---------------- Project list ---------------- */
-function projCardHTML(p){
-  const fav = p.favorite ? 'is-fav' : '';
-  const owner = p.createdByMe ? `<span class="proj-pill">Owner</span>` : `<span class="proj-meta">by ${p.owner}</span>`;
-  const playPill = (!p.createdByMe) ? `<span class="proj-pill play">▶ Playable</span>` : '';
-  return `
-  <div class="proj-card" data-id="${p.id}">
-    <div class="proj-thumb" style="background:${p.grad}">
-      <button class="proj-fav ${fav}" data-fav="${p.id}" title="Pin favorite">★</button>
-      <span class="proj-code-tag">${p.code}</span>
-    </div>
-    <div class="proj-body">
-      <div class="proj-title">${p.title}</div>
-      <div class="proj-meta">
-        ${owner}<span class="sep">·</span>${p.scenes} scenes<span class="sep">·</span>${p.lastOpened}
-        ${p.requests && p.requests.length ? `<span class="sep">·</span><span class="proj-pill">${p.requests.length} pending</span>` : ''}
-        ${playPill}
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderProjectList(){
-  const favorites = projects.filter(p=>p.favorite);
-  const created = projects.filter(p=>p.createdByMe);
-  const recent = projects.filter(p=>!p.createdByMe);
-
-  let html = '';
-  if(favorites.length){
-    html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7-6.2-3.4-6.2 3.4 1.2-7-5-4.9 7.1-.7L12 2z"/></svg>Pinned</div><div class="proj-grid">${favorites.map(projCardHTML).join('')}</div>`;
+    const list = document.getElementById('notifList');
+    if (!list) return;
+    list.innerHTML = notifications.length ?
+      notifications.map(n => `
+        <div class="notif-item ${n.read ? '' : 'unread'}">
+          <div class="ic">🔔</div>
+          <div>
+            <div class="txt">${n.text}</div>
+            <div class="when">${n.when}</div>
+          </div>
+        </div>`).join('') :
+      `<div class="notif-empty">You're all caught up — no notifications yet.</div>`;
   }
-  html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg>Created by you</div>`;
-  html += created.length
-    ? `<div class="proj-grid">${created.map(projCardHTML).join('')}</div>`
-    : `<div class="proj-empty">You haven't created any projects yet.</div>`;
 
-  html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Recently opened</div>`;
-  html += recent.length
-    ? `<div class="proj-grid">${recent.map(projCardHTML).join('')}</div>`
-    : `<div class="proj-empty">Projects you're granted access to will show up here — open one to start playing.</div>`;
-
-  pageBody.innerHTML = html;
-
-  pageBody.querySelectorAll('.proj-fav').forEach(btn=>{
-    btn.addEventListener('click', (e)=>{
+  const bellBtn = document.getElementById('sidebarBell');
+  const notifPop = document.getElementById('notifPop');
+  if (bellBtn) {
+    bellBtn.addEventListener('click', (e) => {
       e.stopPropagation();
-      const p = projects.find(x=>x.id===btn.dataset.fav);
-      p.favorite = !p.favorite;
-      render();
+      notifPop.classList.toggle('open');
+      if (notifPop.classList.contains('open')) {
+        notifications.forEach(n => n.read = true);
+        renderNotifications();
+        const dot = document.getElementById('sidebarBellDot');
+        if (dot) dot.style.display = 'none';
+        bellBtn.classList.remove('has-unread');
+      }
     });
-  });
-  pageBody.querySelectorAll('.proj-card').forEach(card=>{
-    card.addEventListener('click', ()=>{
-      activeProjectId = card.dataset.id;
-      render();
-    });
-  });
-}
-
-/* ---------------- Workspace list ---------------- */
-function workspaceCardHTML(p){
-  return `
-  <a class="proj-card" href="workspace.html?id=${p.id}">
-    <div class="proj-thumb" style="background:${p.grad}">
-      <span class="proj-code-tag">Draft</span>
-    </div>
-    <div class="proj-body">
-      <div class="proj-title">${p.title}</div>
-      <div class="proj-meta">${p.scenes} scenes<span class="sep">·</span>Edited ${p.lastEdited}</div>
-    </div>
-  </a>`;
-}
-
-function renderWorkspaceList(){
-  let html = `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Your projects</div>`;
-  html += workspaceProjects.length
-    ? `<div class="proj-grid">${workspaceProjects.map(workspaceCardHTML).join('')}</div>`
-    : `<div class="proj-empty">You haven't started any projects yet.</div>`;
-  pageBody.innerHTML = html;
-}
-
-/* ---------------- Join panel ---------------- */
-function renderJoinPanel(){
-  pageBody.innerHTML = `
-    <div class="join-panel">
-      <div class="ic">🔑</div>
-      <h3>Join a project with a code</h3>
-      <p>Ask the project owner for their project code, enter it below, and they'll be able to accept or decline your request.</p>
-      <input class="join-input" id="joinCodeInput" placeholder="e.g. SCI-4821" maxlength="12">
-      <button class="btn-primary" id="joinRequestBtn">Request access</button>
-      <div class="join-status" id="joinStatus"></div>
-    </div>`;
-  document.getElementById('joinRequestBtn').addEventListener('click', handleJoinRequest);
-  document.getElementById('joinCodeInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') handleJoinRequest(); });
-}
-
-function handleJoinRequest(){
-  const input = document.getElementById('joinCodeInput');
-  const status = document.getElementById('joinStatus');
-  const code = input.value.trim().toUpperCase();
-
-  if(!code){ status.textContent = 'Enter a project code first.'; status.className = 'join-status err'; return; }
-  if(projects.find(p=>p.code===code)){ status.textContent = 'You already have access to this project.'; status.className = 'join-status err'; return; }
-
-  status.textContent = 'Request sent — waiting for the project owner to respond.';
-  status.className = 'join-status pending';
-  input.value = '';
-
-  setTimeout(()=>{
-    const title = `Project ${code}`;
-    projects.push({
-      id:'p'+Date.now(), code, title, grad:GRADIENTS[projects.length % GRADIENTS.length],
-      scenes: Math.floor(Math.random()*10)+6, createdByMe:false, favorite:false,
-      lastOpened:'Just now', owner:'Project owner', myCompletion:0, myScore:null,
-      script: genericScript(title)
-    });
-    addNotification(`Your request to join "${title}" was accepted! Open it under Recently Opened to start playing.`);
-    if(activeTab==='join' && !activeProjectId && !playState){
-      status.textContent = 'Accepted! Find it under "Recently opened."';
-      status.className = 'join-status ok';
-    }
-  }, 2200);
-}
-
-/* ---------------- Project detail ---------------- */
-function renderProjectDetail(id){
-  const p = projects.find(x=>x.id===id);
-  if(!p){ activeProjectId = null; render(); return; }
-
-  let html = `<button class="detail-back" id="detailBackBtn">← Back to projects</button>`;
-  html += `
-    <div class="detail-hero" style="background:${p.grad}">
-      <div>
-        <h3>${p.title}</h3>
-        <div class="code">Project code: <b>${p.code}</b></div>
-      </div>
-      <div class="detail-hero-actions">
-        ${!p.createdByMe ? `<button class="btn-play" id="playBtn">▶ ${p.myCompletion>0 ? 'Continue playing':'Start playing'}</button>` : ''}
-        <button class="proj-fav ${p.favorite?'is-fav':''}" data-fav="${p.id}" title="Pin favorite">★</button>
-      </div>
-    </div>`;
-
-  if(p.createdByMe){
-    html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg>Access requests</div>`;
-    html += p.requests.length
-      ? p.requests.map(r => `
-        <div class="req-item">
-          <span class="author-dot" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;background:${colorFor(r.name)}">${initials(r.name)}</span>
-          <span class="req-name">${r.name}</span>
-          <div class="req-actions">
-            <button class="btn-accept" data-accept="${r.name}">Accept</button>
-            <button class="btn-decline" data-decline="${r.name}">Decline</button>
-          </div>
-        </div>`).join('')
-      : `<div class="proj-empty">No pending requests right now.</div>`;
-
-    html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Accepted users</div>`;
-    html += p.accepted.length
-      ? p.accepted.map(u => `
-        <div class="acc-item">
-          <span class="author-dot" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;background:${colorFor(u.name)}">${initials(u.name)}</span>
-          <span class="req-name" style="flex:0 0 auto; min-width:120px;">${u.name}</span>
-          <div class="bar-wrap"><div class="bar-fill" style="width:${u.completion}%"></div></div>
-          <span class="stat"><b>${u.completion}%</b> done</span>
-          <span class="score-tag ${u.score===null?'none':''}">${u.score===null ? 'No score' : u.score + ' pts'}</span>
-        </div>`).join('')
-      : `<div class="proj-empty">No one has been accepted into this project yet.</div>`;
-  } else {
-    html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17l6-6 4 4 8-9"/></svg>Your progress</div>`;
-    html += `
-      <div class="acc-item" style="border-bottom:none;">
-        <span class="author-dot" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;background:${colorFor('You')}">Y</span>
-        <span class="req-name" style="flex:0 0 auto; min-width:120px;">You</span>
-        <div class="bar-wrap"><div class="bar-fill" style="width:${p.myCompletion}%"></div></div>
-        <span class="stat"><b>${p.myCompletion}%</b> done</span>
-        <span class="score-tag ${p.myScore===null?'none':''}">${p.myScore===null ? 'No score' : p.myScore + ' pts'}</span>
-      </div>
-      <div class="proj-empty">Owned by ${p.owner}. Only the owner can manage who has access.</div>`;
   }
 
-  pageBody.innerHTML = html;
-
-  document.getElementById('detailBackBtn').addEventListener('click', ()=>{ activeProjectId = null; render(); });
-  const favBtn = pageBody.querySelector('.proj-fav');
-  if(favBtn) favBtn.addEventListener('click', ()=>{ p.favorite = !p.favorite; renderProjectDetail(id); });
-  const playBtn = document.getElementById('playBtn');
-  if(playBtn) playBtn.addEventListener('click', ()=>{ playState = { projectId: id, index: 0 }; render(); });
-
-  pageBody.querySelectorAll('[data-accept]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const name = btn.dataset.accept;
-      p.requests = p.requests.filter(r=>r.name!==name);
-      p.accepted.push({ name, completion:0, score:null });
-      renderProjectDetail(id);
+  const helpBtn = document.getElementById('sidebarHelp');
+  if (helpBtn) {
+    helpBtn.addEventListener('click', () => {
+      alert('Plotter Help — contact support@plotter.com');
     });
-  });
-  pageBody.querySelectorAll('[data-decline]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const name = btn.dataset.decline;
-      p.requests = p.requests.filter(r=>r.name!==name);
-      renderProjectDetail(id);
-    });
-  });
-}
-
-/* ---------------- Player ---------------- */
-function renderPlayer(){
-  const p = projects.find(x=>x.id===playState.projectId);
-  if(!p){ playState = null; render(); return; }
-
-  const script = p.script || genericScript(p.title);
-  const idx = playState.index;
-  const total = script.length;
-
-  let html = `<button class="detail-back" id="playerBackBtn">← Back to project</button>`;
-  html += `<div class="player-shell" style="background:${p.grad}">`;
-  html += `<div class="player-progress"><div class="player-progress-fill" style="width:${Math.min(100, Math.round((idx/total)*100))}%"></div></div>`;
-
-  if(idx >= total){
-    const finalScore = playState.finalScore ?? p.myScore ?? 90;
-    html += `
-      <div class="dialogue-box end-card">
-        <div class="big-ic">🎉</div>
-        <h4>You finished "${p.title}"</h4>
-        <p>Nice work — your progress and score have been saved to this project.</p>
-        <div class="end-stats">
-          <div class="end-stat"><div class="n">100%</div><div class="l">Completion</div></div>
-          <div class="end-stat"><div class="n">${finalScore}</div><div class="l">Score</div></div>
-        </div>
-        <button class="continue-btn" id="finishBtn">Back to project</button>
-      </div>`;
-  } else {
-    const beat = script[idx];
-    if(beat.speaker === 'CHOICE'){
-      html += `
-        <div class="dialogue-box">
-          <span class="speaker-tag">MAKE A CHOICE</span>
-          <div class="choice-list">
-            ${beat.choices.map((c,i) => `<button class="choice-btn" data-choice="${i}">${c.label}</button>`).join('')}
-          </div>
-        </div>`;
-    } else {
-      html += `
-        <div class="dialogue-box">
-          <span class="speaker-tag">${beat.speaker}</span>
-          <div class="dialogue-text">${beat.text}</div>
-          <div class="dialogue-controls"><button class="continue-btn" id="continueBtn">Continue ›</button></div>
-        </div>`;
-    }
   }
-  html += `</div>`;
-  pageBody.innerHTML = html;
 
-  document.getElementById('playerBackBtn').addEventListener('click', ()=>{ playState = null; render(); });
-
-  const continueBtn = document.getElementById('continueBtn');
-  if(continueBtn) continueBtn.addEventListener('click', ()=>{ playState.index++; render(); });
-
-  pageBody.querySelectorAll('[data-choice]').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const beat = script[idx];
-      const choice = beat.choices[parseInt(btn.dataset.choice)];
-      playState.finalScore = choice.score;
-      playState.index++;
-      render();
+  const createBtn = document.getElementById('sidebarCreateBtn');
+  if (createBtn) {
+    createBtn.addEventListener('click', () => {
+      alert('✨ Create a new story!');
     });
+  }
+
+  const clearBtn = document.getElementById('notifClear');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      notifications.forEach(n => n.read = true);
+      renderNotifications();
+      const dot = document.getElementById('sidebarBellDot');
+      if (dot) dot.style.display = 'none';
+      const bell = document.getElementById('sidebarBell');
+      if (bell) bell.classList.remove('has-unread');
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    const pop = document.getElementById('notifPop');
+    const bell = document.getElementById('sidebarBell');
+    if (pop && !pop.contains(e.target) && e.target !== bell && !bell?.contains(e.target)) {
+      pop.classList.remove('open');
+    }
   });
 
-  const finishBtn = document.getElementById('finishBtn');
-  if(finishBtn) finishBtn.addEventListener('click', ()=>{
-    p.myCompletion = 100;
-    p.myScore = playState.finalScore ?? p.myScore ?? 90;
-    p.lastOpened = 'Just now';
+  /* ---------------- Existing projects scripts ---------------- */
+  const GRADIENTS = [
+    'linear-gradient(135deg,#16324a,#0a1826)',
+    'linear-gradient(135deg,#4a6d8c,#2e0708)',
+    'linear-gradient(135deg,#1f4a5e,#0e2430)',
+    'linear-gradient(135deg,#2a4a6e,#12263d)',
+    'linear-gradient(135deg,#a9364a,#33101c)',
+    'linear-gradient(135deg,#1a3a52,#0c1e2c)',
+    'linear-gradient(135deg,#3a5a7a,#182c3d)',
+    'linear-gradient(135deg,#7a5522,#3d240d)',
+    'linear-gradient(135deg,#22526a,#0e2934)',
+    'linear-gradient(135deg,#4a6d8c,#1c3348)',
+    'linear-gradient(135deg,#2e4a6e,#14243a)',
+  ];
+  const AVATAR_COLORS = ['#4a6d8c','#c9a24d','#4a86c9','#2f5f8a','#a9364a','#2f5a8a','#b0863c','#3a6690','#3a5f6e'];
+  function initials(name){ return name.split(' ').map(w=>w[0]).slice(0,1).join(''); }
+  function colorFor(seed){ let h=0; for(const c of seed) h = (h*31 + c.charCodeAt(0)) % AVATAR_COLORS.length; return AVATAR_COLORS[h]; }
+
+  const ALGEBRA_SCRIPT = [
+    { speaker:'DR. CHEN', text:"Welcome back to Algebra Adventures! Last time, the Fraction Kingdom was in chaos. Ready to continue?" },
+    { speaker:'NARRATOR', text:"You arrive at the border of the Ratio Valley, where two paths split before you." },
+    { speaker:'CHOICE', choices:[
+        { label:'Take the Proportions Path (careful, methodical)', score:92 },
+        { label:'Take the Shortcut through Variable Woods (risky)', score:74 }
+      ]},
+    { speaker:'NARRATOR', text:"You solve the final equation and the kingdom's bridges reconnect. The Fraction Kingdom is whole again." }
+  ];
+  const MYSTERY_SCRIPT = [
+    { speaker:'HOLMES', text:"A curious case, isn't it? Someone has removed a single page from the ledger — and left no trace." },
+    { speaker:'NARRATOR', text:"You examine the study for clues: ink stains, a broken window latch, and a muddy footprint by the desk." },
+    { speaker:'CHOICE', choices:[
+        { label:'Follow the muddy footprint outside', score:95 },
+        { label:'Question the household staff first', score:80 }
+      ]},
+    { speaker:'HOLMES', text:"Elementary, once you see it clearly. The case is closed." }
+  ];
+  function genericScript(title){
+    return [
+      { speaker:'NARRATOR', text:`You open "${title}" and step back into the story where you last left off.` },
+      { speaker:'CHOICE', choices:[
+          { label:'Proceed carefully', score:90 },
+          { label:'Proceed boldly', score:78 }
+        ]},
+      { speaker:'NARRATOR', text:"The scene resolves, and your choices are recorded." }
+    ];
+  }
+
+  let projects = [
+    { id:'p1', code:'SCI-4821', title:'The Scientific Method', grad:GRADIENTS[6], scenes:12, createdByMe:true, favorite:true, lastOpened:'2 hours ago', requests:[ { name:'Jordan Blake' }, { name:'Ravi Chandran' } ], accepted:[ { name:'Amara Ndoye', completion:82, score:91 }, { name:'Tom Fischer', completion:45, score:null } ] },
+    { id:'p2', code:'HIS-2093', title:'Ancient Rome: Rise & Fall', grad:GRADIENTS[3], scenes:8, createdByMe:true, favorite:false, lastOpened:'Yesterday', requests:[], accepted:[ { name:'Elena Cruz', completion:100, score:97 }, { name:'Sam Whitfield', completion:30, score:null } ] },
+    { id:'p3', code:'MTH-5510', title:'Algebra Adventures', grad:GRADIENTS[8], scenes:15, createdByMe:false, favorite:false, lastOpened:'3 days ago', owner:'Owen Park', myCompletion:63, myScore:null, script: ALGEBRA_SCRIPT },
+    { id:'p4', code:'LIT-3387', title:"Mystery on Baker Street", grad:GRADIENTS[10], scenes:10, createdByMe:false, favorite:true, lastOpened:'1 week ago', owner:'Priya Nair', myCompletion:100, myScore:88, script: MYSTERY_SCRIPT },
+  ];
+
+  let workspaceProjects = [
+    { id:'p1', title:'Ancient Egypt: The Pharaoh\'s Court', grad:GRADIENTS[1], scenes:12, lastEdited:'2 hours ago' },
+    { id:'p2', title:'Ancient Rome: Rise & Fall', grad:GRADIENTS[3], scenes:8, lastEdited:'Yesterday' },
+    { id:'w3', title:'Untitled Story', grad:GRADIENTS[0], scenes:0, lastEdited:'3 days ago' },
+  ];
+
+  let activeTab = 'workspace';
+  let activeProjectId = null;
+  let playState = null;
+
+  const pageBody = document.getElementById('pageBody');
+  const pageTabs = document.getElementById('pageTabs');
+  const pageHeading = document.getElementById('pageHeading');
+
+  function syncTabs(){
+    const showTabs = !activeProjectId && !playState;
+    pageTabs.style.display = showTabs ? 'flex' : 'none';
+    pageTabs.querySelectorAll('.page-tab').forEach(b=>{
+      b.classList.toggle('active', b.dataset.tab === activeTab);
+    });
+    pageHeading.textContent = playState ? 'Playing' : (activeProjectId ? 'Project' : 'Projects');
+  }
+
+  pageTabs.addEventListener('click', (e)=>{
+    const btn = e.target.closest('.page-tab');
+    if(!btn) return;
+    activeTab = btn.dataset.tab;
+    activeProjectId = null;
     playState = null;
-    activeProjectId = p.id;
     render();
   });
-}
 
-/* =====================================================================
-   NOTIFICATIONS
-   ===================================================================== */
-const notifBell = document.getElementById('notifBell');
-const notifPop = document.getElementById('notifPop');
-const notifList = document.getElementById('notifList');
+  function render(){
+    syncTabs();
+    if(playState){ renderPlayer(); return; }
+    if(activeProjectId){ renderProjectDetail(activeProjectId); return; }
+    if(activeTab === 'join'){ renderJoinPanel(); return; }
+    if(activeTab === 'workspace'){ renderWorkspaceList(); return; }
+    renderProjectList();
+  }
 
-function addNotification(text){
-  notifications.unshift({ id:'n'+Date.now(), text, when:'Just now', read:false });
+  function projCardHTML(p){
+    const fav = p.favorite ? 'is-fav' : '';
+    const owner = p.createdByMe ? `<span class="proj-pill">Owner</span>` : `<span class="proj-meta">by ${p.owner}</span>`;
+    const playPill = (!p.createdByMe) ? `<span class="proj-pill play">▶ Playable</span>` : '';
+    return `
+    <div class="proj-card" data-id="${p.id}">
+      <div class="proj-thumb" style="background:${p.grad}">
+        <button class="proj-fav ${fav}" data-fav="${p.id}" title="Pin favorite">★</button>
+        <span class="proj-code-tag">${p.code}</span>
+      </div>
+      <div class="proj-body">
+        <div class="proj-title">${p.title}</div>
+        <div class="proj-meta">
+          ${owner}<span class="sep">·</span>${p.scenes} scenes<span class="sep">·</span>${p.lastOpened}
+          ${p.requests && p.requests.length ? `<span class="sep">·</span><span class="proj-pill">${p.requests.length} pending</span>` : ''}
+          ${playPill}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function renderProjectList(){
+    const favorites = projects.filter(p=>p.favorite);
+    const created = projects.filter(p=>p.createdByMe);
+    const recent = projects.filter(p=>!p.createdByMe);
+
+    let html = '';
+    if(favorites.length){
+      html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7-6.2-3.4-6.2 3.4 1.2-7-5-4.9 7.1-.7L12 2z"/></svg>Pinned</div><div class="proj-grid">${favorites.map(projCardHTML).join('')}</div>`;
+    }
+    html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg>Created by you</div>`;
+    html += created.length
+      ? `<div class="proj-grid">${created.map(projCardHTML).join('')}</div>`
+      : `<div class="proj-empty">You haven't created any projects yet.</div>`;
+
+    html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>Recently opened</div>`;
+    html += recent.length
+      ? `<div class="proj-grid">${recent.map(projCardHTML).join('')}</div>`
+      : `<div class="proj-empty">Projects you're granted access to will show up here — open one to start playing.</div>`;
+
+    pageBody.innerHTML = html;
+
+    pageBody.querySelectorAll('.proj-fav').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        const p = projects.find(x=>x.id===btn.dataset.fav);
+        p.favorite = !p.favorite;
+        render();
+      });
+    });
+    pageBody.querySelectorAll('.proj-card').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        activeProjectId = card.dataset.id;
+        render();
+      });
+    });
+  }
+
+  function workspaceCardHTML(p){
+    return `
+    <a class="proj-card" href="workspace.html?id=${p.id}">
+      <div class="proj-thumb" style="background:${p.grad}">
+        <span class="proj-code-tag">Draft</span>
+      </div>
+      <div class="proj-body">
+        <div class="proj-title">${p.title}</div>
+        <div class="proj-meta">${p.scenes} scenes<span class="sep">·</span>Edited ${p.lastEdited}</div>
+      </div>
+    </a>`;
+  }
+
+  function renderWorkspaceList(){
+    let html = `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Your projects</div>`;
+    html += workspaceProjects.length
+      ? `<div class="proj-grid">${workspaceProjects.map(workspaceCardHTML).join('')}</div>`
+      : `<div class="proj-empty">You haven't started any projects yet.</div>`;
+    pageBody.innerHTML = html;
+  }
+
+  function renderJoinPanel(){
+    pageBody.innerHTML = `
+      <div class="join-panel">
+        <div class="ic">🔑</div>
+        <h3>Join a project with a code</h3>
+        <p>Ask the project owner for their project code, enter it below, and they'll be able to accept or decline your request.</p>
+        <input class="join-input" id="joinCodeInput" placeholder="e.g. SCI-4821" maxlength="12">
+        <button class="btn-primary" id="joinRequestBtn">Request access</button>
+        <div class="join-status" id="joinStatus"></div>
+      </div>`;
+    document.getElementById('joinRequestBtn').addEventListener('click', handleJoinRequest);
+    document.getElementById('joinCodeInput').addEventListener('keydown', (e)=>{ if(e.key==='Enter') handleJoinRequest(); });
+  }
+
+  function handleJoinRequest(){
+    const input = document.getElementById('joinCodeInput');
+    const status = document.getElementById('joinStatus');
+    const code = input.value.trim().toUpperCase();
+
+    if(!code){ status.textContent = 'Enter a project code first.'; status.className = 'join-status err'; return; }
+    if(projects.find(p=>p.code===code)){ status.textContent = 'You already have access to this project.'; status.className = 'join-status err'; return; }
+
+    status.textContent = 'Request sent — waiting for the project owner to respond.';
+    status.className = 'join-status pending';
+    input.value = '';
+
+    setTimeout(()=>{
+      const title = `Project ${code}`;
+      projects.push({
+        id:'p'+Date.now(), code, title, grad:GRADIENTS[projects.length % GRADIENTS.length],
+        scenes: Math.floor(Math.random()*10)+6, createdByMe:false, favorite:false,
+        lastOpened:'Just now', owner:'Project owner', myCompletion:0, myScore:null,
+        script: genericScript(title)
+      });
+      notifications.unshift({ id:'n'+Date.now(), text:`Your request to join "${title}" was accepted! Open it under Recently Opened to start playing.`, when:'Just now', read:false });
+      renderNotifications();
+      if(activeTab==='join' && !activeProjectId && !playState){
+        status.textContent = 'Accepted! Find it under "Recently opened."';
+        status.className = 'join-status ok';
+      }
+    }, 2200);
+  }
+
+  function renderProjectDetail(id){
+    const p = projects.find(x=>x.id===id);
+    if(!p){ activeProjectId = null; render(); return; }
+
+    let html = `<button class="detail-back" id="detailBackBtn">← Back to projects</button>`;
+    html += `
+      <div class="detail-hero" style="background:${p.grad}">
+        <div>
+          <h3>${p.title}</h3>
+          <div class="code">Project code: <b>${p.code}</b></div>
+        </div>
+        <div class="detail-hero-actions">
+          ${!p.createdByMe ? `<button class="btn-play" id="playBtn">▶ ${p.myCompletion>0 ? 'Continue playing':'Start playing'}</button>` : ''}
+          <button class="proj-fav ${p.favorite?'is-fav':''}" data-fav="${p.id}" title="Pin favorite">★</button>
+        </div>
+      </div>`;
+
+    if(p.createdByMe){
+      html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5z"/></svg>Access requests</div>`;
+      html += p.requests.length
+        ? p.requests.map(r => `
+          <div class="req-item">
+            <span class="author-dot" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;background:${colorFor(r.name)}">${initials(r.name)}</span>
+            <span class="req-name">${r.name}</span>
+            <div class="req-actions">
+              <button class="btn-accept" data-accept="${r.name}">Accept</button>
+              <button class="btn-decline" data-decline="${r.name}">Decline</button>
+            </div>
+          </div>`).join('')
+        : `<div class="proj-empty">No pending requests right now.</div>`;
+
+      html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg>Accepted users</div>`;
+      html += p.accepted.length
+        ? p.accepted.map(u => `
+          <div class="acc-item">
+            <span class="author-dot" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;background:${colorFor(u.name)}">${initials(u.name)}</span>
+            <span class="req-name" style="flex:0 0 auto; min-width:120px;">${u.name}</span>
+            <div class="bar-wrap"><div class="bar-fill" style="width:${u.completion}%"></div></div>
+            <span class="stat"><b>${u.completion}%</b> done</span>
+            <span class="score-tag ${u.score===null?'none':''}">${u.score===null ? 'No score' : u.score + ' pts'}</span>
+          </div>`).join('')
+        : `<div class="proj-empty">No one has been accepted into this project yet.</div>`;
+    } else {
+      html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17l6-6 4 4 8-9"/></svg>Your progress</div>`;
+      html += `
+        <div class="acc-item" style="border-bottom:none;">
+          <span class="author-dot" style="width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;background:${colorFor('You')}">Y</span>
+          <span class="req-name" style="flex:0 0 auto; min-width:120px;">You</span>
+          <div class="bar-wrap"><div class="bar-fill" style="width:${p.myCompletion}%"></div></div>
+          <span class="stat"><b>${p.myCompletion}%</b> done</span>
+          <span class="score-tag ${p.myScore===null?'none':''}">${p.myScore===null ? 'No score' : p.myScore + ' pts'}</span>
+        </div>
+        <div class="proj-empty">Owned by ${p.owner}. Only the owner can manage who has access.</div>`;
+    }
+
+    pageBody.innerHTML = html;
+
+    document.getElementById('detailBackBtn').addEventListener('click', ()=>{ activeProjectId = null; render(); });
+    const favBtn = pageBody.querySelector('.proj-fav');
+    if(favBtn) favBtn.addEventListener('click', ()=>{ p.favorite = !p.favorite; renderProjectDetail(id); });
+    const playBtn = document.getElementById('playBtn');
+    if(playBtn) playBtn.addEventListener('click', ()=>{ playState = { projectId: id, index: 0 }; render(); });
+
+    pageBody.querySelectorAll('[data-accept]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const name = btn.dataset.accept;
+        p.requests = p.requests.filter(r=>r.name!==name);
+        p.accepted.push({ name, completion:0, score:null });
+        renderProjectDetail(id);
+      });
+    });
+    pageBody.querySelectorAll('[data-decline]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const name = btn.dataset.decline;
+        p.requests = p.requests.filter(r=>r.name!==name);
+        renderProjectDetail(id);
+      });
+    });
+  }
+
+  function renderPlayer(){
+    const p = projects.find(x=>x.id===playState.projectId);
+    if(!p){ playState = null; render(); return; }
+
+    const script = p.script || genericScript(p.title);
+    const idx = playState.index;
+    const total = script.length;
+
+    let html = `<button class="detail-back" id="playerBackBtn">← Back to project</button>`;
+    html += `<div class="player-shell" style="background:${p.grad}">`;
+    html += `<div class="player-progress"><div class="player-progress-fill" style="width:${Math.min(100, Math.round((idx/total)*100))}%"></div></div>`;
+
+    if(idx >= total){
+      const finalScore = playState.finalScore ?? p.myScore ?? 90;
+      html += `
+        <div class="dialogue-box end-card">
+          <div class="big-ic">🎉</div>
+          <h4>You finished "${p.title}"</h4>
+          <p>Nice work — your progress and score have been saved to this project.</p>
+          <div class="end-stats">
+            <div class="end-stat"><div class="n">100%</div><div class="l">Completion</div></div>
+            <div class="end-stat"><div class="n">${finalScore}</div><div class="l">Score</div></div>
+          </div>
+          <button class="continue-btn" id="finishBtn">Back to project</button>
+        </div>`;
+    } else {
+      const beat = script[idx];
+      if(beat.speaker === 'CHOICE'){
+        html += `
+          <div class="dialogue-box">
+            <span class="speaker-tag">MAKE A CHOICE</span>
+            <div class="choice-list">
+              ${beat.choices.map((c,i) => `<button class="choice-btn" data-choice="${i}">${c.label}</button>`).join('')}
+            </div>
+          </div>`;
+      } else {
+        html += `
+          <div class="dialogue-box">
+            <span class="speaker-tag">${beat.speaker}</span>
+            <div class="dialogue-text">${beat.text}</div>
+            <div class="dialogue-controls"><button class="continue-btn" id="continueBtn">Continue ›</button></div>
+          </div>`;
+      }
+    }
+    html += `</div>`;
+    pageBody.innerHTML = html;
+
+    document.getElementById('playerBackBtn').addEventListener('click', ()=>{ playState = null; render(); });
+    const continueBtn = document.getElementById('continueBtn');
+    if(continueBtn) continueBtn.addEventListener('click', ()=>{ playState.index++; render(); });
+    pageBody.querySelectorAll('[data-choice]').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const beat = script[idx];
+        const choice = beat.choices[parseInt(btn.dataset.choice)];
+        playState.finalScore = choice.score;
+        playState.index++;
+        render();
+      });
+    });
+    const finishBtn = document.getElementById('finishBtn');
+    if(finishBtn) finishBtn.addEventListener('click', ()=>{
+      p.myCompletion = 100;
+      p.myScore = playState.finalScore ?? p.myScore ?? 90;
+      p.lastOpened = 'Just now';
+      playState = null;
+      activeProjectId = p.id;
+      render();
+    });
+  }
+
+  render();
   renderNotifications();
-}
-function renderNotifications(){
-  const hasUnread = notifications.some(n=>!n.read);
-  notifBell.classList.toggle('has-unread', hasUnread);
-  notifList.innerHTML = notifications.length
-    ? notifications.map(n => `
-      <div class="notif-item ${n.read?'':'unread'}">
-        <div class="ic">🔔</div>
-        <div><div class="txt">${n.text}</div><div class="when">${n.when}</div></div>
-      </div>`).join('')
-    : `<div class="notif-empty">You're all caught up — no notifications yet.</div>`;
-}
-notifBell.addEventListener('click', (e)=>{
-  e.stopPropagation();
-  notifPop.classList.toggle('open');
-  if(notifPop.classList.contains('open')){ notifications.forEach(n=>n.read=true); renderNotifications(); }
-});
-document.addEventListener('click', (e)=>{
-  if(!notifPop.contains(e.target) && e.target!==notifBell) notifPop.classList.remove('open');
-});
-document.getElementById('notifClear').addEventListener('click', ()=>{
-  notifications.forEach(n=>n.read=true);
-  renderNotifications();
-});
-
-/* ---------------- Init ---------------- */
-renderNotifications();
-render();
 </script>
 </body>
 </html>
