@@ -596,53 +596,60 @@
 <div class="help-fab">?</div>
 
 <script>
-/* ---------------- Cover art (hand-built SVG, unique per template) ---------------- */
-const ART = {
-  "Journey Through the Solar System": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0d1b33"/><stop offset="1" stop-color="#1b3a63"/></linearGradient></defs><rect width="300" height="200" fill="url(#g1)"/><circle cx="240" cy="40" r="10" fill="#fff"/><circle cx="60" cy="30" r="2" fill="#fff"/><circle cx="90" cy="60" r="2" fill="#fff"/><circle cx="200" cy="80" r="2" fill="#fff"/><circle cx="150" cy="20" r="2" fill="#fff"/><circle cx="150" cy="130" r="34" fill="#c9763a"/><circle cx="140" cy="120" r="6" fill="#a85a28"/><circle cx="165" cy="140" r="8" fill="#a85a28"/><ellipse cx="150" cy="130" rx="52" ry="10" fill="none" stroke="#e6c977" stroke-width="3"/><circle cx="70" cy="170" r="16" fill="#4a86c9"/><circle cx="230" cy="165" r="20" fill="#8a5a3a"/><path d="M110 175 h30 l-6 -22 h-18 z" fill="#e0e0e0"/><circle cx="125" cy="150" r="9" fill="#ffe3c2"/></svg>`,
+/* ---------------- Cover art ----------------
+   Cover images live in the /images folder (same directory as this page,
+   inside your "PlotterMockUp-1" folder). For each template, the loader
+   tries the slugified title with several extensions in turn (jpg, jpeg,
+   png, webp, gif) and uses whichever file actually exists. If a template's
+   file name doesn't match the default slug, add an entry to
+   IMAGE_NAME_OVERRIDES with just the base filename (no extension).
+   Default pattern tried: images/<slug>.<ext>
+*/
+const IMAGE_DIR = 'images';
+const IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif']; // tried in this order
 
-  "The DNA Detectives": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#123024"/><path d="M150 40 C 120 60, 120 90, 150 110 C 180 90, 180 60, 150 40" fill="none" stroke="#4ade9a" stroke-width="6"/><path d="M150 40 C 180 60, 180 90, 150 110 C 120 90, 120 60, 150 40" fill="none" stroke="#2f9e6e" stroke-width="6"/><circle cx="120" cy="70" r="14" fill="#0d1f18"/><rect x="112" y="70" width="16" height="4" fill="#4ade9a"/><rect x="112" y="82" width="30" height="52" rx="4" fill="#e8b04d"/><path d="M100 60 h60 l30 40 l-30 40 h-60 l-30 -40 z" fill="none" stroke="#4ade9a55" stroke-width="2"/></svg>`,
-
-  "Ecosystem Explorer": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#0e2b1c"/><ellipse cx="150" cy="190" rx="160" ry="30" fill="#164a2c"/><path d="M40 190 Q 60 60 90 190 Z" fill="#1d6b3c"/><path d="M110 190 Q 140 40 170 190 Z" fill="#238049"/><path d="M190 190 Q 220 70 250 190 Z" fill="#1d6b3c"/><circle cx="230" cy="60" r="10" fill="#f4d35e"/><circle cx="130" cy="120" r="10" fill="#7a4a2a"/><rect x="122" y="128" width="16" height="10" rx="3" fill="#5c3a20"/><circle cx="90" cy="150" r="4" fill="#fff"/><circle cx="200" cy="140" r="5" fill="#4a86c9"/></svg>`,
-
-  "Ancient Egypt: The Pharaoh's Court": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e8b04d"/><stop offset="1" stop-color="#c9762a"/></linearGradient></defs><rect width="300" height="200" fill="url(#g4)"/><circle cx="150" cy="55" r="24" fill="#f4d78a"/><polygon points="60,190 150,60 240,190" fill="#a85a1f"/><polygon points="150,60 195,190 240,190" fill="#8a4515"/><rect x="130" y="140" width="40" height="50" fill="#3a1d0a"/><path d="M120 130 h60 v10 h-60z" fill="#e6c977"/><rect x="20" y="180" width="260" height="20" fill="#4a6d8c"/></svg>`,
-
-  "On the Silk Road": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#3a2a12"/><circle cx="250" cy="45" r="22" fill="#e8b04d"/><path d="M0 170 Q 150 130 300 170 V200 H0 Z" fill="#c98b3f"/><ellipse cx="90" cy="150" rx="18" ry="10" fill="#5c4326"/><path d="M80 140 q10 -30 20 0" stroke="#5c4326" stroke-width="10" fill="none"/><rect x="82" y="120" width="14" height="20" fill="#7a2331"/><ellipse cx="170" cy="155" rx="18" ry="10" fill="#5c4326"/><path d="M160 145 q10 -30 20 0" stroke="#5c4326" stroke-width="10" fill="none"/><rect x="162" y="126" width="14" height="18" fill="#3a5f6e"/><circle cx="60" cy="60" r="3" fill="#fff"/><circle cx="220" cy="90" r="3" fill="#fff"/></svg>`,
-
-  "The Underground Railroad": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#08101e"/><circle cx="150" cy="40" r="4" fill="#e6c977"/><path d="M150 40 l4 12 12 2 -9 8 3 12 -10 -6 -10 6 3 -12 -9 -8 12 -2 z" fill="#e6c977"/><circle cx="60" cy="90" r="1.6" fill="#fff"/><circle cx="240" cy="70" r="1.6" fill="#fff"/><circle cx="100" cy="130" r="1.6" fill="#fff"/><path d="M40 190 Q 150 150 260 190" stroke="#4ade9a" stroke-width="3" fill="none" stroke-dasharray="6 6"/><circle cx="90" cy="170" r="10" fill="#2a1a12"/><rect x="84" y="178" width="12" height="16" fill="#3a2415"/><circle cx="93" cy="163" r="3" fill="#ffdcb0"/></svg>`,
-
-  "The Fraction Kingdom": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#1b2a4a"/><path d="M150 30 L230 70 V150 L150 190 L70 150 V70 Z" fill="#2f4a7a" stroke="#6f8fc9" stroke-width="3"/><path d="M150 30 V190" stroke="#6f8fc9" stroke-width="2"/><path d="M70 70 L230 150" stroke="#6f8fc9" stroke-width="2"/><path d="M230 70 L70 150" stroke="#6f8fc9" stroke-width="2"/><text x="105" y="65" fill="#e6c977" font-size="20" font-family="serif">1/2</text><text x="180" y="120" fill="#e6c977" font-size="20" font-family="serif">1/4</text><text x="100" y="170" fill="#e6c977" font-size="20" font-family="serif">3/4</text></svg>`,
-
-  "Pythagoras and the Lost Temple": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#101c2c"/><polygon points="60,180 220,180 220,60" fill="#7a5522" opacity="0.85"/><polygon points="60,180 220,60 90,60" fill="#5c3f18" opacity="0.6"/><line x1="60" y1="180" x2="220" y2="60" stroke="#e6c977" stroke-width="3"/><line x1="60" y1="180" x2="220" y2="180" stroke="#e6c977" stroke-width="3"/><line x1="220" y1="180" x2="220" y2="60" stroke="#e6c977" stroke-width="3"/><circle cx="150" cy="40" r="3" fill="#fff"/><circle cx="250" cy="90" r="3" fill="#fff"/><rect x="200" y="150" width="30" height="30" fill="#3a2a12" opacity="0.7"/></svg>`,
-
-  "Probability Island": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#1a5c78"/><ellipse cx="150" cy="185" rx="150" ry="15" fill="#0d3a4e"/><ellipse cx="150" cy="150" rx="60" ry="26" fill="#e8c977"/><path d="M110 150 Q150 110 190 150" fill="#3a8a3a"/><circle cx="150" cy="120" r="8" fill="#7a4a2a"/><rect x="90" y="60" width="8" height="14" fill="#5c3a20" transform="rotate(20 90 60)"/><circle cx="60" cy="60" r="1.8" fill="#8a2f2f"/><circle cx="65" cy="55" r="1.8" fill="#8a2f2f"/><path d="M0 0 h300 v40 q-150 20 -300 0 z" fill="#4a86c9" opacity="0.4"/></svg>`,
-
-  "The Poet's Notebook": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#2a1c14"/><rect x="50" y="30" width="200" height="150" rx="6" fill="#f3ead9"/><line x1="80" y1="60" x2="220" y2="60" stroke="#c9a24d" stroke-width="2"/><line x1="80" y1="90" x2="220" y2="90" stroke="#c9a24d" stroke-width="2"/><line x1="80" y1="120" x2="180" y2="120" stroke="#c9a24d" stroke-width="2"/><path d="M170 150 l30 -60 6 4 -28 60 z" fill="#7a5522"/><ellipse cx="205" cy="88" rx="6" ry="10" fill="#e6c977" transform="rotate(35 205 88)"/></svg>`,
-
-  "Chapters of Change": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#0d2418"/><rect x="80" y="120" width="140" height="60" fill="#a9364a"/><rect x="86" y="126" width="128" height="48" fill="#f3ead9"/><path d="M150 120 C 150 80 120 60 100 40 C 130 50 150 70 150 90 C 150 70 170 50 200 40 C 180 60 150 80 150 120" fill="#4ade9a"/><circle cx="150" cy="30" r="4" fill="#4ade9a"/></svg>`,
-
-  "Mystery on Baker Street": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#1b2430"/><ellipse cx="150" cy="100" rx="150" ry="100" fill="#3a4a5a" opacity="0.3"/><path d="M120 190 V120 Q120 90 150 90 Q180 90 180 120 V190" fill="#161c22"/><circle cx="150" cy="70" r="24" fill="#161c22"/><rect x="132" y="52" width="36" height="14" rx="4" fill="#0d1114"/><circle cx="200" cy="130" r="16" fill="none" stroke="#e6c977" stroke-width="4"/><rect x="212" y="142" width="18" height="4" fill="#e6c977" transform="rotate(45 212 142)"/><rect x="0" y="180" width="300" height="20" fill="#0d1114"/></svg>`,
-
-  "Bonjour, Paris!": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#4a86c9"/><rect x="140" y="30" width="20" height="150" fill="#8a5a3a"/><polygon points="130,60 170,60 165,90 135,90" fill="#8a5a3a"/><polygon points="120,90 180,90 172,120 128,120" fill="#8a5a3a"/><polygon points="110,120 190,120 178,150 122,150" fill="#8a5a3a"/><circle cx="60" cy="150" r="16" fill="#f3ead9"/><path d="M50 150 a10 6 0 0 1 20 0" fill="#c9763a"/><circle cx="230" cy="80" r="14" fill="#eee"/></svg>`,
-
-  "Tokyo Transit": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#161226"/><rect x="0" y="140" width="300" height="60" fill="#241a3a"/><rect x="30" y="60" width="30" height="90" fill="#3a2a5a"/><rect x="70" y="40" width="26" height="110" fill="#4a3a6a"/><rect x="230" y="70" width="30" height="80" fill="#3a2a5a"/><path d="M140 60 h50 v10 h-15 v70 h-8 v-70 h-27 z" fill="#e6c977"/><circle cx="120" cy="60" r="2" fill="#e6c977"/><circle cx="180" cy="90" r="2" fill="#e6c977"/><rect x="105" y="150" width="10" height="30" fill="#c9636f"/><rect x="120" y="150" width="10" height="30" fill="#c9636f"/></svg>`,
-
-  "Global Citizen": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#0d2b3a"/><circle cx="150" cy="100" r="55" fill="#2f6f8a" stroke="#4ade9a" stroke-width="3"/><path d="M95 100 Q150 60 205 100 Q150 140 95 100" stroke="#4ade9a" stroke-width="2" fill="none"/><path d="M150 45 V155" stroke="#4ade9a" stroke-width="2"/><circle cx="110" cy="150" r="10" fill="#e6c977"/><circle cx="190" cy="150" r="10" fill="#a9364a"/><circle cx="150" cy="165" r="10" fill="#4a86c9"/><path d="M110 150 L150 165 L190 150" stroke="#fff" stroke-width="2" fill="none"/></svg>`,
-
-  "The Vote That Mattered": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#1a2338"/><rect x="120" y="110" width="60" height="70" fill="#3a4a5a"/><rect x="128" y="90" width="44" height="20" fill="#2f3a48"/><rect x="140" y="60" width="20" height="10" fill="#e6c977"/><path d="M150 60 v-25" stroke="#e6c977" stroke-width="3"/><path d="M136 20 h28 l-6 15 h-16 z" fill="#e6c977"/><circle cx="70" cy="150" r="14" fill="#c9636f"/><path d="M60 150 a10 8 0 0 1 20 0" fill="#8a2f3f"/><circle cx="230" cy="150" r="14" fill="#4a86c9"/><path d="M220 150 a10 8 0 0 1 20 0" fill="#2f5a8a"/></svg>`,
-
-  "The Impressionist's Eye": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#e8dcc0"/><rect x="40" y="60" width="16" height="110" fill="#6b4a2a"/><path d="M20 60 h120 l-10 -20 h-100 z" fill="#6b4a2a"/><circle cx="180" cy="90" r="28" fill="#fdf6e3" stroke="#3a2a1a" stroke-width="3"/><path d="M155 85 q25 -18 50 0" stroke="#c9a24d" stroke-width="4" fill="none"/><circle cx="150" cy="140" r="10" fill="#a9364a"/><circle cx="170" cy="150" r="10" fill="#4ade9a"/><circle cx="190" cy="140" r="10" fill="#4a86c9"/><ellipse cx="230" cy="60" rx="16" ry="10" fill="#4ade9a"/></svg>`,
-
-  "Sound & Story": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#2a1832"/><path d="M100 170 V70 l70 -20 v100" fill="none" stroke="#e6c977" stroke-width="4"/><ellipse cx="90" cy="170" rx="22" ry="14" fill="#c9a24d"/><ellipse cx="160" cy="150" rx="22" ry="14" fill="#e6c977"/><path d="M120 40 q10 -15 20 0" stroke="#4ade9a" stroke-width="3" fill="none"/><path d="M140 30 q10 -15 20 0" stroke="#4ade9a" stroke-width="3" fill="none"/><circle cx="230" cy="60" r="18" fill="none" stroke="#a9364a" stroke-width="4"/><path d="M230 78 v20 M222 90 h16" stroke="#a9364a" stroke-width="4"/></svg>`,
-
-  "Mind Matters": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#123024"/><path d="M150 40 C 100 60 90 110 130 140 Q150 150 170 140 C 210 110 200 60 150 40 Z" fill="#e8c977" stroke="#4ade9a" stroke-width="3"/><path d="M150 40 v100" stroke="#2f9e6e" stroke-width="2"/><path d="M120 60 q30 20 60 0" stroke="#2f9e6e" stroke-width="2" fill="none"/><path d="M115 90 q35 25 70 0" stroke="#2f9e6e" stroke-width="2" fill="none"/><circle cx="150" cy="170" r="8" fill="none" stroke="#4ade9a" stroke-width="3"/><circle cx="130" cy="180" r="5" fill="none" stroke="#4ade9a" stroke-width="2"/></svg>`,
-
-  "The Nutrition Lab": `<svg viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg"><rect width="300" height="200" fill="#0d2b1c"/><rect x="130" y="70" width="40" height="80" rx="4" fill="#dfe9ea" opacity="0.85"/><path d="M138 70 v-20 h24 v20" fill="none" stroke="#dfe9ea" stroke-width="4"/><path d="M132 120 q20 -14 36 0" fill="#4ade9a" opacity="0.7"/><circle cx="60" cy="150" r="20" fill="#c9763a"/><circle cx="55" cy="145" r="4" fill="#8a4a1a"/><path d="M90 150 l20 -30 20 30 z" fill="#2f9e6e"/><circle cx="230" cy="150" r="18" fill="#a9364a"/><path d="M230 132 q6 -10 12 -6" stroke="#2f9e6e" stroke-width="3" fill="none"/></svg>`
+const IMAGE_NAME_OVERRIDES = {
+  "Journey Through the Solar System": "journeytothesolarsystem"
 };
 
-function svgUri(title){
-  const svg = ART[title];
-  if(!svg) return null;
-  return 'data:image/svg+xml,' + encodeURIComponent(svg);
+function slugify(title){
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function baseImageName(title){
+  return IMAGE_NAME_OVERRIDES[title] || slugify(title);
+}
+
+/* Tries each extension in turn for a given title; calls onFound(url) the
+   first time an image actually loads. If none load, onFound is never called
+   and the element just keeps its gradient background. */
+function findCoverImage(title, onFound){
+  const base = baseImageName(title);
+  let i = 0;
+
+  function tryNext(){
+    if(i >= IMAGE_EXTENSIONS.length) return; // no matching file found — keep gradient
+    const ext = IMAGE_EXTENSIONS[i++];
+    const url = `${IMAGE_DIR}/${base}.${ext}`;
+    const img = new Image();
+    img.onload = () => onFound(url);
+    img.onerror = tryNext;
+    img.src = url;
+  }
+  tryNext();
+}
+
+/* Called after cards are rendered: finds every element carrying
+   data-img-title and layers its real cover photo over the gradient
+   once (if ever) it's found. */
+function hydrateImages(){
+  document.querySelectorAll('[data-img-title]').forEach(el => {
+    const title = el.dataset.imgTitle;
+    findCoverImage(title, (url) => {
+      const grad = el.dataset.grad || '';
+      el.style.background = `url('${url}') center/cover no-repeat${grad ? ', ' + grad : ''}`;
+    });
+  });
 }
 
 /* ---------------- Data ---------------- */
@@ -718,17 +725,18 @@ const stories = [
 /* ---------------- Render ---------------- */
 function catMeta(key){ return CATS.find(c=>c.key===key); }
 
-function bgFor(title, idx, multiplier){
-  const uri = svgUri(title);
-  if(uri) return `background-image:url('${uri}');`;
-  const grad = GRADIENTS[(idx*(multiplier||1)) % GRADIENTS.length];
-  return `background:${grad};`;
+/* Returns just the gradient fallback (as a CSS background string) for a
+   card. The real photo (if one exists on disk) is layered on top of this
+   later by hydrateImages(), once it's confirmed to load. */
+function gradFor(idx, multiplier){
+  return GRADIENTS[(idx*(multiplier||1)) % GRADIENTS.length];
 }
 
 function staffCard(t, idx){
   const meta = catMeta(t.cat);
+  const grad = gradFor(idx, 1);
   return `
-  <div class="staff-card" style="${bgFor(t.title, idx, 1)}">
+  <div class="staff-card" data-img-title="${t.title}" data-grad="${grad}" style="background:${grad}">
     <div class="staff-top">
       <span class="badge" style="background:${meta.color}22; color:${meta.color}; border:1px solid ${meta.color}55">${meta.label}</span>
     </div>
@@ -746,9 +754,10 @@ function staffCard(t, idx){
 
 function tplCard(t, idx){
   const meta = catMeta(t.cat);
+  const grad = gradFor(idx, 3);
   return `
   <div class="tpl-card" data-cat="${t.cat}" data-title="${t.title.toLowerCase()}" data-author="${t.author.toLowerCase()}">
-    <div class="tpl-thumb" style="${bgFor(t.title, idx, 3)}">
+    <div class="tpl-thumb" data-img-title="${t.title}" data-grad="${grad}" style="background:${grad}">
       <span class="badge" style="background:${meta.color}25; color:${meta.color}; border:1px solid ${meta.color}55">${meta.label}</span>
       <span class="scene-count">${t.scenes} scenes</span>
       <div class="tpl-actions">
@@ -796,6 +805,7 @@ function renderGrid(list){
     grid.innerHTML = list.map((t,i)=>tplCard(t,i)).join('');
   }
   document.getElementById('gridCount').textContent = `${list.length} template${list.length===1?'':'s'}`;
+  hydrateImages();
 }
 
 function filterGrid(cat, query){
@@ -845,6 +855,7 @@ renderFilters();
 renderGrid(templates);
 renderGenres();
 renderStories();
+hydrateImages();
 
 document.getElementById('searchInput').addEventListener('input', (e)=>{
   const activeCat = document.querySelector('.pill.active')?.dataset.cat || 'all';
