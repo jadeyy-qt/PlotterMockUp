@@ -357,7 +357,7 @@
     border: 1px solid rgba(212,175,106,.25);
     box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(212,175,106,.1);
     flex-shrink:0;
-    background: linear-gradient(180deg,#2a3f6b 0%, #c9822f 55%, #8a5a2f 100%);
+    background: #1c3a52;
   }
   .stage-sun{
     position:absolute; top:40px; left:70px; width:70px; height:70px; border-radius:50%;
@@ -513,13 +513,22 @@
   .bg-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:8px; }
   .bg-thumb{
     aspect-ratio: 4/3; border-radius:9px; border: 2px solid transparent; cursor:pointer; position:relative;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
     transition: border-color .15s ease, transform .15s ease;
   }
   .bg-thumb:hover{ transform: translateY(-1px); }
   .bg-thumb.selected{ border-color: var(--gold-bright); box-shadow: 0 0 0 2px rgba(201,162,77,.2); }
+  .bg-thumb::before{
+    content:"";
+    position:absolute; inset:0; border-radius:7px;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,.55) 100%);
+  }
   .bg-thumb .lbl{
     position:absolute; bottom:4px; left:5px; font-size:9.5px; font-weight:700; color: rgba(255,255,255,.9);
     text-shadow: 0 1px 2px rgba(0,0,0,.6);
+    z-index:1;
   }
 
   .char-row{
@@ -600,7 +609,6 @@
     <button class="create-btn" title="Create">+</button>
     <nav class="nav">
       <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
-      <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
       <a class="nav-item active" href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
       <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
       <a class="nav-item" href="scenes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>Scenes</a>
@@ -809,13 +817,17 @@ const castInScene = [
   { name:"Horemheb", role:"Vizier", pos:"Left" },
 ];
 
+/* ---------------- Backgrounds ----------------
+   Each background now points at a real image file
+   (images/backgrounds/*.jpg). The "grad" field is kept
+   as a fallback color shown while the jpg loads / if it's missing. */
 const backgrounds = [
-  { name:"Palace Gates",  grad:"linear-gradient(160deg,#233f7a,#c9822f 75%)" },
-  { name:"Throne Room",   grad:"linear-gradient(160deg,#4a6d8c,#2e0708)", selected:true },
-  { name:"Nile Bank",     grad:"linear-gradient(160deg,#2f7fc9,#1f5f52)" },
-  { name:"Temple Court",  grad:"linear-gradient(160deg,#c9a24d,#3d2c14)" },
-  { name:"Desert Night",  grad:"linear-gradient(160deg,#0f1c3d,#233f7a)" },
-  { name:"Market Street", grad:"linear-gradient(160deg,#d98a3f,#7a3f0e)" },
+  { name:"Palace Gates",  img:"images/backgrounds/gate.jpg",    grad:"linear-gradient(160deg,#233f7a,#c9822f 75%)" },
+  { name:"Throne Room",   img:"images/backgrounds/throneroom.jpg",  grad:"linear-gradient(160deg,#4a6d8c,#2e0708)", selected:true },
+  { name:"Nile Bank",     img:"images/backgrounds/loading.jpg",    grad:"linear-gradient(160deg,#2f7fc9,#1f5f52)" },
+  { name:"Temple Court",  img:"images/pyt.jpg",  grad:"linear-gradient(160deg,#c9a24d,#3d2c14)" },
+  { name:"Desert Night",  img:"images/backgrounds/loading.jpg",  grad:"linear-gradient(160deg,#0f1c3d,#233f7a)" },
+  { name:"Market Street", img:"images/backgrounds/loading.jpg",  grad:"linear-gradient(160deg,#d98a3f,#7a3f0e)" },
 ];
 
 const choices = [
@@ -871,13 +883,24 @@ function renderFlow(){
 /* ---------------- Render: backgrounds ---------------- */
 function renderBackgrounds(){
   document.getElementById('bgGrid').innerHTML = backgrounds.map(b => `
-    <div class="bg-thumb ${b.selected?'selected':''}" style="background:${b.grad}" title="${b.name}">
+    <div class="bg-thumb ${b.selected?'selected':''}" style="background-image:url('${b.img}'); background-color:transparent;" data-fallback="${b.grad}" title="${b.name}">
       <span class="lbl">${b.name}</span>
     </div>`).join('');
-  document.querySelectorAll('.bg-thumb').forEach(t=>{
-    t.addEventListener('click', ()=>{
+
+  // If a jpg fails to load, fall back to the gradient so the grid never looks broken.
+  document.querySelectorAll('.bg-thumb').forEach(thumb => {
+    const bgUrl = thumb.style.backgroundImage.slice(5, -2).replace(/^["']|["']$/g, '');
+    const testImg = new Image();
+    testImg.onload = () => {};
+    testImg.onerror = () => {
+      thumb.style.backgroundImage = 'none';
+      thumb.style.background = thumb.dataset.fallback;
+    };
+    testImg.src = bgUrl;
+
+    thumb.addEventListener('click', ()=>{
       document.querySelectorAll('.bg-thumb').forEach(x=>x.classList.remove('selected'));
-      t.classList.add('selected');
+      thumb.classList.add('selected');
     });
   });
 }
