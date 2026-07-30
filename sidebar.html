@@ -1,0 +1,146 @@
+<nav class="sidebar" role="navigation" aria-label="Main navigation">
+
+    <!-- Logo – no frame, just the image -->
+    <div class="sidebar-logo" id="sidebarLogo">
+        <img src="" alt="Logo" id="sidebarLogoImg" style="display:none;" />
+        <span class="logo-placeholder" id="sidebarLogoPlaceholder">SF</span>
+    </div>
+
+    <!-- Create button -->
+    <button class="sidebar-create" id="sidebarCreateBtn" title="Create new" aria-haspopup="true" aria-expanded="false">+</button>
+
+    <!-- Create dropdown menu -->
+    <div class="create-menu" id="createMenu" role="menu" aria-label="Create options">
+        <button class="create-menu-item" id="menuUpload" role="menuitem" type="button">Upload</button>
+        <button class="create-menu-item" id="menuBlankProject" role="menuitem" type="button" onclick="window.location.href='blank_workspace.html'">Create blank project</button>
+    </div>
+    <input type="file" id="hiddenFileInput" style="display:none;" />
+
+    <!-- Navigation links – update the href attributes to match your actual file names -->
+    <div class="sidebar-nav">
+        <a class="nav-item active" href="index.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 11l9-7 9 7"/>
+                <path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/>
+            </svg>
+            <span>Home</span>
+        </a>
+
+        <a class="nav-item" href="projects.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/>
+            </svg>
+            <span>Projects</span>
+        </a>
+
+        <a class="nav-item" href="characters.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="4"/>
+                <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+            </svg>
+            <span>Characters</span>
+        </a>
+
+        <a class="nav-item" href="scenes.html">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="14" height="12" rx="1.5"/>
+                <path d="M20 8l-4 2.5v3L20 16V8Z"/>
+            </svg>
+            <span>Scenes</span>
+        </a>
+    </div>
+
+    <!-- Bottom: notification bell + help button -->
+    <div class="sidebar-bottom">
+        <button class="bell-btn" id="sidebarBell" type="button" aria-label="Notifications">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/>
+                <path d="M10 20a2 2 0 0 0 4 0"/>
+            </svg>
+            <span class="bell-dot" id="sidebarBellDot"></span>
+        </button>
+        <button class="help-btn" id="sidebarHelp" type="button" aria-label="Help">?</button>
+    </div>
+
+</nav>
+
+<style>
+/* --- Added: create button dropdown menu only --- */
+.sidebar-create { position: relative; }
+
+.create-menu {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: 0;
+    margin-left: 8px;
+    min-width: 180px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    padding: 4px;
+    z-index: 100;
+}
+
+.create-menu.open { display: block; }
+
+.create-menu-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.create-menu-item:hover { background: #f2f2f2; }
+</style>
+
+<script>
+// --- Added: create button dropdown behavior only ---
+(function () {
+    const createBtn = document.getElementById('sidebarCreateBtn');
+    const createMenu = document.getElementById('createMenu');
+    const menuUpload = document.getElementById('menuUpload');
+    const menuBlankProject = document.getElementById('menuBlankProject');
+    const hiddenFileInput = document.getElementById('hiddenFileInput');
+
+    function openMenu() {
+        createMenu.classList.add('open');
+        createBtn.setAttribute('aria-expanded', 'true');
+        document.addEventListener('click', onOutsideClick);
+    }
+
+    function closeMenu() {
+        createMenu.classList.remove('open');
+        createBtn.setAttribute('aria-expanded', 'false');
+        document.removeEventListener('click', onOutsideClick);
+    }
+
+    function onOutsideClick(e) {
+        if (!createMenu.contains(e.target) && e.target !== createBtn) {
+            closeMenu();
+        }
+    }
+
+    createBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        createMenu.classList.contains('open') ? closeMenu() : openMenu();
+    });
+
+    menuUpload.addEventListener('click', function () {
+        closeMenu();
+        hiddenFileInput.click();
+        // TODO: hook hiddenFileInput's change event into your upload logic
+    });
+
+    menuBlankProject.addEventListener('click', function () {
+        closeMenu();
+        // TODO: replace with your blank-project creation logic
+    });
+})();
+</script>
