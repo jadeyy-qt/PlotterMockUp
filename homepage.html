@@ -129,11 +129,48 @@
             margin-bottom: 22px;
             transition: background .15s ease, border-color .15s ease, transform .15s ease;
             flex-shrink: 0;
+            position: relative;
         }
         .sidebar-create:hover {
             background: #1c3a52;
             border-color: #c9a24d;
             transform: translateY(-1px);
+        }
+
+        /* ---- create dropdown menu (Upload / Create blank project) ----
+           !important used because sidebar.html may load its own .create-menu
+           rules after this stylesheet and win the cascade otherwise. */
+        .create-menu {
+            display: none;
+            position: absolute !important;
+            top: 0 !important;
+            left: calc(100% + 10px) !important;
+            width: 210px !important;
+            background: #0f1f30 !important;
+            border: 1px solid rgba(212, 175, 106, .25) !important;
+            border-radius: 12px !important;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, .5) !important;
+            padding: 6px !important;
+            z-index: 90 !important;
+        }
+        .create-menu.open {
+            display: block;
+        }
+        .create-menu-item {
+            display: block !important;
+            width: 100% !important;
+            text-align: left !important;
+            padding: 10px 12px !important;
+            border-radius: 8px !important;
+            font-size: 13.5px !important;
+            font-weight: 600 !important;
+            color: #a8bccf !important;
+            background: none !important;
+            border: none !important;
+        }
+        .create-menu-item:hover {
+            background: #142a3e !important;
+            color: #e6c977 !important;
         }
 
         .sidebar-nav {
@@ -1136,14 +1173,6 @@
 
         <!-- ====== RIGHT RAIL ====== -->
         <aside class="right-rail hidden" id="rightRail">
-            <div class="rr-label">Start Creating</div>
-            <button class="btn-primary" id="railNewStory">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
-                    <path d="M12 5v14M5 12h14"/>
-                </svg>
-                New story
-            </button>
-            <button class="btn-outline">Import story</button>
 
             <div class="rr-label">Quick Actions</div>
             <a class="qa-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>Browse by genre</a>
@@ -1163,12 +1192,6 @@
 
     <!-- ====== FLOATING CONTROLS ====== -->
     <div class="float-controls">
-        <button class="float-new-story" id="floatNewStory">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
-                <path d="M12 5v14M5 12h14"/>
-            </svg>
-            <span>New story</span>
-        </button>
         <button class="toggle-rail-btn" id="toggleRailBtn" aria-label="Toggle right panel">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M9 18l6-6-6-6"/>
@@ -1267,7 +1290,54 @@
 
             const sidebarCreate = document.getElementById('sidebarCreateBtn');
             if (sidebarCreate) {
-                sidebarCreate.addEventListener('click', handleNewStory);
+                // Build the dropdown menu if the injected sidebar.html doesn't already have one
+                let createMenu = document.getElementById('createMenu');
+                if (!createMenu) {
+                    createMenu = document.createElement('div');
+                    createMenu.className = 'create-menu';
+                    createMenu.id = 'createMenu';
+                    createMenu.setAttribute('role', 'menu');
+                    createMenu.setAttribute('aria-label', 'Create options');
+                    createMenu.innerHTML = `
+                        <button class="create-menu-item" id="menuUpload" role="menuitem" type="button">Upload</button>
+                        <button class="create-menu-item" id="menuBlankProject" role="menuitem" type="button">Create blank project</button>
+                    `;
+                    sidebarCreate.insertAdjacentElement('afterend', createMenu);
+                }
+
+                sidebarCreate.setAttribute('aria-haspopup', 'true');
+                sidebarCreate.setAttribute('aria-expanded', 'false');
+
+                sidebarCreate.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isOpen = createMenu.classList.toggle('open');
+                    sidebarCreate.setAttribute('aria-expanded', String(isOpen));
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!createMenu.contains(e.target) && e.target !== sidebarCreate) {
+                        createMenu.classList.remove('open');
+                        sidebarCreate.setAttribute('aria-expanded', 'false');
+                    }
+                });
+
+                const menuUpload = document.getElementById('menuUpload');
+                if (menuUpload) {
+                    menuUpload.addEventListener('click', () => {
+                        createMenu.classList.remove('open');
+                        sidebarCreate.setAttribute('aria-expanded', 'false');
+                        // TODO: hook this up to your real upload flow (e.g. open a file input)
+                    });
+                }
+
+                const menuBlankProject = document.getElementById('menuBlankProject');
+                if (menuBlankProject) {
+                    menuBlankProject.addEventListener('click', () => {
+                        createMenu.classList.remove('open');
+                        sidebarCreate.setAttribute('aria-expanded', 'false');
+                        // TODO: hook this up to your real "create blank project" flow
+                    });
+                }
             }
 
             // expose logo replacement
@@ -1687,7 +1757,6 @@
                         img.onerror = () => {
                             img.style.display = 'none';
                             placeholder.style.display = 'block';
-                            console.warn('⚠️ Brand image failed to load:', src);
                         };
                         if (img.complete) {
                             img.onload();
