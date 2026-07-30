@@ -53,7 +53,7 @@
   textarea, input, select{font-family:inherit;}
 
   /* ---------- Shell ---------- */
-  .shell{ display:flex; height:100vh; padding:28px 20px; gap:20px; box-sizing:border-box; }
+  .shell{ display:flex; height:100vh; padding:10px 10px; gap:20px; box-sizing:border-box; }
   @media (max-width: 768px){
     .shell{ flex-direction:column; height:auto; min-height:100vh; padding:12px; gap:12px; }
     #sidebar-container{ width:100%; display:flex; justify-content:center; }
@@ -376,13 +376,14 @@
     border-radius: 16px;
     position:relative;
     overflow:hidden;
-    border: 1px dashed rgba(212,175,106,.35);
+    border: 1px solid rgba(212,175,106,.12);
     box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(212,175,106,.06);
     flex-shrink:0;
     background: var(--panel-2);
-    transition: background .2s ease, border-color .15s ease, transform .12s ease;
+    transition: background .2s ease, border-color .15s ease, border-style .15s ease, transform .12s ease;
   }
-  .stage.drag-over{ border-color: var(--gold-bright); box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 0 3px rgba(201,162,77,.25); }
+  .stage.is-empty{ border-style: dashed; border-color: rgba(212,175,106,.35); }
+  .stage.drag-over{ border-style: solid; border-color: var(--gold-bright); box-shadow: 0 20px 60px rgba(0,0,0,.5), 0 0 0 3px rgba(201,162,77,.25); }
 
   .stage-empty{
     position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:10px;
@@ -545,6 +546,11 @@
   .insp-toggle:hover{ transform: translate(-50%, -2px); border-color: var(--gold); background:#1c3a52; box-shadow: 0 12px 28px rgba(0,0,0,.45), 0 4px 10px rgba(0,0,0,.35); }
   .insp-toggle svg{ width:16px; height:16px; transition: transform .28s ease; }
   .insp-toggle.panel-open svg{ transform: rotate(180deg); }
+  /* When collapsed, the panel's own edge sits flush against .workspace's
+     right edge (overflow:hidden). Centering the button on that edge would
+     clip its right half, so pull it fully inside instead. */
+  .inspector.collapsed .insp-toggle{ transform: translate(calc(-100% - 6px), 0); }
+  .inspector.collapsed .insp-toggle:hover{ transform: translate(calc(-100% - 6px), -2px); }
   @media (max-width: 980px){ .insp-toggle{ display:none; } }
 </style>
 </head>
@@ -679,7 +685,7 @@
         </div>
 
         <div class="stage-scroll" id="stageScroll">
-          <div class="stage" id="stage">
+          <div class="stage is-empty" id="stage">
             <div class="stage-empty" id="stageEmpty">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"/><path d="M9 9h6v6H9z"/></svg>
               <div class="t1">Empty canvas</div>
@@ -967,6 +973,7 @@ function markDirty(){
 
 function updateEmptyState(){
   stageEmpty.style.display = placedCount === 0 ? 'flex' : 'none';
+  stage.classList.toggle('is-empty', placedCount === 0);
 }
 
 /* ---------------- Drag from palette ---------------- */
