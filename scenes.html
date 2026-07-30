@@ -3,320 +3,852 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>StoryForge — Scenes</title>
+<title>Plotter — Scenes</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg: #0a1420;
-    --panel: #0f1f30;
-    --panel-2: #142a3e;
-    --panel-3: #1a3348;
-    --border: #24435f;
-    --border-soft: #1a3049;
-    --text: #eef1e9;
-    --text-dim: #a8bccf;
-    --text-faint: #6d859f;
-    --accent: #c9a24d;
-    --accent-2: #e6c977;
-    --gold: #c9a24d;
-    --gold-bright: #e6c977;
-    --maroon: #4a6d8c;
-    --maroon-deep: #1c3348;
-    --sci: #4a86c9;
-    --hist: #c9a24d;
-    --math: #6f8fc9;
-    --lit: #a9364a;
-    --lang: #c9636f;
-    --soc: #4ade9a;
-    --arts: #c9a24d;
-    --health: #4ade9a;
-    --ok: #4ade9a;
-    --radius-lg: 18px;
-    --radius-md: 12px;
-    --font-display: 'Fraunces', serif;
+  /* ---------- reset / base ---------- */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
   }
-
-  *{box-sizing:border-box; margin:0; padding:0;}
-  html,body{height:100%;}
-  body{
-    background:
-      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(74,109,140,.22), transparent 60%),
-      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(201,162,77,.05), transparent 55%),
-      radial-gradient(ellipse 1000px 600px at 50% 100%, rgba(20,50,80,.3), transparent 60%),
-      var(--bg);
-    color: var(--text);
+  html, body {
+    height: 100%;
+  }
+  body {
+    background: #0a1420;
+    color: #eef1e9;
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
   }
-  ::selection{ background: rgba(201,162,77,.35); color:#fff; }
-  ::-webkit-scrollbar{ width:9px; height:9px; }
-  ::-webkit-scrollbar-track{ background: transparent; }
-  ::-webkit-scrollbar-thumb{ background: #1e3c56; border-radius:8px; border:2px solid var(--bg); }
-  ::-webkit-scrollbar-thumb:hover{ background: var(--maroon); }
-  a{color:inherit; text-decoration:none;}
-  button{font-family:inherit; cursor:pointer;}
-
-  /* ---------- Layout shell ---------- */
-  .shell{ display:grid; grid-template-columns: 84px 1fr; min-height:100vh; }
-  @media (max-width: 720px){ .shell{ grid-template-columns: 1fr; } .sidebar{ display:none; } }
-
-  .sidebar{
-    background: var(--panel);
-    border-right: 1px solid var(--border-soft);
-    display:flex; flex-direction:column; align-items:center;
-    padding: 20px 0 16px;
-    position:sticky; top:0; height:100vh;
+  ::selection {
+    background: rgba(201, 162, 77, .35);
+    color: #fff;
   }
-  .logo{
-    width:38px; height:38px; border-radius:11px;
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    border: 1px solid rgba(212,175,106,.5);
-    display:flex; align-items:center; justify-content:center;
+  ::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1e3c56;
+    border-radius: 8px;
+    border: 2px solid #0a1420;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #4a6d8c;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    background: none;
+  }
+
+  /* ---------- page layout ---------- */
+  .app {
+    display: flex;
+    min-height: 100vh;
+    padding: 20px 24px 24px 24px;
+    gap: 24px;
+    position: relative;
+  }
+
+  /* ---------- SIDEBAR (exactly like homepage) ---------- */
+  #sidebar-container {
+    flex-shrink: 0;
+    z-index: 50;
+  }
+  .sidebar {
+    width: 76px;
+    background: #0f1f30;
+    border: 1px solid rgba(212, 175, 106, .20);
+    border-radius: 20px;
+    padding: 18px 0 14px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, .55);
+    backdrop-filter: blur(4px);
+    height: calc(100vh - 48px);
+    min-height: 460px;
+    position: sticky;
+    top: 20px;
+    transition: transform .25s ease, opacity .25s ease;
+  }
+  .sidebar-logo {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    border-radius: 0;
+    margin-bottom: 18px;
+    flex-shrink: 0;
+  }
+  .sidebar-logo img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .sidebar-logo .logo-placeholder {
+    font-size: 18px;
+    font-weight: 700;
+    color: #c9a24d;
+    letter-spacing: -.5px;
+  }
+  .sidebar-create {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #142a3e;
+    border: 1px solid #24435f;
+    color: #c9a24d;
+    font-size: 22px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 22px;
-    box-shadow: 0 4px 14px rgba(20,40,58,.55), 0 0 0 1px rgba(212,175,106,.15);
+    transition: background .15s ease, border-color .15s ease, transform .15s ease;
+    flex-shrink: 0;
   }
-  .logo svg path{ fill: var(--gold) !important; }
-  .logo svg{ width:20px; height:20px; }
-  .create-btn{
-    width:44px; height:44px; border-radius:13px;
-    background: var(--panel-2); border:1px solid var(--border); color: var(--gold);
-    display:flex; align-items:center; justify-content:center;
-    font-size:20px; font-weight:600; margin-bottom: 26px;
-    transition: transform .15s ease, background .15s ease, border-color .15s ease;
+  .sidebar-create:hover {
+    background: #1c3a52;
+    border-color: #c9a24d;
+    transform: translateY(-1px);
   }
-  .create-btn:hover{ background:#1c3a52; border-color: var(--accent); transform: translateY(-1px); }
-  .nav{ display:flex; flex-direction:column; gap:4px; width:100%; align-items:center; flex:1; }
-  .nav-item{
-    width:64px; display:flex; flex-direction:column; align-items:center; gap:5px;
-    padding: 9px 0 7px; border-radius: 12px; color: var(--text-faint);
-    font-size:11px; font-weight:500; position:relative; background:none; border:none;
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    align-items: center;
+    flex: 1;
+    padding: 0 4px;
+  }
+  .sidebar-nav .nav-item {
+    width: 56px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 0 6px;
+    border-radius: 12px;
+    color: #6d859f;
+    font-size: 10px;
+    font-weight: 500;
     transition: color .15s ease, background .15s ease;
+    position: relative;
+    border: none;
+    background: none;
+    text-align: center;
   }
-  .nav-item svg{ width:19px; height:19px; }
-  .nav-item:hover{ color: var(--text-dim); }
-  .nav-item.active{
-    color: var(--gold-bright);
-    background: rgba(212,175,106,.12);
+  .sidebar-nav .nav-item svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
   }
-  .nav-item.active::before{
-    content:""; position:absolute; left:-1px; top:50%; transform:translateY(-50%);
-    width:3px; height:20px; border-radius:3px; background: var(--gold);
+  .sidebar-nav .nav-item:hover {
+    color: #a8bccf;
+  }
+  .sidebar-nav .nav-item.active {
+    color: #e6c977;
+    background: rgba(212, 175, 106, .10);
+  }
+  .sidebar-nav .nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: -2px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3px;
+    height: 20px;
+    border-radius: 3px;
+    background: #c9a24d;
+  }
+  .sidebar-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    padding-top: 12px;
+    width: 100%;
+    border-top: 1px solid rgba(36, 67, 95, .45);
+  }
+  .sidebar-bottom .bell-btn {
+    position: relative;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6d859f;
+    transition: color .15s ease, background .15s ease;
+    background: none;
+    border: none;
+  }
+  .sidebar-bottom .bell-btn:hover {
+    color: #e6c977;
+    background: rgba(212, 175, 106, .08);
+  }
+  .sidebar-bottom .bell-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+  .sidebar-bottom .bell-dot {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #a9364a;
+    border: 2px solid #0f1f30;
+    display: none;
+  }
+  .sidebar-bottom .bell-btn.has-unread .bell-dot {
+    display: block;
+  }
+  .sidebar-bottom .help-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #6d859f;
+    font-weight: 700;
+    font-size: 16px;
+    transition: color .15s ease, background .15s ease;
+    background: none;
+    border: none;
+  }
+  .sidebar-bottom .help-btn:hover {
+    color: #e6c977;
+    background: rgba(212, 175, 106, .08);
   }
 
-  /* ---------- Top bar ---------- */
-  .topbar{
-    position: sticky; top:0; z-index:20;
-    display:flex; align-items:center; gap:16px;
+  /* ---------- NOTIFICATION POPOVER ---------- */
+  .notif-pop {
+    position: fixed;
+    bottom: 110px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 360px;
+    max-height: 400px;
+    overflow-y: auto;
+    background: #0f1f30;
+    border: 1px solid rgba(212, 175, 106, .25);
+    border-radius: 14px;
+    box-shadow: 0 20px 56px rgba(0, 0, 0, .6);
+    z-index: 70;
+    display: none;
+  }
+  .notif-pop.open {
+    display: block;
+  }
+  .notif-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid #1a3049;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #eef1e9;
+  }
+  .notif-head .clear {
+    font-size: 12px;
+    font-weight: 600;
+    color: #c9a24d;
+    background: none;
+    border: none;
+  }
+  .notif-item {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 12px 16px;
+    border-bottom: 1px solid #1a3049;
+  }
+  .notif-item:last-child {
+    border-bottom: none;
+  }
+  .notif-item .ic {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(212, 175, 106, .12);
+    color: #c9a24d;
+    font-size: 14px;
+  }
+  .notif-item .txt {
+    font-size: 13px;
+    color: #a8bccf;
+    line-height: 1.4;
+  }
+  .notif-item.unread .txt {
+    color: #eef1e9;
+  }
+  .notif-item .when {
+    font-size: 11px;
+    color: #6d859f;
+    margin-top: 3px;
+  }
+  .notif-empty {
+    padding: 36px 16px;
+    text-align: center;
+    color: #6d859f;
+    font-size: 13px;
+  }
+
+  /* ---------- main content ---------- */
+  .main-wrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: rgba(13,20,32,.4);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(212,175,106,.08);
+  }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
     padding: 18px 28px;
     background: rgba(13,20,32,.85);
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(212,175,106,.15);
+    flex-shrink: 0;
   }
-  .page-heading{
-    font-family: var(--font-display);
-    font-size:20px; font-weight:600;
-    color: var(--text);
+  .page-heading {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: #eef1e9;
+  }
+  .banner-stripe {
+    height: 3px;
+    background: linear-gradient(90deg, #1c3348, #c9a24d, #1c3348);
+    opacity: .55;
+    flex-shrink: 0;
+  }
+  main {
+    padding: 24px 32px 40px;
+    flex: 1;
+    overflow-y: auto;
   }
 
-  .banner-stripe{
-    height:3px;
-    background: linear-gradient(90deg, var(--maroon-deep), var(--gold), var(--maroon-deep));
-    opacity:.55;
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 22px;
   }
-
-  /* ---------- Main ---------- */
-  main{ padding: 24px 40px 60px; max-width: 1600px; margin: 0 auto; }
-
-  /* Filter bar */
-  .filter-bar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:22px; }
-  .search-input{
-    flex:1; min-width:200px; max-width:340px;
-    background: var(--panel-2); border:1px solid var(--border); border-radius:11px;
-    padding:11px 14px; color:var(--text); font-size:13.5px; font-family:inherit; outline:none;
+  .search-input {
+    flex: 1;
+    min-width: 200px;
+    max-width: 340px;
+    background: #142a3e;
+    border: 1px solid #24435f;
+    border-radius: 11px;
+    padding: 11px 14px;
+    color: #eef1e9;
+    font-size: 13.5px;
+    font-family: inherit;
+    outline: none;
     transition: border-color .15s ease;
   }
-  .search-input:focus{ border-color: var(--gold); }
-  .search-input:hover{ border-color: rgba(201,162,77,.4); }
-  .search-input::placeholder{ color: var(--text-faint); }
-  .proj-select{
-    background: var(--panel-2); border:1px solid var(--border); border-radius:11px;
-    padding:11px 14px; color:var(--text); font-size:13.5px; font-family:inherit; outline:none;
+  .search-input:focus {
+    border-color: #c9a24d;
+  }
+  .search-input:hover {
+    border-color: rgba(201, 162, 77, .4);
+  }
+  .search-input::placeholder {
+    color: #6d859f;
+  }
+  .proj-select {
+    background: #142a3e;
+    border: 1px solid #24435f;
+    border-radius: 11px;
+    padding: 11px 14px;
+    color: #eef1e9;
+    font-size: 13.5px;
+    font-family: inherit;
+    outline: none;
     transition: border-color .15s ease;
   }
-  .proj-select:focus{ border-color: var(--gold); }
-  .subject-pills{ display:flex; gap:6px; margin-left:auto; flex-wrap:wrap; }
-  .subject-pill{
-    background: var(--panel-2); border:1px solid var(--border); color: var(--text-dim);
-    font-size:12px; font-weight:700; padding:8px 13px; border-radius:999px;
-    display:flex; align-items:center; gap:6px;
+  .proj-select:focus {
+    border-color: #c9a24d;
+  }
+  .subject-pills {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+    flex-wrap: wrap;
+  }
+  .subject-pill {
+    background: #142a3e;
+    border: 1px solid #24435f;
+    color: #a8bccf;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 8px 13px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
     transition: all .15s ease;
   }
-  .subject-pill:hover{ border-color: var(--gold); color: var(--gold-bright); }
-  .subject-pill .dot{ width:7px; height:7px; border-radius:50%; }
-  .subject-pill.active{
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    border-color: var(--gold);
-    color: var(--gold-bright);
+  .subject-pill:hover {
+    border-color: #c9a24d;
+    color: #e6c977;
+  }
+  .subject-pill .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+  .subject-pill.active {
+    background: linear-gradient(135deg, #4a6d8c, #1c3348);
+    border-color: #c9a24d;
+    color: #e6c977;
   }
 
-  /* Banner-style section labels */
-  .proj-section-label{
-    position:relative;
-    display:inline-flex; align-items:center; gap:8px;
-    font-family: var(--font-display);
-    font-size: 12px; font-weight:600; letter-spacing: .08em;
-    color: var(--gold-bright);
+  .proj-section-label {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Fraunces', serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    color: #e6c977;
     text-transform: uppercase;
     margin: 26px 0 16px;
     padding: 8px 20px 8px 14px;
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    border: 1px solid rgba(230,201,119,.5);
+    background: linear-gradient(135deg, #4a6d8c, #1c3348);
+    border: 1px solid rgba(230, 201, 119, .5);
     border-radius: 3px;
     clip-path: polygon(0 0, 100% 0, 100% 70%, calc(100% - 12px) 100%, 0 100%);
-    box-shadow: 0 6px 16px rgba(0,0,0,.35);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, .35);
   }
-  .proj-section-label:first-child{ margin-top:0; }
-  .proj-section-label svg{ width:12px; height:12px; fill: var(--gold); }
+  .proj-section-label:first-child {
+    margin-top: 0;
+  }
+  .proj-section-label svg {
+    width: 12px;
+    height: 12px;
+    fill: #c9a24d;
+  }
 
-  .scene-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap:18px; }
-  @media (max-width:900px){ .scene-grid{ grid-template-columns: repeat(2,1fr); } }
-  @media (max-width:600px){ .scene-grid{ grid-template-columns:1fr; } }
+  .scene-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 18px;
+  }
+  @media (max-width: 900px) {
+    .scene-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 600px) {
+    .scene-grid {
+      grid-template-columns: 1fr;
+    }
+  }
 
-  .scene-card{
-    position:relative; border-radius: var(--radius-lg);
-    border:1px solid var(--border-soft);
-    background: var(--panel);
-    overflow:hidden; cursor:pointer;
+  .scene-card {
+    position: relative;
+    border-radius: 18px;
+    border: 1px solid #1a3049;
+    background: #0f1f30;
+    overflow: hidden;
+    cursor: pointer;
     transition: border-color .18s ease, transform .18s ease, box-shadow .18s ease;
   }
-  .scene-card:hover{
-    border-color: var(--gold);
+  .scene-card:hover {
+    border-color: #c9a24d;
     transform: translateY(-3px);
-    box-shadow: 0 16px 34px rgba(0,0,0,.38), 0 0 0 1px rgba(212,175,106,.15);
+    box-shadow: 0 16px 34px rgba(0, 0, 0, .38), 0 0 0 1px rgba(212, 175, 106, .15);
   }
-  .scene-strip{ height:5px; }
-  .scene-body{ padding:16px 16px 15px; }
-  .scene-subject-tag{
-    display:inline-flex; align-items:center; gap:6px;
-    font-size:10.5px; font-weight:700;
-    letter-spacing:.04em; text-transform:uppercase;
-    padding:4px 9px; border-radius:4px;
-    margin-bottom:10px;
-    font-family: var(--font-display);
+  .scene-strip {
+    height: 5px;
+  }
+  .scene-body {
+    padding: 16px 16px 15px;
+  }
+  .scene-subject-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 4px 9px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    font-family: 'Fraunces', serif;
     border: 1px solid transparent;
   }
-  .scene-title{
-    font-size:14.5px; font-weight:700; color:var(--text);
-    margin-bottom:6px; line-height:1.3;
+  .scene-title {
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #eef1e9;
+    margin-bottom: 6px;
+    line-height: 1.3;
   }
-  .scene-meta{
-    font-size:12px; color:var(--text-faint);
-    display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  .scene-meta {
+    font-size: 12px;
+    color: #6d859f;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
   }
-  .scene-meta .sep{ opacity:.5; }
-  .scene-meta .proj-link{ color: var(--gold-bright); font-weight:600; }
-  .scene-empty{ color:var(--text-faint); font-size:13px; padding: 6px 2px 18px; }
+  .scene-meta .sep {
+    opacity: .5;
+  }
+  .scene-meta .proj-link {
+    color: #e6c977;
+    font-weight: 600;
+  }
+  .scene-empty {
+    color: #6d859f;
+    font-size: 13px;
+    padding: 6px 2px 18px;
+  }
 
-  /* Detail view */
-  .detail-back{
-    display:inline-flex; align-items:center; gap:6px;
-    font-size:13px; font-weight:600; color:var(--text-dim);
-    background:none; border:none; margin-bottom:18px;
+  .detail-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #a8bccf;
+    background: none;
+    border: none;
+    margin-bottom: 18px;
     transition: color .15s ease;
   }
-  .detail-back:hover{ color: var(--gold-bright); }
-  .scene-hero{
-    border-radius: var(--radius-lg); padding:22px; margin-bottom:24px;
-    background: var(--panel);
-    border:1px solid var(--border-soft);
-    box-shadow: 0 8px 24px rgba(0,0,0,.2);
+  .detail-back:hover {
+    color: #e6c977;
   }
-  .scene-hero-top{
-    display:flex; align-items:flex-start; justify-content:space-between;
-    gap:16px; flex-wrap:wrap; margin-bottom:6px;
+
+  .scene-hero {
+    border-radius: 18px;
+    padding: 22px;
+    margin-bottom: 24px;
+    background: #0f1f30;
+    border: 1px solid #1a3049;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
   }
-  .scene-hero h3{
-    font-family: var(--font-display);
-    font-size:22px; font-weight:600;
+  .scene-hero-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 6px;
   }
-  .scene-hero .sub{ font-size:13px; color:var(--text-faint); margin-top:6px; }
-  .scene-hero .sub .proj-link{ color: var(--gold-bright); font-weight:600; }
-  .scene-hero-actions{ display:flex; align-items:center; gap:10px; margin-top:14px; }
-  .btn-primary-sm{
-    display:inline-flex; align-items:center; gap:8px;
-    background: linear-gradient(135deg, var(--gold), #b88a45);
-    color:#2a1608; border: 1px solid rgba(230,201,119,.6);
-    padding:10px 16px; border-radius:999px; font-size:13px; font-weight:700;
-    box-shadow: 0 6px 16px rgba(201,162,77,.22);
+  .scene-hero h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+  }
+  .scene-hero .sub {
+    font-size: 13px;
+    color: #6d859f;
+    margin-top: 6px;
+  }
+  .scene-hero .sub .proj-link {
+    color: #e6c977;
+    font-weight: 600;
+  }
+  .scene-hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .btn-primary-sm {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #c9a24d, #b88a45);
+    color: #2a1608;
+    border: 1px solid rgba(230, 201, 119, .6);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 6px 16px rgba(201, 162, 77, .22);
     transition: transform .15s ease, box-shadow .15s ease;
   }
-  .btn-primary-sm:hover{ transform: translateY(-1px); box-shadow: 0 8px 20px rgba(212,175,106,.34); }
-  .btn-ghost-sm{
-    background: var(--panel-2); border:1px solid var(--border); color: var(--text-dim);
-    padding:10px 16px; border-radius:999px; font-size:13px; font-weight:700;
+  .btn-primary-sm:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(212, 175, 106, .34);
+  }
+  .btn-ghost-sm {
+    background: #142a3e;
+    border: 1px solid #24435f;
+    color: #a8bccf;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
     transition: all .15s ease;
   }
-  .btn-ghost-sm:hover{ color: var(--gold-bright); border-color: var(--gold); }
+  .btn-ghost-sm:hover {
+    color: #e6c977;
+    border-color: #c9a24d;
+  }
 
-  .beat-list{ display:flex; flex-direction:column; gap:10px; }
-  .beat-item{
-    border:1px solid var(--border-soft); background: var(--panel);
-    border-radius:12px; padding:14px 16px;
+  .beat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .beat-item {
+    border: 1px solid #1a3049;
+    background: #0f1f30;
+    border-radius: 12px;
+    padding: 14px 16px;
     transition: border-color .15s ease;
   }
-  .beat-item:hover{ border-color: rgba(201,162,77,.3); }
-  .beat-speaker{
-    display:inline-flex; align-items:center; gap:6px;
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    color: var(--gold-bright);
-    font-size:11px; font-weight:700; letter-spacing:.03em;
-    padding:4px 10px; border-radius:999px; margin-bottom:9px;
-    border: 1px solid rgba(230,201,119,.35);
-    font-family: var(--font-display);
+  .beat-item:hover {
+    border-color: rgba(201, 162, 77, .3);
   }
-  .beat-speaker.choice{
-    background: rgba(201,162,77,.14);
-    color: var(--gold-bright);
-    border-color: rgba(201,162,77,.35);
+  .beat-speaker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #4a6d8c, #1c3348);
+    color: #e6c977;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .03em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    margin-bottom: 9px;
+    border: 1px solid rgba(230, 201, 119, .35);
+    font-family: 'Fraunces', serif;
   }
-  .beat-text{ font-size:13.5px; color:var(--text); line-height:1.55; }
-  .beat-choices{ display:flex; flex-direction:column; gap:6px; margin-top:2px; }
-  .beat-choice{
-    font-size:13px; color:var(--text-dim);
-    padding:8px 12px;
-    border:1px solid var(--border-soft);
-    border-radius:9px;
-    background: var(--panel-2);
+  .beat-speaker.choice {
+    background: rgba(201, 162, 77, .14);
+    color: #e6c977;
+    border-color: rgba(201, 162, 77, .35);
+  }
+  .beat-text {
+    font-size: 13.5px;
+    color: #eef1e9;
+    line-height: 1.55;
+  }
+  .beat-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 2px;
+  }
+  .beat-choice {
+    font-size: 13px;
+    color: #a8bccf;
+    padding: 8px 12px;
+    border: 1px solid #1a3049;
+    border-radius: 9px;
+    background: #142a3e;
     transition: border-color .15s ease, color .15s ease;
   }
-  .beat-choice:hover{
-    border-color: rgba(201,162,77,.4);
-    color: var(--text);
+  .beat-choice:hover {
+    border-color: rgba(201, 162, 77, .4);
+    color: #eef1e9;
+  }
+
+  @media (max-width: 768px) {
+    .app {
+      padding: 12px;
+      flex-direction: column;
+      align-items: center;
+    }
+    #sidebar-container {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+    .sidebar {
+      width: 100%;
+      max-width: 460px;
+      height: auto;
+      min-height: unset;
+      flex-direction: row;
+      flex-wrap: wrap;
+      padding: 12px 16px;
+      border-radius: 16px;
+      gap: 4px 0;
+      position: relative;
+      top: 0;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, .4);
+    }
+    .sidebar-logo {
+      margin-bottom: 0;
+      margin-right: 12px;
+      width: 36px;
+      height: 36px;
+    }
+    .sidebar-create {
+      margin-bottom: 0;
+      margin-right: 8px;
+      width: 36px;
+      height: 36px;
+      font-size: 18px;
+    }
+    .sidebar-nav {
+      flex-direction: row;
+      flex: 1;
+      justify-content: flex-start;
+      gap: 0;
+      padding: 0;
+      flex-wrap: wrap;
+    }
+    .sidebar-nav .nav-item {
+      width: auto;
+      padding: 6px 10px;
+      flex-direction: row;
+      gap: 5px;
+      font-size: 11px;
+    }
+    .sidebar-nav .nav-item svg {
+      width: 16px;
+      height: 16px;
+    }
+    .sidebar-nav .nav-item.active::before {
+      display: none;
+    }
+    .sidebar-bottom {
+      flex-direction: row;
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+      width: auto;
+      gap: 4px;
+      border-left: 1px solid rgba(36, 67, 95, .35);
+      padding-left: 10px;
+    }
+    .sidebar-bottom .bell-btn,
+    .sidebar-bottom .help-btn {
+      width: 34px;
+      height: 34px;
+    }
+    .main-wrap {
+      width: 100%;
+      max-width: 800px;
+    }
+    main {
+      padding: 16px 16px 30px;
+    }
+    .topbar {
+      padding: 14px 18px;
+    }
+    .filter-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .subject-pills {
+      margin-left: 0;
+    }
+    .notif-pop {
+      width: 90vw;
+      max-width: 360px;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+  @media (max-width: 480px) {
+    .scene-grid {
+      grid-template-columns: 1fr;
+    }
+    .sidebar-nav .nav-item span {
+      display: none;
+    }
   }
 </style>
 </head>
 <body>
 
-<div class="shell">
-  <aside class="sidebar">
-    <a class="logo" href="homepage.html">
-      <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5C4 4.67 4.67 4 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13Z" fill="white" opacity=".9"/><path d="M13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" fill="white" opacity=".55"/></svg>
-    </a>
-    <button class="create-btn" title="Create">+</button>
-    <nav class="nav">
-      <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
-      <a class="nav-item" href="homepage.html#templates"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
-      <a class="nav-item" href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
-      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
-      <a class="nav-item active" href="scenes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>Scenes</a>
-    </nav>
-  </aside>
+<div class="app">
 
-  <div>
-    <header class="topbar">
+  <!-- ====== SIDEBAR ====== -->
+  <div id="sidebar-container">
+    <nav class="sidebar" role="navigation" aria-label="Main navigation">
+      <div class="sidebar-logo" id="sidebarLogo">
+        <img src="images/sidebar-logo.png" alt="Logo" id="sidebarLogoImg" />
+        <span class="logo-placeholder" id="sidebarLogoPlaceholder" style="display:none;">SF</span>
+      </div>
+      <button class="sidebar-create" id="sidebarCreateBtn" title="Create new">+</button>
+      <div class="sidebar-nav">
+        <a class="nav-item" href="homepage.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+          <span>Home</span>
+        </a>
+        <a class="nav-item" href="templates.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+          <span>Templates</span>
+        </a>
+        <a class="nav-item" href="projects.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>
+          <span>Projects</span>
+        </a>
+        <a class="nav-item" href="characters.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+          <span>Characters</span>
+        </a>
+        <a class="nav-item active" href="scenes.html">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>
+          <span>Scenes</span>
+        </a>
+      </div>
+      <div class="sidebar-bottom">
+        <button class="bell-btn" id="sidebarBell" type="button" aria-label="Notifications">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg>
+          <span class="bell-dot" id="sidebarBellDot"></span>
+        </button>
+        <button class="help-btn" id="sidebarHelp" type="button" aria-label="Help">?</button>
+      </div>
+    </nav>
+  </div>
+
+  <!-- ====== MAIN ====== -->
+  <div class="main-wrap">
+    <div class="topbar">
       <div class="page-heading" id="pageHeading">Scenes</div>
-    </header>
+    </div>
     <div class="banner-stripe"></div>
 
     <main>
@@ -330,228 +862,247 @@
       <div id="pageBody"></div>
     </main>
   </div>
+
+</div>
+
+<!-- ====== NOTIFICATION POPOVER ====== -->
+<div class="notif-pop" id="notifPop">
+  <div class="notif-head">
+    <span>Notifications</span>
+    <button class="clear" id="notifClear" type="button">Mark all read</button>
+  </div>
+  <div id="notifList"></div>
 </div>
 
 <script>
-/* =====================================================================
-   DATA
-   ===================================================================== */
-const SUBJECTS = {
-  sci:  { label:'Science',  color:'var(--sci)'  },
-  hist: { label:'History',  color:'var(--hist)' },
-  math: { label:'Math',     color:'var(--math)' },
-  lit:  { label:'Literature', color:'var(--lit)' },
-};
+  /* ---------------- Sidebar functionality ---------------- */
+  const notifications = [
+    { id: 'n1', text: 'Elena Cruz accepted your invite to "Ancient Rome: Rise & Fall."', when: 'Yesterday', read: false },
+  ];
 
-let scenes = [
-  {
-    id:'sc1', title:"The Trial of Galileo", project:'The Scientific Method', projectId:'p1', subject:'sci',
-    updated:'2 hours ago',
-    beats:[
-      { speaker:'NARRATOR', text:'Rome, 1633. Galileo stands before the Inquisition, his telescope confiscated, his theories under fire.' },
-      { speaker:'CARDINAL', text:'You claim the Earth moves around the Sun. Do you recant, or do you stand by heresy?' },
-      { speaker:'CHOICE', choices:[
-          { label:'Recant publicly to survive' },
-          { label:'Defend the evidence, whatever the cost' }
-        ]},
-    ]
-  },
-  {
-    id:'sc2', title:"Newton's Orchard", project:'The Scientific Method', projectId:'p1', subject:'sci',
-    updated:'1 day ago',
-    beats:[
-      { speaker:'NARRATOR', text:'A quiet afternoon in Woolsthorpe. An apple falls, and a question takes root.' },
-      { speaker:'NEWTON', text:'Why straight down? Why not sideways, or up? What is pulling it?' },
-      { speaker:'NARRATOR', text:'The idea that will become gravity begins to take shape.' },
-    ]
-  },
-  {
-    id:'sc3', title:"Ratio Valley Crossroads", project:'Algebra Adventures', projectId:'p3', subject:'math',
-    updated:'3 days ago',
-    beats:[
-      { speaker:'NARRATOR', text:'You arrive at the border of the Ratio Valley, where two paths split before you.' },
-      { speaker:'CHOICE', choices:[
-          { label:'Take the Proportions Path (careful, methodical)' },
-          { label:'Take the Shortcut through Variable Woods (risky)' }
-        ]},
-    ]
-  },
-  {
-    id:'sc4', title:"The Missing Ledger Page", project:'Mystery on Baker Street', projectId:'p4', subject:'lit',
-    updated:'1 week ago',
-    beats:[
-      { speaker:'HOLMES', text:"A curious case, isn't it? Someone has removed a single page from the ledger, and left no trace." },
-      { speaker:'NARRATOR', text:'You examine the study for clues: ink stains, a broken window latch, a muddy footprint by the desk.' },
-      { speaker:'CHOICE', choices:[
-          { label:'Follow the muddy footprint outside' },
-          { label:'Question the household staff first' }
-        ]},
-    ]
-  },
-  {
-    id:'sc5', title:"Fall of the Republic", project:'Ancient Rome: Rise & Fall', projectId:'p2', subject:'hist',
-    updated:'Yesterday',
-    beats:[
-      { speaker:'NARRATOR', text:'The Senate is divided. Legions loyal to rival generals camp at the edges of the city.' },
-      { speaker:'SENATOR', text:'If he crosses the Rubicon with his army, it is war. There is no path back from that river.' },
-      { speaker:'NARRATOR', text:'The die, as they say, will soon be cast.' },
-    ]
-  },
-  {
-    id:'sc6', title:"The Colosseum Riot", project:'Ancient Rome: Rise & Fall', projectId:'p2', subject:'hist',
-    updated:'4 days ago',
-    beats:[
-      { speaker:'NARRATOR', text:'A disputed match, a furious crowd, and guards who are suddenly outnumbered.' },
-      { speaker:'CHOICE', choices:[
-          { label:'Call for reinforcements' },
-          { label:'Let the crowd exhaust itself' }
-        ]},
-    ]
-  },
-];
+  function renderNotifications() {
+    const hasUnread = notifications.some(n => !n.read);
+    const dot = document.getElementById('sidebarBellDot');
+    const bell = document.getElementById('sidebarBell');
+    if (dot) dot.style.display = hasUnread ? 'block' : 'none';
+    if (bell) bell.classList.toggle('has-unread', hasUnread);
 
-/* =====================================================================
-   VIEW STATE
-   ===================================================================== */
-let activeSceneId = null;
-let searchQuery = '';
-let projFilterValue = '';
-let subjectFilter = '';
+    const list = document.getElementById('notifList');
+    if (!list) return;
+    list.innerHTML = notifications.length ?
+      notifications.map(n => `
+        <div class="notif-item ${n.read ? '' : 'unread'}">
+          <div class="ic">🔔</div>
+          <div>
+            <div class="txt">${n.text}</div>
+            <div class="when">${n.when}</div>
+          </div>
+        </div>`).join('') :
+      `<div class="notif-empty">You're all caught up — no notifications yet.</div>`;
+  }
 
-const pageBody = document.getElementById('pageBody');
-const pageHeading = document.getElementById('pageHeading');
-const sceneSearch = document.getElementById('sceneSearch');
-const projFilter = document.getElementById('projFilter');
-const subjectPills = document.getElementById('subjectPills');
-
-/* Populate the project filter dropdown from scene data */
-const uniqueProjects = [...new Map(scenes.map(s => [s.projectId, s.project])).entries()];
-uniqueProjects.forEach(([id, name]) => {
-  const opt = document.createElement('option');
-  opt.value = id; opt.textContent = name;
-  projFilter.appendChild(opt);
-});
-
-/* Populate subject filter pills */
-function renderSubjectPills(){
-  subjectPills.innerHTML = Object.entries(SUBJECTS).map(([key, s]) => `
-    <button class="subject-pill ${subjectFilter===key?'active':''}" data-subject="${key}">
-      <span class="dot" style="background:${s.color}"></span>${s.label}
-    </button>`).join('');
-  subjectPills.querySelectorAll('.subject-pill').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const key = btn.dataset.subject;
-      subjectFilter = (subjectFilter === key) ? '' : key;
-      render();
+  const bellBtn = document.getElementById('sidebarBell');
+  const notifPop = document.getElementById('notifPop');
+  if (bellBtn) {
+    bellBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      notifPop.classList.toggle('open');
+      if (notifPop.classList.contains('open')) {
+        notifications.forEach(n => n.read = true);
+        renderNotifications();
+        const dot = document.getElementById('sidebarBellDot');
+        if (dot) dot.style.display = 'none';
+        bellBtn.classList.remove('has-unread');
+      }
     });
-  });
-}
+  }
 
-sceneSearch.addEventListener('input', ()=>{ searchQuery = sceneSearch.value.trim().toLowerCase(); render(); });
-projFilter.addEventListener('change', ()=>{ projFilterValue = projFilter.value; render(); });
-
-function render(){
-  renderSubjectPills();
-  const showFilters = !activeSceneId;
-  document.querySelector('.filter-bar').style.display = showFilters ? 'flex' : 'none';
-  pageHeading.textContent = activeSceneId ? 'Scene' : 'Scenes';
-
-  if(activeSceneId){ renderSceneDetail(activeSceneId); return; }
-  renderSceneList();
-}
-
-/* ---------------- Scene list ---------------- */
-function sceneCardHTML(s){
-  const sub = SUBJECTS[s.subject];
-  return `
-  <div class="scene-card" data-id="${s.id}">
-    <div class="scene-strip" style="background:${sub.color}"></div>
-    <div class="scene-body">
-      <span class="scene-subject-tag" style="color:${sub.color}; background:${sub.color}22; border-color:${sub.color}44;">${sub.label}</span>
-      <div class="scene-title">${s.title}</div>
-      <div class="scene-meta">
-        <span class="proj-link">${s.project}</span><span class="sep">·</span>${s.beats.length} beats<span class="sep">·</span>${s.updated}
-      </div>
-    </div>
-  </div>`;
-}
-
-function renderSceneList(){
-  const filtered = scenes.filter(s => {
-    if(searchQuery && !s.title.toLowerCase().includes(searchQuery)) return false;
-    if(projFilterValue && s.projectId !== projFilterValue) return false;
-    if(subjectFilter && s.subject !== subjectFilter) return false;
-    return true;
-  });
-
-  let html = `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 5h14a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 16 17H2V5Zm18 3 4 2.5v3L20 16V8Z"/></svg>All scenes${filtered.length ? ` (${filtered.length})` : ''}</div>`;
-  html += filtered.length
-    ? `<div class="scene-grid">${filtered.map(sceneCardHTML).join('')}</div>`
-    : `<div class="scene-empty">No scenes match your filters.</div>`;
-
-  pageBody.innerHTML = html;
-
-  pageBody.querySelectorAll('.scene-card').forEach(card=>{
-    card.addEventListener('click', ()=>{
-      activeSceneId = card.dataset.id;
-      render();
+  const helpBtn = document.getElementById('sidebarHelp');
+  if (helpBtn) {
+    helpBtn.addEventListener('click', () => {
+      alert('Plotter Help — contact support@plotter.com');
     });
+  }
+
+  const createBtn = document.getElementById('sidebarCreateBtn');
+  if (createBtn) {
+    createBtn.addEventListener('click', () => {
+      alert('✨ Create a new story!');
+    });
+  }
+
+  const clearBtn = document.getElementById('notifClear');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      notifications.forEach(n => n.read = true);
+      renderNotifications();
+      const dot = document.getElementById('sidebarBellDot');
+      if (dot) dot.style.display = 'none';
+      const bell = document.getElementById('sidebarBell');
+      if (bell) bell.classList.remove('has-unread');
+    });
+  }
+
+  document.addEventListener('click', (e) => {
+    const pop = document.getElementById('notifPop');
+    const bell = document.getElementById('sidebarBell');
+    if (pop && !pop.contains(e.target) && e.target !== bell && !bell?.contains(e.target)) {
+      pop.classList.remove('open');
+    }
   });
-}
 
-/* ---------------- Scene detail ---------------- */
-function renderSceneDetail(id){
-  const s = scenes.find(x=>x.id===id);
-  if(!s){ activeSceneId = null; render(); return; }
-  const sub = SUBJECTS[s.subject];
+  /* ---------------- Existing scenes scripts ---------------- */
+  const SUBJECTS = {
+    sci:  { label:'Science',  color:'#4a86c9'  },
+    hist: { label:'History',  color:'#c9a24d' },
+    math: { label:'Math',     color:'#6f8fc9' },
+    lit:  { label:'Literature', color:'#a9364a' },
+  };
 
-  let html = `<button class="detail-back" id="detailBackBtn">← Back to scenes</button>`;
-  html += `
-    <div class="scene-hero">
-      <div class="scene-hero-top">
-        <div>
-          <h3>${s.title}</h3>
-          <div class="sub">From <span class="proj-link">${s.project}</span> · ${s.beats.length} beats · Edited ${s.updated}</div>
-        </div>
+  let scenes = [
+    { id:'sc1', title:"The Trial of Galileo", project:'The Scientific Method', projectId:'p1', subject:'sci', updated:'2 hours ago', beats:[ { speaker:'NARRATOR', text:'Rome, 1633. Galileo stands before the Inquisition...' }, { speaker:'CARDINAL', text:'You claim the Earth moves around the Sun...' }, { speaker:'CHOICE', choices:[ { label:'Recant publicly to survive' }, { label:'Defend the evidence, whatever the cost' } ]}, ] },
+    { id:'sc2', title:"Newton's Orchard", project:'The Scientific Method', projectId:'p1', subject:'sci', updated:'1 day ago', beats:[ { speaker:'NARRATOR', text:'A quiet afternoon in Woolsthorpe...' }, { speaker:'NEWTON', text:'Why straight down?' }, { speaker:'NARRATOR', text:'The idea that will become gravity begins to take shape.' } ] },
+    { id:'sc3', title:"Ratio Valley Crossroads", project:'Algebra Adventures', projectId:'p3', subject:'math', updated:'3 days ago', beats:[ { speaker:'NARRATOR', text:'You arrive at the border of the Ratio Valley...' }, { speaker:'CHOICE', choices:[ { label:'Take the Proportions Path' }, { label:'Take the Shortcut through Variable Woods' } ]}, ] },
+    { id:'sc4', title:"The Missing Ledger Page", project:'Mystery on Baker Street', projectId:'p4', subject:'lit', updated:'1 week ago', beats:[ { speaker:'HOLMES', text:"A curious case, isn't it?" }, { speaker:'NARRATOR', text:'You examine the study for clues...' }, { speaker:'CHOICE', choices:[ { label:'Follow the muddy footprint outside' }, { label:'Question the household staff first' } ]}, ] },
+    { id:'sc5', title:"Fall of the Republic", project:'Ancient Rome: Rise & Fall', projectId:'p2', subject:'hist', updated:'Yesterday', beats:[ { speaker:'NARRATOR', text:'The Senate is divided...' }, { speaker:'SENATOR', text:'If he crosses the Rubicon...' }, { speaker:'NARRATOR', text:'The die, as they say, will soon be cast.' } ] },
+    { id:'sc6', title:"The Colosseum Riot", project:'Ancient Rome: Rise & Fall', projectId:'p2', subject:'hist', updated:'4 days ago', beats:[ { speaker:'NARRATOR', text:'A disputed match, a furious crowd...' }, { speaker:'CHOICE', choices:[ { label:'Call for reinforcements' }, { label:'Let the crowd exhaust itself' } ]}, ] },
+  ];
+
+  let activeSceneId = null;
+  let searchQuery = '';
+  let projFilterValue = '';
+  let subjectFilter = '';
+
+  const pageBody = document.getElementById('pageBody');
+  const pageHeading = document.getElementById('pageHeading');
+  const sceneSearch = document.getElementById('sceneSearch');
+  const projFilter = document.getElementById('projFilter');
+  const subjectPills = document.getElementById('subjectPills');
+
+  const uniqueProjects = [...new Map(scenes.map(s => [s.projectId, s.project])).entries()];
+  uniqueProjects.forEach(([id, name]) => {
+    const opt = document.createElement('option');
+    opt.value = id; opt.textContent = name;
+    projFilter.appendChild(opt);
+  });
+
+  function renderSubjectPills(){
+    subjectPills.innerHTML = Object.entries(SUBJECTS).map(([key, s]) => `
+      <button class="subject-pill ${subjectFilter===key?'active':''}" data-subject="${key}">
+        <span class="dot" style="background:${s.color}"></span>${s.label}
+      </button>`).join('');
+    subjectPills.querySelectorAll('.subject-pill').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const key = btn.dataset.subject;
+        subjectFilter = (subjectFilter === key) ? '' : key;
+        render();
+      });
+    });
+  }
+
+  sceneSearch.addEventListener('input', ()=>{ searchQuery = sceneSearch.value.trim().toLowerCase(); render(); });
+  projFilter.addEventListener('change', ()=>{ projFilterValue = projFilter.value; render(); });
+
+  function render(){
+    renderSubjectPills();
+    const showFilters = !activeSceneId;
+    document.querySelector('.filter-bar').style.display = showFilters ? 'flex' : 'none';
+    pageHeading.textContent = activeSceneId ? 'Scene' : 'Scenes';
+
+    if(activeSceneId){ renderSceneDetail(activeSceneId); return; }
+    renderSceneList();
+  }
+
+  function sceneCardHTML(s){
+    const sub = SUBJECTS[s.subject];
+    return `
+    <div class="scene-card" data-id="${s.id}">
+      <div class="scene-strip" style="background:${sub.color}"></div>
+      <div class="scene-body">
         <span class="scene-subject-tag" style="color:${sub.color}; background:${sub.color}22; border-color:${sub.color}44;">${sub.label}</span>
-      </div>
-      <div class="scene-hero-actions">
-        <a class="btn-primary-sm" href="workspace.html?id=${s.projectId}&scene=${s.id}">Open in workspace</a>
-        <button class="btn-ghost-sm" id="duplicateBtn">Duplicate into another project</button>
+        <div class="scene-title">${s.title}</div>
+        <div class="scene-meta">
+          <span class="proj-link">${s.project}</span><span class="sep">·</span>${s.beats.length} beats<span class="sep">·</span>${s.updated}
+        </div>
       </div>
     </div>`;
+  }
 
-  html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z"/></svg>Beats</div>`;
-  html += `<div class="beat-list">`;
-  html += s.beats.map(b => {
-    if(b.speaker === 'CHOICE'){
+  function renderSceneList(){
+    const filtered = scenes.filter(s => {
+      if(searchQuery && !s.title.toLowerCase().includes(searchQuery)) return false;
+      if(projFilterValue && s.projectId !== projFilterValue) return false;
+      if(subjectFilter && s.subject !== subjectFilter) return false;
+      return true;
+    });
+
+    let html = `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M2 5h14a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 16 17H2V5Zm18 3 4 2.5v3L20 16V8Z"/></svg>All scenes${filtered.length ? ` (${filtered.length})` : ''}</div>`;
+    html += filtered.length
+      ? `<div class="scene-grid">${filtered.map(sceneCardHTML).join('')}</div>`
+      : `<div class="scene-empty">No scenes match your filters.</div>`;
+
+    pageBody.innerHTML = html;
+
+    pageBody.querySelectorAll('.scene-card').forEach(card=>{
+      card.addEventListener('click', ()=>{
+        activeSceneId = card.dataset.id;
+        render();
+      });
+    });
+  }
+
+  function renderSceneDetail(id){
+    const s = scenes.find(x=>x.id===id);
+    if(!s){ activeSceneId = null; render(); return; }
+    const sub = SUBJECTS[s.subject];
+
+    let html = `<button class="detail-back" id="detailBackBtn">← Back to scenes</button>`;
+    html += `
+      <div class="scene-hero">
+        <div class="scene-hero-top">
+          <div>
+            <h3>${s.title}</h3>
+            <div class="sub">From <span class="proj-link">${s.project}</span> · ${s.beats.length} beats · Edited ${s.updated}</div>
+          </div>
+          <span class="scene-subject-tag" style="color:${sub.color}; background:${sub.color}22; border-color:${sub.color}44;">${sub.label}</span>
+        </div>
+        <div class="scene-hero-actions">
+          <a class="btn-primary-sm" href="workspace.html?id=${s.projectId}&scene=${s.id}">Open in workspace</a>
+          <button class="btn-ghost-sm" id="duplicateBtn">Duplicate into another project</button>
+        </div>
+      </div>`;
+
+    html += `<div class="proj-section-label"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h10v2H4v-2z"/></svg>Beats</div>`;
+    html += `<div class="beat-list">`;
+    html += s.beats.map(b => {
+      if(b.speaker === 'CHOICE'){
+        return `
+          <div class="beat-item">
+            <span class="beat-speaker choice">CHOICE</span>
+            <div class="beat-choices">
+              ${b.choices.map(c => `<div class="beat-choice">${c.label}</div>`).join('')}
+            </div>
+          </div>`;
+      }
       return `
         <div class="beat-item">
-          <span class="beat-speaker choice">CHOICE</span>
-          <div class="beat-choices">
-            ${b.choices.map(c => `<div class="beat-choice">${c.label}</div>`).join('')}
-          </div>
+          <span class="beat-speaker">${b.speaker}</span>
+          <div class="beat-text">${b.text}</div>
         </div>`;
-    }
-    return `
-      <div class="beat-item">
-        <span class="beat-speaker">${b.speaker}</span>
-        <div class="beat-text">${b.text}</div>
-      </div>`;
-  }).join('');
-  html += `</div>`;
+    }).join('');
+    html += `</div>`;
 
-  pageBody.innerHTML = html;
+    pageBody.innerHTML = html;
 
-  document.getElementById('detailBackBtn').addEventListener('click', ()=>{ activeSceneId = null; render(); });
-  const dupBtn = document.getElementById('duplicateBtn');
-  if(dupBtn) dupBtn.addEventListener('click', ()=>{
-    alert(`"${s.title}" would be copied into a project of your choice.`);
-  });
-}
+    document.getElementById('detailBackBtn').addEventListener('click', ()=>{ activeSceneId = null; render(); });
+    const dupBtn = document.getElementById('duplicateBtn');
+    if(dupBtn) dupBtn.addEventListener('click', ()=>{
+      alert(`"${s.title}" would be copied into a project of your choice.`);
+    });
+  }
 
-/* ---------------- Init ---------------- */
-render();
+  render();
+  renderNotifications();
 </script>
 </body>
 </html>
