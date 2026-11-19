@@ -8,19 +8,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a1420;
-    --panel: #0f1f30;
-    --panel-2: #142a3e;
-    --panel-3: #1a3348;
-    --border: #24435f;
-    --border-soft: #1a3049;
-    --text: #eef1e9;
-    --text-dim: #a8bccf;
-    --text-faint: #6d859f;
-    --gold: #c9a24d;
-    --gold-bright: #e6c977;
-    --maroon: #4a6d8c;
-    --maroon-deep: #1c3348;
+    --bg: #f3f5f8;
+    --panel: #ffffff;
+    --panel-2: #f7f8fa;
+    --panel-3: #eceff4;
+    --border: #dfe3ea;
+    --border-soft: #e8ebf0;
+    --text: #03114c;
+    --text-dim: #5c6675;
+    --text-faint: #8b95a3;
+    --gold: #3c65a7;
+    --gold-bright: #3c65a7;
+    --maroon: #03114c;
+    --maroon-deep: #3c65a7;
     --font-display: 'Fraunces', serif;
   }
 
@@ -39,7 +39,7 @@
     -webkit-font-smoothing: antialiased;
   }
 
-  ::selection { background: rgba(201,162,77,.35); color: #fff; }
+  ::selection { background: rgba(60,101,167,0.2); color: #fff; }
 
   .page {
     display: flex;
@@ -52,9 +52,9 @@
     flex: 1.35;
     position: relative;
     background:
-      radial-gradient(ellipse 700px 500px at 20% 10%, rgba(74,109,140,.28), transparent 55%),
-      radial-gradient(ellipse 500px 400px at 85% 90%, rgba(201,162,77,.08), transparent 50%),
-      linear-gradient(160deg, #0f1a28 0%, #0a1420 100%);
+      radial-gradient(ellipse 700px 500px at 20% 10%, rgba(60,101,167,0.07), transparent 55%),
+      radial-gradient(ellipse 500px 400px at 85% 90%, rgba(60,101,167,0.08), transparent 50%),
+      linear-gradient(160deg, #03114c 0%, #03114c 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -91,16 +91,16 @@
     height: 30px;
     border-radius: 8px;
     background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    border: 1px solid rgba(212,175,106,0.5);
+    border: 1px solid #c9d0da;
     display: flex;
     align-items: center;
     justify-content: center;
     font-family: var(--font-display);
     font-size: 0.95rem;
     font-weight: 600;
-    color: var(--gold);
+    color: #fff;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(20,40,58,0.45);
+    box-shadow: 0 4px 12px rgba(3,17,76,0.12);
   }
 
   .dialogue-card {
@@ -108,10 +108,10 @@
     width: 100%;
     max-width: 440px;
     background: var(--panel);
-    border: 1px solid rgba(212,175,106,0.25);
+    border: 1px solid #dfe3ea;
     border-radius: 16px;
     padding: 24px 26px 20px;
-    box-shadow: 0 24px 56px rgba(0,0,0,0.45), 0 0 0 1px rgba(212,175,106,0.08);
+    box-shadow: 0 24px 56px rgba(3,17,76,0.12), 0 0 0 1px rgba(3,17,76,0.02);
     z-index: 1;
   }
 
@@ -131,9 +131,9 @@
     display: inline-flex;
     align-items: center;
     gap: 7px;
-    background: rgba(74,109,140,0.35);
-    border: 1px solid rgba(212,175,106,0.3);
-    color: var(--gold-bright);
+    background: #03114c;
+    border: 1px solid #dfe3ea;
+    color: #fff;
     font-family: var(--font-display);
     font-size: 0.72rem;
     font-weight: 700;
@@ -147,8 +147,8 @@
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: var(--gold-bright);
-    box-shadow: 0 0 6px 1px rgba(230,201,119,0.5);
+    background: #fff;
+    box-shadow: 0 0 6px 1px rgba(3,17,76,0.14);
   }
 
   .dialogue-text {
@@ -205,7 +205,7 @@
 
   .left-copy p {
     font-size: 0.98rem;
-    color: var(--text-dim);
+    color: rgba(255,255,255,0.85);
     line-height: 1.55;
     max-width: 380px;
     margin: 0 auto;
@@ -233,7 +233,7 @@
     font-family: var(--font-display);
     font-size: 1.9rem;
     font-weight: 700;
-    color: #fff;
+    color: #03114c;
     letter-spacing: -0.02em;
     margin-bottom: 8px;
   }
@@ -269,8 +269,8 @@
 
   .toggle button.active {
     background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    color: var(--gold-bright);
-    border: 1px solid rgba(212,175,106,0.3);
+    color: #fff;
+    border: 1px solid #dfe3ea;
   }
 
   .field {
@@ -304,7 +304,7 @@
 
   .field input:focus {
     border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(201,162,77,0.18);
+    box-shadow: 0 0 0 3px rgba(3,17,76,0.05);
   }
 
   .forgot-row {
@@ -328,14 +328,14 @@
   .signin-btn {
     width: 100%;
     padding: 13px 0;
-    border: 1px solid rgba(230,201,119,0.5);
+    border: 1px solid #c9d0da;
     border-radius: 10px;
-    background: linear-gradient(135deg, var(--gold), #b88a45);
-    color: #2a1608;
+    background: linear-gradient(135deg, var(--gold), #3c65a7);
+    color: #ffffff;
     font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 8px 20px rgba(201,162,77,0.22);
+    box-shadow: 0 8px 20px rgba(3,17,76,0.06);
     transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
     font-family: inherit;
     display: block;
@@ -345,7 +345,7 @@
 
   .signin-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 10px 24px rgba(212,175,106,0.34);
+    box-shadow: 0 10px 24px rgba(3,17,76,0.09);
     filter: brightness(1.05);
   }
 
@@ -434,15 +434,15 @@
     height: 36px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    border: 1px solid rgba(212,175,106,0.5);
-    color: var(--gold-bright);
+    border: 1px solid #c9d0da;
+    color: #fff;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 0.9rem;
     font-weight: 700;
     cursor: pointer;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.4);
+    box-shadow: 0 6px 16px rgba(3,17,76,0.11);
     transition: transform 0.15s ease;
   }
 
@@ -516,7 +516,7 @@
       <div class="divider">or continue with</div>
 
       <button class="google-btn">
-        <svg viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20.4H24v7.2h11.3C33.6 32 29.2 35 24 35c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.1-5.1C33.6 5.6 29 3.9 24 3.9 12.9 3.9 3.9 12.9 3.9 24S12.9 44.1 24 44.1 44.1 35.1 44.1 24c0-1.2-.1-2.4-.5-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 5.9 4.3c1.6-4.1 5.6-7 10.2-7 3.1 0 5.9 1.2 8 3.1l5.1-5.1C33.6 5.6 29 3.9 24 3.9c-7.7 0-14.3 4.4-17.7 10.8z"/><path fill="#4CAF50" d="M24 44.1c5 0 9.5-1.7 12.9-4.6l-6-5c-1.9 1.4-4.3 2.2-6.9 2.2-5.2 0-9.6-3.5-11.1-8.2l-6 4.6c3.3 6.6 10 11 17.1 11z"/><path fill="#1976D2" d="M43.6 20.5H42V20.4H24v7.2h11.3c-.8 2.4-2.4 4.4-4.4 5.8l6 5c-.4.4 6.6-4.8 6.6-14.9 0-1.2-.1-2.4-.4-3.5z"/></svg>
+        <svg viewBox="0 0 48 48"><path fill="#5b88c1" d="M43.6 20.5H42V20.4H24v7.2h11.3C33.6 32 29.2 35 24 35c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.1-5.1C33.6 5.6 29 3.9 24 3.9 12.9 3.9 3.9 12.9 3.9 24S12.9 44.1 24 44.1 44.1 35.1 44.1 24c0-1.2-.1-2.4-.5-3.5z"/><path fill="#3c65a7" d="m6.3 14.7 5.9 4.3c1.6-4.1 5.6-7 10.2-7 3.1 0 5.9 1.2 8 3.1l5.1-5.1C33.6 5.6 29 3.9 24 3.9c-7.7 0-14.3 4.4-17.7 10.8z"/><path fill="#3c65a7" d="M24 44.1c5 0 9.5-1.7 12.9-4.6l-6-5c-1.9 1.4-4.3 2.2-6.9 2.2-5.2 0-9.6-3.5-11.1-8.2l-6 4.6c3.3 6.6 10 11 17.1 11z"/><path fill="#03114c" d="M43.6 20.5H42V20.4H24v7.2h11.3c-.8 2.4-2.4 4.4-4.4 5.8l6 5c-.4.4 6.6-4.8 6.6-14.9 0-1.2-.1-2.4-.4-3.5z"/></svg>
         Continue with Google
       </button>
 
