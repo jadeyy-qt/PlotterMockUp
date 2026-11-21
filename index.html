@@ -3,8 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plotter - Landing Page</title>
+<title>Plotter — The visual novel editor for educators</title>
+<meta name="description" content="Plotter is the visual novel editor for educators. Build branching, character-driven stories your students actually want to finish.">
+<link rel="icon" href="images/sidebar-logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -14,1002 +17,955 @@
     --panel-3: #eceff4;
     --border: #dfe3ea;
     --border-soft: #e8ebf0;
+    --navy: #03114c;
+    --navy-2: #0b1d63;
+    --blue: #3c65a7;
+    --blue-2: #5b88c1;
+    --blue-3: #6397d0;
+    --blue-tint: rgba(60,101,167,0.08);
     --text: #03114c;
     --text-dim: #5c6675;
     --text-faint: #8b95a3;
-    --accent: #3c65a7;
-    --accent-2: #5b88c1;
-    --gold: #3c65a7;
-    --gold-bright: #3c65a7;
-    --maroon: #03114c;
-    --maroon-deep: #3c65a7;
     --radius-lg: 18px;
     --radius-md: 12px;
-    --font-display: 'Fraunces', serif;
+    --font-display: 'Fraunces', Georgia, serif;
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
     --max-width: 1200px;
+    --shadow-sm: 0 2px 6px rgba(3,17,76,0.05);
+    --shadow-md: 0 14px 32px rgba(3,17,76,0.10);
+    --shadow-lg: 0 40px 100px rgba(3,17,76,0.18);
   }
 
   *{ box-sizing: border-box; margin: 0; padding: 0; }
-
-  html{ scroll-behavior: smooth; }
+  html{ scroll-behavior: smooth; scroll-padding-top: 80px; }
 
   body{
-    background:
-      radial-gradient(ellipse 900px 500px at 15% -5%, rgba(60,101,167,0.062), transparent 60%),
-      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(60,101,167,0.06), transparent 55%),
-      radial-gradient(ellipse 1000px 600px at 50% 100%, rgba(60,101,167,0.075), transparent 60%),
-      var(--bg);
+    background: var(--bg);
     color: var(--text);
-    font-family: 'Inter', system-ui, sans-serif;
-    line-height: 1.5;
+    font-family: var(--font-body);
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }
 
-  ::selection{ background: rgba(60,101,167,0.2); color:#fff; }
-  ::-webkit-scrollbar{ width:9px; height:9px; }
+  ::selection{ background: rgba(60,101,167,0.22); color: var(--navy); }
+  ::-webkit-scrollbar{ width: 10px; height: 10px; }
   ::-webkit-scrollbar-track{ background: transparent; }
-  ::-webkit-scrollbar-thumb{ background: #eceff4; border-radius:8px; border:2px solid var(--bg); }
-  ::-webkit-scrollbar-thumb:hover{ background: var(--maroon); }
+  ::-webkit-scrollbar-thumb{ background: #cfd6e1; border-radius: 8px; border: 2px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover{ background: var(--blue); }
 
   a{ color: inherit; text-decoration: none; }
   button{ font-family: inherit; cursor: pointer; }
+  img{ display: block; max-width: 100%; }
+  :focus-visible{ outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
 
-  .wrap{
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 0 32px;
+  .wrap{ max-width: var(--max-width); margin: 0 auto; padding: 0 32px; }
+
+  /* ---------- Buttons ---------- */
+  .btn{
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 10px 20px; border-radius: 10px;
+    font-size: 0.92rem; font-weight: 600; white-space: nowrap;
+    border: 1px solid transparent;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease, color .15s ease;
   }
+  .btn svg{ width: 16px; height: 16px; flex-shrink: 0; }
+  .btn-primary{
+    background: linear-gradient(135deg, var(--blue), #2f548f);
+    color: #fff;
+    box-shadow: 0 6px 18px rgba(60,101,167,0.28), inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+  .btn-primary:hover{ transform: translateY(-1px); box-shadow: 0 10px 26px rgba(60,101,167,0.36), inset 0 1px 0 rgba(255,255,255,0.15); }
+  .btn-secondary{ background: #fff; color: var(--navy); border-color: var(--border); box-shadow: var(--shadow-sm); }
+  .btn-secondary:hover{ border-color: var(--blue); color: var(--blue); }
+  .btn-light{ background: #fff; color: var(--navy); }
+  .btn-light:hover{ transform: translateY(-1px); box-shadow: 0 10px 26px rgba(0,0,0,0.25); }
+  .btn-ghost-light{ background: transparent; color: #fff; border-color: rgba(255,255,255,0.3); }
+  .btn-ghost-light:hover{ background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.6); }
+  .btn-lg{ padding: 14px 28px; font-size: 1rem; border-radius: 12px; }
 
   /* ---------- Navbar ---------- */
   header{
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    background: rgba(255,255,255,0.88);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid #dfe3ea;
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(255,255,255,0.82);
+    backdrop-filter: saturate(160%) blur(14px);
+    -webkit-backdrop-filter: saturate(160%) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s ease, box-shadow .2s ease;
   }
+  header.scrolled{ border-bottom-color: var(--border); box-shadow: 0 4px 20px rgba(3,17,76,0.05); }
 
-  nav{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 16px 32px;
+  .nav{
+    display: flex; align-items: center; justify-content: space-between; gap: 24px;
+    max-width: var(--max-width); margin: 0 auto; padding: 14px 32px;
   }
-
-  .nav-left{
-    display: flex;
-    align-items: center;
-    gap: 36px;
-  }
-
-  .logo{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-weight: 700;
-    font-size: 1.2rem;
-    letter-spacing: -0.02em;
-    color: #03114c;
-  }
-
-  .logo-mark{
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-    flex-shrink: 0;
-    display: block;
-  }
-
-  .nav-links{
-    display: flex;
-    align-items: center;
-    gap: 28px;
-  }
-
-  .nav-links a{
-    color: var(--text-dim);
-    font-size: 0.95rem;
-    font-weight: 500;
-    transition: color 0.15s ease;
-  }
-
-  .nav-links a:hover{ color: var(--gold-bright); }
-
-  .nav-actions{
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    flex-shrink: 0;
-  }
-
-  .nav-actions .signin{
-    color: var(--text-dim);
-    font-size: 0.95rem;
-    font-weight: 500;
-  }
-
-  .nav-actions .signin:hover{ color: var(--gold-bright); }
-
-  .btn{
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 20px;
-    border-radius: 10px;
-    font-size: 0.92rem;
-    font-weight: 600;
-    border: none;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease, background 0.15s ease;
-    white-space: nowrap;
-  }
-
-  .btn-primary{
-    background: linear-gradient(135deg, var(--gold), #3c65a7);
-    color: #ffffff;
-    border: 1px solid #c9d0da;
-    box-shadow: 0 6px 18px rgba(3,17,76,0.06);
-  }
-
-  .btn-primary:hover{
-    box-shadow: 0 10px 24px rgba(3,17,76,0.09);
-    transform: translateY(-1px);
-    filter: brightness(1.05);
-  }
-
-  .btn-secondary{
-    background: transparent;
-    color: var(--text);
-    border: 1px solid var(--border);
-  }
-
-  .btn-secondary:hover{
-    background: var(--panel-2);
-    border-color: var(--gold);
-    color: var(--gold-bright);
-  }
+  .nav-left{ display: flex; align-items: center; gap: 40px; }
+  .logo{ display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 1.2rem; letter-spacing: -0.03em; color: var(--navy); }
+  .logo-mark{ width: 32px; height: 32px; object-fit: contain; }
+  .nav-links{ display: flex; align-items: center; gap: 30px; }
+  .nav-links a{ color: var(--text-dim); font-size: 0.93rem; font-weight: 500; transition: color .15s ease; }
+  .nav-links a:hover{ color: var(--blue); }
+  .nav-actions{ display: flex; align-items: center; gap: 20px; }
+  .nav-actions .signin{ color: var(--text-dim); font-size: 0.93rem; font-weight: 500; }
+  .nav-actions .signin:hover{ color: var(--blue); }
 
   .menu-toggle{
-    display: none;
-    background: none;
-    border: none;
-    color: var(--text);
-    font-size: 1.5rem;
-    cursor: pointer;
+    display: none; width: 40px; height: 40px; border-radius: 10px;
+    background: transparent; border: 1px solid var(--border); color: var(--navy);
+    align-items: center; justify-content: center;
   }
+  .menu-toggle svg{ width: 20px; height: 20px; }
+
+  .mobile-menu{
+    display: none; flex-direction: column; gap: 4px;
+    padding: 8px 20px 20px; border-top: 1px solid var(--border-soft); background: #fff;
+  }
+  .mobile-menu a{ padding: 12px 4px; font-weight: 500; color: var(--text-dim); border-bottom: 1px solid var(--border-soft); }
+  .mobile-menu .btn{ margin-top: 12px; border-bottom: none; color: #fff; }
+  header.open .mobile-menu{ display: flex; }
 
   /* ---------- Hero ---------- */
   .hero{
-    text-align: center;
-    padding: 88px 32px 56px;
-    position: relative;
+    position: relative; text-align: center;
+    padding: 84px 32px 0;
     overflow: hidden;
   }
-
   .hero::before{
-    content: "";
-    position: absolute;
-    top: -180px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 900px;
-    height: 480px;
-    background: radial-gradient(ellipse at center, rgba(60,101,167,0.07), transparent 68%);
-    pointer-events: none;
-    z-index: 0;
+    content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 800px 420px at 50% -10%, rgba(91,136,193,0.20), transparent 70%),
+      linear-gradient(rgba(3,17,76,0.045) 1px, transparent 1px) 0 0 / 44px 44px,
+      linear-gradient(90deg, rgba(3,17,76,0.045) 1px, transparent 1px) 0 0 / 44px 44px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 30%, transparent 75%);
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 20%, #000 30%, transparent 75%);
   }
-
   .hero > *{ position: relative; z-index: 1; }
 
   .badge{
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 16px;
-    border-radius: 4px;
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    border: 1px solid #c9d0da;
-    color: #fff;
-    font-family: var(--font-display);
-    font-size: 0.8rem;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    margin-bottom: 28px;
-    box-shadow: 0 6px 16px rgba(3,17,76,0.08);
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 6px 14px 6px 6px; border-radius: 999px;
+    background: #fff; border: 1px solid var(--border);
+    color: var(--text-dim); font-size: 0.84rem; font-weight: 500;
+    box-shadow: var(--shadow-sm); margin-bottom: 28px;
   }
-
-  .badge .dot{
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--gold-bright);
+  .badge-tag{
+    background: var(--navy); color: #fff; font-size: 0.72rem; font-weight: 700;
+    letter-spacing: 0.04em; padding: 3px 10px; border-radius: 999px;
   }
 
   h1.headline{
     font-family: var(--font-display);
-    font-size: clamp(2.5rem, 6.5vw, 4.4rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.08;
-    color: #03114c;
+    font-size: clamp(2.6rem, 6.6vw, 4.8rem);
+    font-weight: 700; letter-spacing: -0.025em; line-height: 1.04;
+    color: var(--navy);
   }
-
-  h1.headline .gradient-text{
-    background: linear-gradient(90deg, var(--gold-bright), var(--gold));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+  .headline em{
+    font-style: italic; font-weight: 600;
+    background: linear-gradient(90deg, var(--blue), var(--blue-3));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    padding-right: 0.06em;
   }
-
   .hero-sub{
-    max-width: 580px;
-    margin: 24px auto 0;
-    color: var(--text-dim);
-    font-size: 1.12rem;
-    line-height: 1.55;
+    max-width: 600px; margin: 24px auto 0;
+    color: var(--text-dim); font-size: 1.15rem; line-height: 1.6;
   }
-
-  .hero-actions{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 14px;
-    margin-top: 36px;
-    flex-wrap: wrap;
-  }
-
-  .hero-actions .btn{
-    padding: 13px 26px;
-    font-size: 0.98rem;
-  }
+  .hero-actions{ display: flex; justify-content: center; gap: 12px; margin-top: 36px; flex-wrap: wrap; }
+  .hero-note{ margin-top: 16px; color: var(--text-faint); font-size: 0.84rem; display: flex; justify-content: center; gap: 18px; flex-wrap: wrap; }
+  .hero-note span{ display: inline-flex; align-items: center; gap: 6px; }
+  .hero-note svg{ width: 14px; height: 14px; color: var(--blue); }
 
   /* ---------- Editor mockup ---------- */
+  .editor-wrap{ max-width: 1040px; margin: 64px auto 0; position: relative; }
+  .editor-wrap::after{
+    content: ""; position: absolute; left: 8%; right: 8%; bottom: -30px; height: 60px;
+    background: radial-gradient(ellipse at center, rgba(3,17,76,0.25), transparent 70%);
+    filter: blur(16px); z-index: -1;
+  }
   .editor-shell{
-    max-width: 940px;
-    margin: 64px auto 0;
-    background: var(--panel);
-    border: 1px solid #dfe3ea;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 36px 90px rgba(3,17,76,0.12), 0 0 0 1px rgba(3,17,76,0.02);
-    position: relative;
-    z-index: 1;
+    background: #fff; border: 1px solid var(--border);
+    border-radius: 16px 16px 0 0; border-bottom: none;
+    overflow: hidden; box-shadow: var(--shadow-lg); text-align: left;
   }
-
   .editor-titlebar{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 12px 18px;
-    border-bottom: 1px solid var(--border-soft);
-    background: rgba(255,255,255,0.02);
+    display: grid; grid-template-columns: 1fr auto 1fr; align-items: center;
+    padding: 10px 16px; border-bottom: 1px solid var(--border-soft); background: var(--panel-2);
   }
-
-  .traffic-lights{
-    display: flex;
-    gap: 7px;
-  }
-
-  .traffic-lights span{
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    display: block;
-  }
-
-  .traffic-lights span:nth-child(1){ background: #3c65a7; }
-  .traffic-lights span:nth-child(2){ background: #5b88c1; }
-  .traffic-lights span:nth-child(3){ background: #3c65a7; }
-
+  .traffic-lights{ display: flex; gap: 7px; }
+  .traffic-lights span{ width: 11px; height: 11px; border-radius: 50%; background: #d5dbe4; }
   .editor-title{
-    color: var(--text-dim);
-    font-size: 0.82rem;
-    font-weight: 500;
+    display: flex; align-items: center; gap: 8px;
+    background: #fff; border: 1px solid var(--border-soft); border-radius: 7px;
+    padding: 4px 14px; color: var(--text-dim); font-size: 0.78rem; font-weight: 500;
   }
-
-  .editor-titlebar-actions{
-    display: flex;
-    gap: 8px;
-  }
-
+  .editor-title svg{ width: 12px; height: 12px; color: var(--text-faint); }
+  .editor-titlebar-actions{ display: flex; gap: 8px; justify-content: flex-end; }
   .pill-btn{
-    padding: 5px 12px;
-    border-radius: 6px;
-    font-size: 0.78rem;
-    font-weight: 600;
-    border: 1px solid var(--border);
-    color: var(--text-dim);
-    background: transparent;
+    padding: 5px 12px; border-radius: 6px; font-size: 0.76rem; font-weight: 600;
+    border: 1px solid var(--border); color: var(--text-dim); background: #fff;
   }
+  .pill-btn.publish{ background: var(--blue); color: #fff; border-color: var(--blue); }
 
-  .pill-btn.publish{
-    background: linear-gradient(135deg, var(--gold), #3c65a7);
-    color: #ffffff;
-    border: 1px solid #c9d0da;
-  }
-
-  .editor-body{
-    display: grid;
-    grid-template-columns: 190px 1fr 160px;
-    height: 400px;
-  }
-
-  .editor-col{
-    padding: 18px 14px;
-  }
-
-  .editor-col.scenes{ border-right: 1px solid var(--border-soft); }
-  .editor-col.props{ border-left: 1px solid var(--border-soft); }
+  .editor-body{ display: grid; grid-template-columns: 200px 1fr 200px; height: 440px; }
+  .editor-col{ padding: 16px 14px; }
+  .editor-col.scenes{ border-right: 1px solid var(--border-soft); background: #fff; overflow: hidden; }
+  .editor-col.props{ border-left: 1px solid var(--border-soft); background: #fff; }
 
   .editor-tabs{
-    display: flex;
-    gap: 14px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.06em;
-    margin-bottom: 14px;
-    font-family: var(--font-display);
+    display: flex; gap: 4px; padding: 3px; background: var(--panel-3);
+    border-radius: 8px; margin-bottom: 14px;
+  }
+  .editor-tabs span{
+    flex: 1; text-align: center; font-size: 0.7rem; font-weight: 600;
+    padding: 5px 0; border-radius: 6px; color: var(--text-faint);
+  }
+  .editor-tabs .active{ background: #fff; color: var(--navy); box-shadow: var(--shadow-sm); }
+
+  .scene-item{
+    display: flex; gap: 10px; align-items: center;
+    padding: 6px; border-radius: 9px; margin-bottom: 4px; border: 1px solid transparent;
+  }
+  .scene-item.active{ background: var(--blue-tint); border-color: rgba(60,101,167,0.25); }
+  .scene-item img{ width: 64px; height: 38px; object-fit: cover; border-radius: 5px; flex-shrink: 0; }
+  .scene-item .meta{ min-width: 0; }
+  .scene-item .num{ font-size: 0.62rem; color: var(--text-faint); font-weight: 600; letter-spacing: .04em; }
+  .scene-item .name{ font-size: 0.74rem; font-weight: 600; color: var(--navy); line-height: 1.25; }
+  .scene-add{
+    margin-top: 8px; border: 1.5px dashed var(--border); border-radius: 9px;
+    padding: 9px; text-align: center; font-size: 0.74rem; color: var(--text-faint); font-weight: 500;
   }
 
-  .editor-tabs .active{
-    color: var(--gold-bright);
-    border-bottom: 2px solid var(--gold);
-    padding-bottom: 5px;
+  .editor-stage{
+    position: relative; overflow: hidden; padding: 0;
+    background: #222 url('images/backgrounds/classroom.png') center 40% / cover no-repeat;
   }
-
-  .editor-tabs span:not(.active){ color: var(--text-faint); }
-
-  .scene-thumb{
-    height: 48px;
-    border-radius: 7px;
-    margin-bottom: 7px;
-    border: 1px solid #dfe3ea;
+  .stage-character{
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-62%);
+    height: 96%; width: auto; max-width: none;
+    filter: drop-shadow(0 12px 24px rgba(0,0,0,0.25));
   }
-
-  .scene-thumb.s1{ background: linear-gradient(135deg, #03114c, #3c65a7); border-color: #c9d0da; }
-  .scene-thumb.s2{ background: linear-gradient(135deg, #3c65a7, #03114c); }
-  .scene-thumb.s3{ background: linear-gradient(135deg, #5b88c1, #03114c); }
-  .scene-thumb.s4{ background: linear-gradient(135deg, #6397d0, #3c65a7); opacity: 0.55; }
-
-  .scene-label{
-    font-size: 0.68rem;
-    color: var(--text-faint);
-    margin-bottom: 10px;
-  }
-
-  .editor-col.editor-stage{
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px 18px 20px;
-    background: linear-gradient(180deg, #5b88c1 0%, #3c65a7 55%, #03114c 100%);
-    overflow: hidden;
-  }
-
-  .dialogue-box{
-    width: 100%;
-    max-width: 520px;
-    background: rgba(255,255,255,0.96);
-    border: 1px solid #dfe3ea;
-    border-radius: 14px;
-    padding: 22px 22px 18px;
-    position: relative;
-    z-index: 1;
-    box-shadow: 0 20px 48px rgba(3,17,76,0.08);
-  }
-
-  .speaker-tag{
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #03114c;
-    color: #fff;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.04em;
-    padding: 4px 11px;
-    border-radius: 4px;
-    margin-bottom: 10px;
-    font-family: var(--font-display);
-    border: 1px solid #dfe3ea;
-  }
-
-  .speaker-tag .dot{
-    width: 5px; height: 5px; border-radius: 50%; background: var(--gold-bright);
-  }
-
-  .dialogue-text{
-    font-size: 0.92rem;
-    color: var(--text);
-    line-height: 1.5;
-  }
-
-  .continue-row{
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 12px;
-    color: var(--text-dim);
-    font-size: 0.82rem;
-  }
-
-  .props-field{ margin-bottom: 12px; }
-
-  .props-label{
-    font-size: 0.65rem;
-    color: var(--text-faint);
-    margin-bottom: 4px;
-    letter-spacing: 0.03em;
-  }
-
-  .props-input{
-    height: 24px;
-    border-radius: 5px;
-    border: 1px solid var(--border-soft);
-    background: rgba(255,255,255,0.02);
-  }
-
-  .props-heading{
-    font-size: 0.68rem;
-    font-weight: 700;
-    color: var(--text-faint);
-    letter-spacing: 0.06em;
-    margin-bottom: 14px;
-    font-family: var(--font-display);
-  }
-
-  /* ---------- Section shared ---------- */
-  section{ padding: 100px 32px; }
-
-  .section-head{
-    text-align: center;
-    margin-bottom: 48px;
-  }
-
-  /* Academic banner motif */
-  .section-banner{
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-family: var(--font-display);
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    color: #fff;
-    text-transform: uppercase;
-    margin-bottom: 18px;
-    padding: 10px 28px 10px 22px;
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    border: 1px solid #c9d0da;
-    border-radius: 3px;
-    clip-path: none;
-    border-radius: 4px;
-    box-shadow: 0 8px 20px rgba(3,17,76,0.1);
-  }
-
-  .section-banner svg{
-    width: 13px;
-    height: 13px;
-    fill: var(--gold);
-  }
-
-  .section-title{
-    font-family: var(--font-display);
-    font-size: clamp(1.9rem, 4vw, 2.7rem);
-    font-weight: 700;
-    letter-spacing: -0.015em;
-    color: #03114c;
-  }
-
-  /* ---------- Features grid ---------- */
-  .features-grid{
-    max-width: var(--max-width);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-  }
-
-  .feature-card{
-    background: var(--panel);
-    border: 1px solid var(--border-soft);
-    border-radius: var(--radius-lg);
-    padding: 26px;
-    transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .feature-card:hover{
-    border-color: #c9d0da;
-    transform: translateY(-3px);
-    box-shadow: 0 14px 32px rgba(3,17,76,0.1);
-  }
-
-  .feature-icon{
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.15rem;
-    margin-bottom: 18px;
-    background: rgba(60,101,167,0.2);
-    color: #03114c;
-    border: 1px solid #dfe3ea;
-  }
-
-  .feature-card:nth-child(2) .feature-icon{
-    background: #eceff4;
-    color: var(--gold);
-  }
-
-  .feature-card:nth-child(3) .feature-icon{
-    background: rgba(60,101,167,0.18);
-    color: #03114c;
-  }
-
-  .feature-title{
-    font-family: var(--font-display);
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #03114c;
-  }
-
-  .feature-desc{
-    color: var(--text-dim);
-    font-size: 0.94rem;
-    line-height: 1.5;
-  }
-
-  /* ---------- Featured stories ---------- */
-  .stories-header{
-    max-width: var(--max-width);
-    margin: 0 auto 36px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 16px;
-  }
-
-  .stories-header h2{
-    font-family: var(--font-display);
-    font-size: clamp(1.7rem, 3.5vw, 2.2rem);
-    font-weight: 700;
-    letter-spacing: -0.015em;
-    color: #03114c;
-  }
-
-  .stories-grid{
-    max-width: var(--max-width);
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 22px;
-  }
-
-  .story-card{
-    border-radius: var(--radius-lg);
-    overflow: hidden;
-    border: 1px solid var(--border-soft);
-    background: var(--panel);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    cursor: pointer;
-  }
-
-  .story-card:hover{
-    transform: translateY(-4px);
-    box-shadow: 0 16px 40px rgba(3,17,76,0.11);
-    border-color: #c9d0da;
-  }
-
-  .story-cover{
-    height: 190px;
-    position: relative;
-    display: flex;
-    align-items: flex-end;
-    padding: 14px;
-  }
-
-  .story-cover.c1{ background: linear-gradient(135deg, #03114c, #3c65a7); }
-  .story-cover.c2{ background: linear-gradient(135deg, #5b88c1, #03114c); }
-  .story-cover.c3{ background: linear-gradient(135deg, #6397d0, #3c65a7); }
-
-  .scene-count{
-    background: #eceff4;
-    backdrop-filter: blur(6px);
-    color: #03114c;
-    font-size: 0.72rem;
-    font-weight: 600;
-    padding: 4px 11px;
-    border-radius: 999px;
-    border: 1px solid #dfe3ea;
-  }
-
-  .story-info{
-    padding: 16px 18px 20px;
-  }
-
-  .story-title{
-    font-family: var(--font-display);
-    font-size: 1.08rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-    color: #03114c;
-  }
-
-  .story-meta{
-    color: var(--text-faint);
-    font-size: 0.84rem;
-  }
-
-  /* ---------- CTA ---------- */
-  .cta{
-    text-align: center;
-    padding: 120px 32px 140px;
-    position: relative;
-  }
-
-  .cta::before{
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 800px;
-    height: 300px;
-    background: radial-gradient(ellipse at center, rgba(60,101,167,0.05), transparent 70%);
+  .stage-select{
+    position: absolute; bottom: 0; left: 50%; transform: translateX(-62%);
+    height: 96%; aspect-ratio: 0.62;
+    outline: 1.5px dashed rgba(255,255,255,0.9); outline-offset: -2px; border-radius: 4px;
     pointer-events: none;
   }
-
-  .cta-title{
-    font-family: var(--font-display);
-    font-size: clamp(2.1rem, 5vw, 3.3rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    line-height: 1.15;
-    color: #03114c;
-    position: relative;
+  .stage-select::before, .stage-select::after{
+    content: ""; position: absolute; width: 8px; height: 8px; background: #fff; border: 1.5px solid var(--blue); border-radius: 2px;
   }
+  .stage-select::before{ top: -3px; left: -3px; }
+  .stage-select::after{ top: -3px; right: -3px; }
 
-  .cta-sub{
-    max-width: 540px;
-    margin: 22px auto 0;
-    color: var(--text-dim);
-    font-size: 1.05rem;
-    position: relative;
+  .dialogue-box{
+    position: absolute; left: 18px; right: 18px; bottom: 16px;
+    background: rgba(255,255,255,0.96); border-radius: 12px;
+    padding: 18px 20px 14px; box-shadow: 0 16px 40px rgba(3,17,76,0.25);
+    border: 1px solid rgba(255,255,255,0.6);
   }
+  .speaker-tag{
+    position: absolute; top: -13px; left: 18px;
+    background: var(--navy); color: #fff; font-family: var(--font-display);
+    font-size: 0.76rem; font-weight: 600; letter-spacing: 0.02em;
+    padding: 4px 14px; border-radius: 6px; box-shadow: 0 4px 10px rgba(3,17,76,0.25);
+  }
+  .dialogue-text{ font-size: 0.92rem; color: var(--navy); line-height: 1.5; }
+  .dialogue-text .caret{ display: inline-block; width: 2px; height: 1em; background: var(--blue); vertical-align: -2px; margin-left: 2px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink{ 50%{ opacity: 0; } }
 
-  .cta-btn{
-    margin-top: 32px;
-    padding: 14px 30px;
-    font-size: 1.02rem;
-    position: relative;
+  .stage-choices{
+    position: absolute; top: 18px; right: 18px; display: flex; flex-direction: column; gap: 8px; width: 200px;
   }
+  .stage-choice{
+    background: rgba(3,17,76,0.82); color: #fff; font-size: 0.76rem; font-weight: 500;
+    padding: 9px 12px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.18);
+    backdrop-filter: blur(6px); display: flex; align-items: center; gap: 8px;
+  }
+  .stage-choice b{ display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 4px; background: rgba(255,255,255,0.15); font-size: 0.66rem; }
+  .stage-choice.hl{ background: var(--blue); }
+
+  .props-heading{ font-size: 0.7rem; font-weight: 700; color: var(--text-faint); letter-spacing: 0.08em; margin-bottom: 14px; text-transform: uppercase; }
+  .props-field{ margin-bottom: 12px; }
+  .props-label{ font-size: 0.66rem; color: var(--text-faint); margin-bottom: 5px; font-weight: 500; }
+  .props-input{
+    display: flex; align-items: center; justify-content: space-between; gap: 6px;
+    min-height: 30px; border-radius: 7px; border: 1px solid var(--border);
+    background: var(--panel-2); padding: 0 9px; font-size: 0.74rem; color: var(--navy); font-weight: 500;
+  }
+  .props-input img{ width: 22px; height: 22px; object-fit: cover; object-position: top; border-radius: 4px; }
+  .props-input .chev{ color: var(--text-faint); font-size: 0.7rem; }
+  .props-row{ display: flex; gap: 6px; }
+  .props-row .props-input{ flex: 1; justify-content: center; }
+  .toggle{ width: 28px; height: 16px; border-radius: 999px; background: var(--blue); position: relative; }
+  .toggle::after{ content: ""; position: absolute; top: 2px; right: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; }
+
+  /* ---------- Logos / subjects strip ---------- */
+  .strip{
+    background: #fff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+    padding: 28px 32px; position: relative; z-index: 2;
+  }
+  .strip-inner{ max-width: var(--max-width); margin: 0 auto; display: flex; align-items: center; gap: 32px; flex-wrap: wrap; justify-content: center; }
+  .strip-label{ font-size: 0.82rem; color: var(--text-faint); font-weight: 500; }
+  .subject-list{ display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+  .subject{
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 14px; border-radius: 999px; background: var(--panel-2); border: 1px solid var(--border-soft);
+    font-size: 0.85rem; font-weight: 600; color: var(--navy);
+  }
+  .subject i{ width: 8px; height: 8px; border-radius: 50%; display: block; }
+
+  /* ---------- Sections ---------- */
+  section.block{ padding: 110px 32px; }
+  .section-head{ text-align: center; max-width: 640px; margin: 0 auto 56px; }
+  .eyebrow{
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--blue); margin-bottom: 14px;
+  }
+  .eyebrow::before{ content: ""; width: 18px; height: 2px; background: var(--blue); border-radius: 2px; }
+  .section-title{
+    font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 700; letter-spacing: -0.02em; line-height: 1.12; color: var(--navy);
+  }
+  .section-sub{ margin-top: 16px; color: var(--text-dim); font-size: 1.05rem; }
+
+  /* ---------- Features ---------- */
+  .features-grid{ max-width: var(--max-width); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .feature-card{
+    background: #fff; border: 1px solid var(--border-soft); border-radius: var(--radius-lg);
+    padding: 28px; transition: border-color .2s ease, transform .2s ease, box-shadow .2s ease;
+  }
+  .feature-card:hover{ border-color: #c9d0da; transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .feature-icon{
+    width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+    background: var(--blue-tint); color: var(--blue); margin-bottom: 20px;
+    border: 1px solid rgba(60,101,167,0.15);
+  }
+  .feature-icon svg{ width: 22px; height: 22px; }
+  .feature-title{ font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; margin-bottom: 8px; color: var(--navy); }
+  .feature-desc{ color: var(--text-dim); font-size: 0.95rem; }
+
+  /* ---------- How it works ---------- */
+  .how{ background: #fff; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .steps{ max-width: var(--max-width); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; counter-reset: step; }
+  .step{ position: relative; }
+  .step-visual{
+    height: 200px; border-radius: var(--radius-lg); overflow: hidden; position: relative;
+    border: 1px solid var(--border-soft); background: var(--panel-2); margin-bottom: 22px;
+  }
+  .step-visual img.bg{ width: 100%; height: 100%; object-fit: cover; }
+  .step-num{
+    display: inline-grid; place-items: center; width: 30px; height: 30px; border-radius: 8px;
+    background: var(--navy); color: #fff; font-family: var(--font-display); font-weight: 600; font-size: 0.9rem;
+    margin-bottom: 12px;
+  }
+  .step h3{ font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--navy); margin-bottom: 6px; }
+  .step p{ color: var(--text-dim); font-size: 0.95rem; }
+
+  /* step 1: cast */
+  .cast{ position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: center; gap: 0;
+    background: linear-gradient(180deg, #e9eef6, #d8e1ee); }
+  .cast img{ height: 92%; width: auto; margin: 0 -14px; filter: drop-shadow(0 8px 14px rgba(3,17,76,0.18)); }
+  .cast img:nth-child(2){ height: 100%; position: relative; z-index: 2; }
+
+  /* step 2: branch graph */
+  .graph{ position: absolute; inset: 0; background:
+      radial-gradient(circle, rgba(3,17,76,0.1) 1px, transparent 1.5px) 0 0 / 16px 16px, var(--panel-2); }
+  .graph svg{ position: absolute; inset: 0; width: 100%; height: 100%; }
+  .node{
+    position: absolute; background: #fff; border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 10px; font-size: 0.72rem; font-weight: 600; color: var(--navy);
+    box-shadow: var(--shadow-sm); white-space: nowrap; transform: translate(-50%, -50%);
+  }
+  .node.start{ background: var(--navy); color: #fff; border-color: var(--navy); }
+  .node.choice{ border-color: var(--blue); color: var(--blue); }
+
+  /* step 3: share */
+  .share{ position: absolute; inset: 0; background: url('images/backgrounds/hallway.png') center / cover; }
+  .share::before{ content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(3,17,76,0.1), rgba(3,17,76,0.55)); }
+  .share-card{
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+    background: #fff; border-radius: 12px; padding: 14px 16px; width: 76%;
+    box-shadow: 0 16px 40px rgba(3,17,76,0.3);
+  }
+  .share-card .lbl{ font-size: 0.66rem; color: var(--text-faint); font-weight: 600; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 6px; }
+  .share-link{ display: flex; gap: 6px; }
+  .share-link span{ flex: 1; font-size: 0.74rem; background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .share-link b{ font-size: 0.72rem; background: var(--blue); color: #fff; border-radius: 6px; padding: 6px 10px; }
+  .share-stats{ display: flex; gap: 14px; margin-top: 10px; font-size: 0.72rem; color: var(--text-dim); }
+  .share-stats strong{ color: var(--navy); }
+
+  /* ---------- Stories ---------- */
+  .stories-header{
+    max-width: var(--max-width); margin: 0 auto 40px;
+    display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap;
+  }
+  .stories-header .section-head{ text-align: left; margin: 0; }
+  .stories-grid{ max-width: var(--max-width); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .story-card{
+    border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-soft);
+    background: #fff; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    display: flex; flex-direction: column;
+  }
+  .story-card:hover{ transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: #c9d0da; }
+  .story-cover{ aspect-ratio: 16 / 9; position: relative; overflow: hidden; background: linear-gradient(135deg, var(--navy), var(--blue)); }
+  .story-cover img{ width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+  .story-card:hover .story-cover img{ transform: scale(1.05); }
+  .story-cover .scene-count{
+    position: absolute; left: 12px; bottom: 12px;
+    background: rgba(3,17,76,0.78); color: #fff; backdrop-filter: blur(6px);
+    font-size: 0.72rem; font-weight: 600; padding: 4px 10px; border-radius: 999px;
+  }
+  .story-info{ padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .story-tags{ display: flex; gap: 6px; }
+  .tag{ font-size: 0.7rem; font-weight: 600; padding: 3px 9px; border-radius: 999px; background: var(--blue-tint); color: var(--blue); }
+  .tag.grey{ background: var(--panel-3); color: var(--text-dim); }
+  .story-title{ font-family: var(--font-display); font-size: 1.14rem; font-weight: 600; color: var(--navy); margin-top: 4px; }
+  .story-desc{ color: var(--text-dim); font-size: 0.88rem; }
+
+  /* ---------- Stats band ---------- */
+  .stats{ max-width: var(--max-width); margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0;
+    background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .stat{ padding: 32px 28px; border-right: 1px solid var(--border-soft); }
+  .stat:last-child{ border-right: none; }
+  .stat-value{ font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; color: var(--navy); letter-spacing: -0.02em; line-height: 1.1; }
+  .stat-label{ color: var(--text-dim); font-size: 0.9rem; margin-top: 6px; }
+
+  /* ---------- FAQ ---------- */
+  .faq{ max-width: 780px; margin: 0 auto; }
+  .faq details{ background: #fff; border: 1px solid var(--border-soft); border-radius: var(--radius-md); margin-bottom: 10px; transition: border-color .2s ease; }
+  .faq details[open]{ border-color: #c9d0da; box-shadow: var(--shadow-sm); }
+  .faq summary{
+    list-style: none; cursor: pointer; padding: 18px 22px; font-weight: 600; color: var(--navy);
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  }
+  .faq summary::-webkit-details-marker{ display: none; }
+  .faq summary::after{ content: "+"; font-size: 1.3rem; font-weight: 400; color: var(--blue); transition: transform .2s ease; }
+  .faq details[open] summary::after{ transform: rotate(45deg); }
+  .faq details p{ padding: 0 22px 20px; color: var(--text-dim); font-size: 0.95rem; }
+
+  /* ---------- CTA ---------- */
+  .cta-outer{ padding: 0 32px 110px; }
+  .cta{
+    max-width: var(--max-width); margin: 0 auto; border-radius: 24px; overflow: hidden; position: relative;
+    background: var(--navy); color: #fff;
+    display: grid; grid-template-columns: 1.2fr 1fr; align-items: stretch; min-height: 360px;
+  }
+  .cta-copy{ padding: 64px 56px; position: relative; z-index: 1; }
+  .cta-title{ font-family: var(--font-display); font-size: clamp(2rem, 4vw, 2.8rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.12; }
+  .cta-sub{ margin-top: 16px; color: rgba(255,255,255,0.72); font-size: 1.05rem; max-width: 460px; }
+  .cta-actions{ display: flex; gap: 12px; margin-top: 32px; flex-wrap: wrap; }
+  .cta-art{ position: relative; background: url('images/backgrounds/rooftop.png') center / cover; }
+  .cta-art::before{ content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, var(--navy) 0%, rgba(3,17,76,0.35) 45%, rgba(3,17,76,0.1) 100%); }
+  .cta-art img{ position: absolute; bottom: 0; right: 12%; height: 92%; width: auto; filter: drop-shadow(0 10px 30px rgba(0,0,0,0.35)); }
 
   /* ---------- Footer ---------- */
-  footer{
-    border-top: 1px solid var(--border-soft);
-    padding: 28px 0;
-    background: transparent;
-    color: var(--text-faint);
-    font-size: 0.85rem;
+  footer{ background: #020b33; color: rgba(255,255,255,0.65); padding: 64px 32px 28px; font-size: 0.9rem; }
+  .footer-grid{ max-width: var(--max-width); margin: 0 auto; display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 40px; }
+  .footer-brand img{ height: 64px; width: auto; margin: -16px 0 4px -10px; }
+  .footer-brand p{ max-width: 280px; color: rgba(255,255,255,0.55); }
+  .footer-col h4{ color: #fff; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px; }
+  .footer-col a{ display: block; padding: 4px 0; transition: color .15s ease; }
+  .footer-col a:hover{ color: #fff; }
+  .footer-bottom{
+    max-width: var(--max-width); margin: 48px auto 0; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1);
+    display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 0.84rem; color: rgba(255,255,255,0.45);
   }
-
-  .footer-inner{
-    width: 100%;
-    max-width: var(--max-width);
-    margin: 0 auto;
-    padding: 0 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    flex-wrap: nowrap;
-  }
-
-  .footer-logo{
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: #03114c;
-    flex-shrink: 0;
-  }
-
-  .footer-links{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 22px;
-    justify-content: center;
-    flex: 1;
-  }
-
-  .footer-links a{
-    color: var(--text-dim);
-    font-size: 0.92rem;
-    transition: color 0.15s ease;
-  }
-
-  .footer-links a:hover{ color: var(--gold-bright); }
-
-  .footer-copy{
-    color: var(--text-faint);
-    font-size: 0.88rem;
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-
-  @media (max-width: 640px) {
-    .footer-inner{
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      flex-wrap: wrap;
-    }
-
-    .footer-links{
-      justify-content: center;
-      flex: none;
-    }
-  }
+  .footer-bottom nav{ display: flex; gap: 20px; }
+  .footer-bottom a:hover{ color: #fff; }
 
   .help-fab{
-    position: fixed;
-    bottom: 22px;
-    right: 22px;
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--maroon), var(--maroon-deep));
-    border: 1px solid #c9d0da;
-    color: #fff;
-    font-size: 0.95rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 16px rgba(3,17,76,0.11);
-    z-index: 40;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    position: fixed; bottom: 22px; right: 22px; width: 44px; height: 44px; border-radius: 50%;
+    background: var(--navy); border: none; color: #fff; font-size: 1rem; font-weight: 700;
+    display: grid; place-items: center; box-shadow: 0 8px 20px rgba(3,17,76,0.25); z-index: 40;
+    transition: transform .15s ease, background .15s ease;
   }
+  .help-fab:hover{ transform: translateY(-2px); background: var(--blue); }
 
-  .help-fab:hover{
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(3,17,76,0.14);
+  /* ---------- Reveal ---------- */
+  .reveal{ opacity: 0; transform: translateY(18px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal.in{ opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    .reveal{ opacity: 1; transform: none; transition: none; }
+    .dialogue-text .caret{ animation: none; }
   }
 
   /* ---------- Responsive ---------- */
-  @media (max-width: 900px){
-    .features-grid, .stories-grid{
-      grid-template-columns: repeat(2, 1fr);
-    }
-    .editor-body{
-      grid-template-columns: 110px 1fr 0px;
-    }
+  @media (max-width: 1000px){
+    .editor-body{ grid-template-columns: 170px 1fr; }
     .editor-col.props{ display: none; }
+    .features-grid, .stories-grid{ grid-template-columns: repeat(2, 1fr); }
+    .steps{ grid-template-columns: 1fr 1fr; }
+    .stats{ grid-template-columns: repeat(2, 1fr); }
+    .stat:nth-child(2){ border-right: none; }
+    .stat:nth-child(-n+2){ border-bottom: 1px solid var(--border-soft); }
+    .footer-grid{ grid-template-columns: 1fr 1fr 1fr; }
+    .footer-brand{ grid-column: 1 / -1; }
   }
 
   @media (max-width: 760px){
-    .nav-links{ display: none; }
-    .menu-toggle{ display: block; }
-    nav{ padding: 14px 20px; gap: 12px; }
-    .logo{ margin-right: auto; }
-    .nav-actions{ margin-left: 0; }
-    .nav-actions .signin{ display: none; }
-    .hero{ padding: 56px 20px 36px; }
-    section{ padding: 64px 20px; }
-    .features-grid, .stories-grid{
-      grid-template-columns: 1fr;
-    }
-    .editor-body{
-      grid-template-columns: 1fr;
-    }
-    .editor-col.scenes{
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      border-right: none;
-      border-bottom: 1px solid var(--border-soft);
-    }
-    .editor-col.scenes .editor-tabs{ display: none; }
-    .scene-thumb{ min-width: 90px; margin-bottom: 0; }
-    .scene-label{ display: none; }
-    .editor-col.props{ display: none; }
-    .stories-header{ flex-direction: column; align-items: flex-start; }
+    .nav{ padding: 12px 20px; }
+    .nav-links, .nav-actions{ display: none; }
+    .menu-toggle{ display: inline-flex; }
+    .hero{ padding: 56px 20px 0; }
+    .editor-wrap{ margin-top: 44px; }
+    .editor-titlebar{ grid-template-columns: auto 1fr; }
+    .editor-titlebar-actions{ display: none; }
+    .editor-title{ justify-self: end; }
+    .editor-body{ grid-template-columns: 1fr; height: auto; }
+    .editor-col.scenes{ display: none; }
+    .editor-stage{ height: 340px; }
+    .stage-choices{ width: 170px; top: 12px; right: 12px; }
+    .stage-character, .stage-select{ transform: translateX(-80%); }
+    section.block{ padding: 72px 20px; }
+    .strip{ padding: 24px 20px; }
+    .features-grid, .stories-grid, .steps{ grid-template-columns: 1fr; }
+    .cta-outer{ padding: 0 16px 72px; }
+    .cta{ grid-template-columns: 1fr; }
+    .cta-copy{ padding: 44px 28px 32px; }
+    .cta-art{ height: 220px; }
+    .cta-art::before{ background: linear-gradient(180deg, var(--navy) 0%, rgba(3,17,76,0.2) 60%); }
+    .footer-grid{ grid-template-columns: 1fr 1fr; }
+    footer{ padding: 48px 20px 24px; }
   }
 
   @media (max-width: 480px){
-    .hero-actions{ flex-direction: column; width: 100%; }
+    .hero-actions{ flex-direction: column; }
     .hero-actions .btn{ width: 100%; }
+    .stats{ grid-template-columns: 1fr; }
+    .stat{ border-right: none; border-bottom: 1px solid var(--border-soft); }
+    .stat:last-child{ border-bottom: none; }
+    .stage-choices{ display: none; }
+    .stage-character, .stage-select{ transform: translateX(-50%); }
   }
 </style>
 </head>
 <body>
 
-<header>
-  <nav>
+<header id="siteHeader">
+  <div class="nav">
     <div class="nav-left">
       <a href="#" class="logo">
-        <img src="images/sidebar-logo.png" alt="Plotter" class="logo-mark">
+        <img src="images/sidebar-logo.png" alt="" class="logo-mark">
         <span>plotter</span>
       </a>
-      <div class="nav-links">
-        <a href="#templates">Templates</a>
-        <a href="#explore">Explore</a>
-        <a href="#schools">For Schools</a>
-        <a href="#pricing">Pricing</a>
-      </div>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#features">Features</a>
+        <a href="#how">How it works</a>
+        <a href="#explore">Stories</a>
+        <a href="#faq">FAQ</a>
+      </nav>
     </div>
     <div class="nav-actions">
       <a href="signin.html" class="signin">Sign in</a>
-      <a href="#start" class="btn btn-primary">Get started free</a>
+      <a href="signin.html" class="btn btn-primary">Get started free</a>
     </div>
-    <button class="menu-toggle" aria-label="Menu">&#9776;</button>
-  </nav>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+  </div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#features">Features</a>
+    <a href="#how">How it works</a>
+    <a href="#explore">Stories</a>
+    <a href="#faq">FAQ</a>
+    <a href="signin.html">Sign in</a>
+    <a href="signin.html" class="btn btn-primary">Get started free</a>
+  </div>
 </header>
 
 <main>
+  <!-- ============ HERO ============ -->
   <section class="hero">
-    <span class="badge"><span class="dot"></span>Open beta · Free for educators</span>
-    <h1 class="headline">Where Creativity<br><span class="gradient-text">Educates.</span></h1>
-    <p class="hero-sub">Plotter is the visual novel editor for educators. Create branching, character-driven stories your students actually want to finish.</p>
+    <span class="badge"><span class="badge-tag">BETA</span>Free for educators during open beta</span>
+    <h1 class="headline">Where creativity<br><em>educates.</em></h1>
+    <p class="hero-sub">Plotter is the visual novel editor built for teachers. Turn any lesson into a branching, character-driven story your students actually want to finish.</p>
     <div class="hero-actions">
-      <a href="#start" class="btn btn-primary">Start creating — it's free</a>
-      <a href="#demo" class="btn btn-secondary">Watch demo →</a>
+      <a href="signin.html" class="btn btn-primary btn-lg">
+        Start creating — it's free
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a href="homepage.html" class="btn btn-secondary btn-lg">Browse templates</a>
+    </div>
+    <div class="hero-note">
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>No credit card</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>No coding required</span>
+      <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Works in any browser</span>
     </div>
 
-    <div class="editor-shell">
-      <div class="editor-titlebar">
-        <div class="traffic-lights"><span></span><span></span><span></span></div>
-        <div class="editor-title">The Scientific Method · plotter.app</div>
-        <div class="editor-titlebar-actions">
-          <span class="pill-btn">Preview</span>
-          <span class="pill-btn publish">Publish</span>
-        </div>
-      </div>
-      <div class="editor-body">
-        <div class="editor-col scenes">
-          <div class="editor-tabs">
-            <span class="active">SCENES</span>
-            <span>CHARS</span>
+    <div class="editor-wrap">
+      <div class="editor-shell" aria-hidden="true">
+        <div class="editor-titlebar">
+          <div class="traffic-lights"><span></span><span></span><span></span></div>
+          <div class="editor-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            plotter.app / The Scientific Method
           </div>
-          <div class="scene-thumb s1"></div>
-          <div class="scene-label">Opening Scene</div>
-          <div class="scene-thumb s2"></div>
-          <div class="scene-label">The Question</div>
-          <div class="scene-thumb s3"></div>
-          <div class="scene-label">Choose Your Path</div>
-          <div class="scene-thumb s4"></div>
-        </div>
-        <div class="editor-col editor-stage">
-          <div class="dialogue-box">
-            <span class="speaker-tag"><span class="dot"></span>DR. CHEN</span>
-            <p class="dialogue-text">Welcome to the lab! Today we're going to explore something incredible about how science actually works.</p>
-            <div class="continue-row">Continue ›</div>
+          <div class="editor-titlebar-actions">
+            <span class="pill-btn">Preview</span>
+            <span class="pill-btn publish">Publish</span>
           </div>
         </div>
-        <div class="editor-col props">
-          <div class="props-heading">PROPERTIES</div>
-          <div class="props-field">
-            <div class="props-label">Scene name</div>
-            <div class="props-input"></div>
+        <div class="editor-body">
+          <div class="editor-col scenes">
+            <div class="editor-tabs"><span class="active">Scenes</span><span>Cast</span></div>
+            <div class="scene-item">
+              <img src="images/backgrounds/schoolgate.png" alt="">
+              <div class="meta"><div class="num">01</div><div class="name">Arriving at school</div></div>
+            </div>
+            <div class="scene-item active">
+              <img src="images/backgrounds/classroom.png" alt="">
+              <div class="meta"><div class="num">02</div><div class="name">The big question</div></div>
+            </div>
+            <div class="scene-item">
+              <img src="images/backgrounds/art_room.png" alt="">
+              <div class="meta"><div class="num">03</div><div class="name">Form a hypothesis</div></div>
+            </div>
+            <div class="scene-item">
+              <img src="images/backgrounds/clubroom.png" alt="">
+              <div class="meta"><div class="num">04</div><div class="name">Run the experiment</div></div>
+            </div>
+            <div class="scene-add">+ New scene</div>
           </div>
-          <div class="props-field">
-            <div class="props-label">Background</div>
-            <div class="props-input"></div>
+
+          <div class="editor-col editor-stage">
+            <img class="stage-character" src="images/characters/Radwer/radwer-focused-pointing.png" alt="">
+            <div class="stage-select"></div>
+            <div class="stage-choices">
+              <div class="stage-choice hl"><b>A</b>Test one variable at a time</div>
+              <div class="stage-choice"><b>B</b>Change everything at once</div>
+            </div>
+            <div class="dialogue-box">
+              <span class="speaker-tag">Mr. Radwer</span>
+              <p class="dialogue-text">Every good experiment starts with a question. So — how would <em>you</em> find out which plant food works best?<span class="caret"></span></p>
+            </div>
           </div>
-          <div class="props-field">
-            <div class="props-label">Character</div>
-            <div class="props-input"></div>
-          </div>
-          <div class="props-field">
-            <div class="props-label">Dialogue</div>
-            <div class="props-input"></div>
-          </div>
-          <div class="props-field">
-            <div class="props-label">Branches</div>
-            <div class="props-input"></div>
+
+          <div class="editor-col props">
+            <div class="props-heading">Properties</div>
+            <div class="props-field">
+              <div class="props-label">Scene name</div>
+              <div class="props-input">The big question</div>
+            </div>
+            <div class="props-field">
+              <div class="props-label">Background</div>
+              <div class="props-input"><span style="display:flex;align-items:center;gap:6px"><img src="images/backgrounds/classroom.png" alt="">Classroom</span><span class="chev">▾</span></div>
+            </div>
+            <div class="props-field">
+              <div class="props-label">Character</div>
+              <div class="props-input"><span style="display:flex;align-items:center;gap:6px"><img src="images/characters/_thumbs/Radwer/radwer-focused-pointing.png" alt="">Radwer · Pointing</span><span class="chev">▾</span></div>
+            </div>
+            <div class="props-field">
+              <div class="props-label">Position</div>
+              <div class="props-row"><div class="props-input">Left</div><div class="props-input" style="border-color:var(--blue);color:var(--blue);background:#fff">Center</div><div class="props-input">Right</div></div>
+            </div>
+            <div class="props-field">
+              <div class="props-label">Branches</div>
+              <div class="props-input">2 choices <span class="chev">›</span></div>
+            </div>
+            <div class="props-field">
+              <div class="props-label">Track score</div>
+              <div class="props-input">Quiz points <span class="toggle"></span></div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <section id="features">
-    <div class="section-head">
-      <div class="section-banner">
-        <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7-6.2-3.4-6.2 3.4 1.2-7-5-4.9 7.1-.7L12 2z"/></svg>
-        What you get
+  <!-- ============ SUBJECT STRIP ============ -->
+  <div class="strip">
+    <div class="strip-inner">
+      <span class="strip-label">Teachers are building stories for</span>
+      <div class="subject-list">
+        <span class="subject"><i style="background:#3c65a7"></i>Science</span>
+        <span class="subject"><i style="background:#b5733a"></i>History</span>
+        <span class="subject"><i style="background:#2f8f6a"></i>Math</span>
+        <span class="subject"><i style="background:#8a4fb0"></i>Literature</span>
+        <span class="subject"><i style="background:#c2475b"></i>Languages</span>
+        <span class="subject"><i style="background:#03114c"></i>Civics</span>
       </div>
-      <h2 class="section-title">Everything your stories need</h2>
+    </div>
+  </div>
+
+  <!-- ============ FEATURES ============ -->
+  <section class="block" id="features">
+    <div class="section-head reveal">
+      <div class="eyebrow">What you get</div>
+      <h2 class="section-title">Everything your stories need, nothing they don't</h2>
+      <p class="section-sub">A focused toolkit for turning lesson plans into interactive narratives — no game-dev experience required.</p>
     </div>
     <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">▦▦</div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10M12 16v4"/></svg></div>
         <div class="feature-title">Scene-by-scene editor</div>
-        <p class="feature-desc">Drag, reorder, and edit scenes like slides. Set backgrounds, characters, and dialogue in one panel.</p>
+        <p class="feature-desc">Drag, reorder, and edit scenes like slides. Set backgrounds, characters, and dialogue from a single panel.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">👤</div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5"/><circle cx="17.5" cy="9" r="2.5"/><path d="M17 14.5c2.4.2 4 1.8 4.5 4.5"/></svg></div>
         <div class="feature-title">Character library</div>
-        <p class="feature-desc">Build a cast. Give each character a role and visual identity, then reuse them across every scene.</p>
+        <p class="feature-desc">Pick from a ready-made cast with multiple expressions and poses, then reuse them across every scene.</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">⇄</div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="8" r="2"/><path d="M6 8v8"/><path d="M18 10c0 4-6 3-11.2 6.6"/></svg></div>
         <div class="feature-title">Branching paths</div>
-        <p class="feature-desc">Add choice moments that send students down different narrative paths. Every decision counts.</p>
+        <p class="feature-desc">Add choice moments that send students down different narrative paths. Every decision has consequences.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16"/><path d="M8 15l4-4 3 3 5-6"/></svg></div>
+        <div class="feature-title">Built-in assessment</div>
+        <p class="feature-desc">Turn choices into quiz questions and track points so you can see what students understood along the way.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+        <div class="feature-title">Curriculum templates</div>
+        <p class="feature-desc">Start from stories organised by subject and grade, then adapt them to fit your own classroom.</p>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/></svg></div>
+        <div class="feature-title">One-link sharing</div>
+        <p class="feature-desc">Publish and share with a single link. Students play in the browser — no accounts or installs needed.</p>
       </div>
     </div>
   </section>
 
-  <section id="explore">
+  <!-- ============ HOW IT WORKS ============ -->
+  <section class="block how" id="how">
+    <div class="section-head reveal">
+      <div class="eyebrow">How it works</div>
+      <h2 class="section-title">From lesson plan to story in an afternoon</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-visual">
+          <div class="cast">
+            <img src="images/characters/_thumbs/Suzy/suzy-holdingtumbler-down-normal.png" alt="">
+            <img src="images/characters/_thumbs/Radwer/radwer-neutral.png" alt="">
+            <img src="images/characters/_thumbs/Justin/justin-normal-onehanddown.png" alt="">
+          </div>
+        </div>
+        <div class="step-num">1</div>
+        <h3>Pick your cast and setting</h3>
+        <p>Choose characters and backgrounds from the library, or start from a subject template.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-visual">
+          <div class="graph">
+            <svg viewBox="0 0 360 200" preserveAspectRatio="none" fill="none" stroke="#9fb3d4" stroke-width="1.5">
+              <path d="M60 100 C110 100, 110 55, 165 55"/>
+              <path d="M60 100 C110 100, 110 145, 165 145"/>
+              <path d="M195 55 C250 55, 250 100, 300 100" stroke-dasharray="4 4"/>
+              <path d="M195 145 C250 145, 250 100, 300 100"/>
+            </svg>
+            <span class="node start" style="left:17%;top:50%">Intro</span>
+            <span class="node choice" style="left:50%;top:27%">Choice A</span>
+            <span class="node choice" style="left:50%;top:73%">Choice B</span>
+            <span class="node" style="left:83%;top:50%">Results</span>
+          </div>
+        </div>
+        <div class="step-num">2</div>
+        <h3>Write scenes and choices</h3>
+        <p>Add dialogue, then drop in decision points that branch the story and check understanding.</p>
+      </div>
+      <div class="step reveal">
+        <div class="step-visual">
+          <div class="share">
+            <div class="share-card">
+              <div class="lbl">Share with your class</div>
+              <div class="share-link"><span>plotter.app/play/sci-method</span><b>Copy</b></div>
+              <div class="share-stats"><span><strong>28</strong> played</span><span><strong>92%</strong> finished</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="step-num">3</div>
+        <h3>Publish and play</h3>
+        <p>Share one link. Students play on any device while you watch progress come in.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STORIES ============ -->
+  <section class="block" id="explore">
     <div class="stories-header">
-      <h2>Featured stories</h2>
-      <a href="#signin" class="btn btn-primary">Sign in to see yours</a>
+      <div class="section-head reveal">
+        <div class="eyebrow">Featured stories</div>
+        <h2 class="section-title">Made with Plotter</h2>
+      </div>
+      <a href="homepage.html" class="btn btn-secondary reveal">
+        Browse all templates
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
     </div>
     <div class="stories-grid">
-      <div class="story-card">
-        <div class="story-cover c1"><span class="scene-count">12 scenes</span></div>
+      <a href="homepage.html" class="story-card reveal">
+        <div class="story-cover"><img src="images/journeytothesolarsystem.jpg" alt="" loading="lazy"><span class="scene-count">14 scenes</span></div>
         <div class="story-info">
-          <div class="story-title">The Scientific Method</div>
-          <div class="story-meta">Science · Grade 7</div>
+          <div class="story-tags"><span class="tag">Science</span><span class="tag grey">Grade 6</span></div>
+          <div class="story-title">Journey Through the Solar System</div>
+          <p class="story-desc">A voyage from Mercury to Neptune with branching paths for each planet.</p>
         </div>
-      </div>
-      <div class="story-card">
-        <div class="story-cover c2"><span class="scene-count">8 scenes</span></div>
+      </a>
+      <a href="homepage.html" class="story-card reveal">
+        <div class="story-cover"><img src="images/rome.jpg" alt="" loading="lazy"><span class="scene-count">8 scenes</span></div>
         <div class="story-info">
+          <div class="story-tags"><span class="tag">History</span><span class="tag grey">Grade 9</span></div>
           <div class="story-title">Ancient Rome: Rise &amp; Fall</div>
-          <div class="story-meta">History · Grade 9</div>
+          <p class="story-desc">Advise the Senate and see how your decisions shape an empire.</p>
         </div>
-      </div>
-      <div class="story-card">
-        <div class="story-cover c3"><span class="scene-count">15 scenes</span></div>
+      </a>
+      <a href="homepage.html" class="story-card reveal">
+        <div class="story-cover"><img src="images/algeb.jpg" alt="" loading="lazy"><span class="scene-count">15 scenes</span></div>
         <div class="story-info">
+          <div class="story-tags"><span class="tag">Math</span><span class="tag grey">Grade 8</span></div>
           <div class="story-title">Algebra Adventures</div>
-          <div class="story-meta">Math · Grade 8</div>
+          <p class="story-desc">Solve for x to unlock each door in a puzzle-filled quest.</p>
         </div>
-      </div>
+      </a>
+      <a href="homepage.html" class="story-card reveal">
+        <div class="story-cover"><img src="images/pyt.jpg" alt="" loading="lazy"><span class="scene-count">10 scenes</span></div>
+        <div class="story-info">
+          <div class="story-tags"><span class="tag">Math</span><span class="tag grey">Grade 8</span></div>
+          <div class="story-title">Pythagoras and the Lost Temple</div>
+          <p class="story-desc">Use geometry to navigate a temple full of right-triangle puzzles.</p>
+        </div>
+      </a>
+      <a href="homepage.html" class="story-card reveal">
+        <div class="story-cover"><img src="images/rail.jpg" alt="" loading="lazy"><span class="scene-count">12 scenes</span></div>
+        <div class="story-info">
+          <div class="story-tags"><span class="tag">History</span><span class="tag grey">Grade 10</span></div>
+          <div class="story-title">The Underground Railroad</div>
+          <p class="story-desc">A powerful narrative following freedom seekers on the path to liberation.</p>
+        </div>
+      </a>
+      <a href="homepage.html" class="story-card reveal">
+        <div class="story-cover"><img src="images/fraction.jpg" alt="" loading="lazy"><span class="scene-count">9 scenes</span></div>
+        <div class="story-info">
+          <div class="story-tags"><span class="tag">Math</span><span class="tag grey">Grade 5</span></div>
+          <div class="story-title">The Fraction Kingdom</div>
+          <p class="story-desc">A kingdom divided — restore order using fractions and ratios.</p>
+        </div>
+      </a>
     </div>
   </section>
 
-  <section class="cta">
-    <div class="section-banner" style="margin-bottom:22px;">
-      <svg viewBox="0 0 24 24"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7-6.2-3.4-6.2 3.4 1.2-7-5-4.9 7.1-.7L12 2z"/></svg>
-      Begin today
+  <!-- ============ STATS ============ -->
+  <section class="block" style="padding-top:0">
+    <div class="stats reveal">
+      <div class="stat"><div class="stat-value">20+</div><div class="stat-label">Ready-made story templates</div></div>
+      <div class="stat"><div class="stat-value">5</div><div class="stat-label">Characters with multiple expressions</div></div>
+      <div class="stat"><div class="stat-value">12</div><div class="stat-label">Hand-painted backgrounds</div></div>
+      <div class="stat"><div class="stat-value">0</div><div class="stat-label">Lines of code required</div></div>
     </div>
-    <h2 class="cta-title">Ready to bring your<br>curriculum to life?</h2>
-    <p class="cta-sub">Join thousands of educators building stories that engage and inspire. Free forever for individual teachers.</p>
-    <a href="#start" class="btn btn-primary cta-btn">Start building for free</a>
   </section>
+
+  <!-- ============ FAQ ============ -->
+  <section class="block how" id="faq">
+    <div class="section-head reveal">
+      <div class="eyebrow">FAQ</div>
+      <h2 class="section-title">Questions, answered</h2>
+    </div>
+    <div class="faq reveal">
+      <details open>
+        <summary>Is Plotter really free?</summary>
+        <p>Yes. Plotter is free for individual educators throughout the open beta, with no credit card required.</p>
+      </details>
+      <details>
+        <summary>Do my students need accounts?</summary>
+        <p>No. When you publish a story you get a share link — students open it in any browser and start playing right away.</p>
+      </details>
+      <details>
+        <summary>Do I need any design or coding skills?</summary>
+        <p>None at all. If you can build a slideshow, you can build a Plotter story. Characters, backgrounds, and templates are included.</p>
+      </details>
+      <details>
+        <summary>Can I use my own images?</summary>
+        <p>Custom backgrounds and characters are on our roadmap. For now, the built-in library covers classrooms, school settings, and historical scenes.</p>
+      </details>
+      <details>
+        <summary>What grade levels is Plotter for?</summary>
+        <p>Templates currently span upper elementary through high school, and every story can be adapted to the level of your class.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- ============ CTA ============ -->
+  <div class="cta-outer" style="padding-top:110px">
+    <div class="cta reveal">
+      <div class="cta-copy">
+        <h2 class="cta-title">Ready to bring your curriculum to life?</h2>
+        <p class="cta-sub">Build your first story today. It's free for individual teachers — and your students will thank you.</p>
+        <div class="cta-actions">
+          <a href="signin.html" class="btn btn-light btn-lg">Start building for free</a>
+          <a href="homepage.html" class="btn btn-ghost-light btn-lg">Explore templates</a>
+        </div>
+      </div>
+      <div class="cta-art" aria-hidden="true">
+        <img src="images/characters/Suzy/suzy-holdingtumbler-down-amused.png" alt="">
+      </div>
+    </div>
+  </div>
 </main>
 
 <footer>
-  <div class="footer-inner">
-    <a href="#" class="logo footer-logo">
-      <img src="images/sidebar-logo.png" alt="Plotter" class="logo-mark">
-      <span>plotter</span>
-    </a>
-    <nav class="footer-links">
-      <a href="#privacy">Privacy</a>
-      <a href="#terms">Terms</a>
-      <a href="#contact">Contact</a>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img src="images/brand-name.png" alt="plotter">
+      <p>The visual novel editor for educators. Where creativity educates.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="#features">Features</a>
+      <a href="#how">How it works</a>
+      <a href="homepage.html">Templates</a>
+    </div>
+    <div class="footer-col">
+      <h4>Resources</h4>
+      <a href="#faq">FAQ</a>
       <a href="#blog">Blog</a>
-    </nav>
-    <span class="footer-copy">&copy; 2026 Plotter</span>
+      <a href="#contact">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Account</h4>
+      <a href="signin.html">Sign in</a>
+      <a href="signin.html">Create account</a>
+      <a href="projects.html">My projects</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 Plotter. All rights reserved.</span>
+    <nav aria-label="Legal"><a href="#privacy">Privacy</a><a href="#terms">Terms</a></nav>
   </div>
 </footer>
 
 <button class="help-fab" aria-label="Help">?</button>
 
+<script>
+  // Header shadow on scroll
+  const header = document.getElementById('siteHeader');
+  const onScroll = () => header.classList.toggle('scrolled', window.scrollY > 8);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  // Mobile menu
+  const toggle = document.getElementById('menuToggle');
+  toggle.addEventListener('click', () => {
+    const open = header.classList.toggle('open');
+    toggle.setAttribute('aria-expanded', open);
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+  });
+  document.querySelectorAll('#mobileMenu a').forEach(a =>
+    a.addEventListener('click', () => { header.classList.remove('open'); toggle.setAttribute('aria-expanded', false); })
+  );
+
+  // Fade-in on scroll
+  const els = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(el => io.observe(el));
+  } else {
+    els.forEach(el => el.classList.add('in'));
+  }
+</script>
 </body>
 </html>
