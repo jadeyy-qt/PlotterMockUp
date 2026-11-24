@@ -89,6 +89,20 @@
   .sb-map-zoom button:hover{ background:var(--panel-3); }
   .sb-map-zoom .pct{ font-size:12px; min-width:52px; font-variant-numeric:tabular-nums; }
   .sb-map-zoom .fit{ font-size:12px; border-left:1px solid var(--border); border-radius:0 7px 7px 0; }
+  .sb-keys-bg{ position:fixed; inset:0; z-index:2000; background:rgba(3,17,76,0.42); display:none; align-items:center; justify-content:center; padding:20px; }
+  .sb-keys-bg.show{ display:flex; }
+  .sb-keys{ background:#fff; border-radius:18px; width:min(720px,100%); max-height:calc(100vh - 40px); overflow:auto; padding:22px 26px 24px; box-shadow:0 30px 80px rgba(3,17,76,0.35); position:relative; font-family:inherit; }
+  .sb-keys h3{ font-family:var(--font-display, Georgia, serif); font-size:20px; font-weight:600; color:var(--text); margin-bottom:2px; }
+  .sb-keys .sub{ font-size:12.5px; color:var(--text-faint); margin-bottom:16px; }
+  .sb-keys-x{ position:absolute; top:14px; right:14px; width:32px; height:32px; border-radius:50%; border:none; background:none; color:var(--text-dim); cursor:pointer; font-size:18px; }
+  .sb-keys-x:hover{ background:var(--panel-3); }
+  .sb-keys-grid{ display:grid; grid-template-columns:1fr 1fr; gap:18px 28px; }
+  .sb-keys-grid h4{ font-size:11px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--text-faint); margin-bottom:6px; }
+  .sb-keys-row{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:5px 0; font-size:12.5px; color:var(--text-dim); border-bottom:1px solid var(--border-soft, #e8ebf0); }
+  .sb-keys-row:last-child{ border-bottom:none; }
+  .sb-keys-row span:last-child{ display:flex; gap:4px; flex-shrink:0; }
+  .sb-keys kbd{ font:600 11px/1 inherit; font-family:inherit; color:var(--text); background:var(--panel-2, #f7f8fa); border:1px solid var(--border); border-bottom-width:2px; border-radius:6px; padding:4px 7px; min-width:22px; text-align:center; }
+  @media (max-width:640px){ .sb-keys-grid{ grid-template-columns:1fr; } }
   .sb-map-hint{ position:absolute; left:14px; bottom:16px; z-index:3; font-size:11px; color:var(--text-faint); background:rgba(255,255,255,0.85); padding:3px 8px; border-radius:6px; pointer-events:none; }
   .sb-map svg.edges{ position:absolute; left:0; top:0; overflow:visible; pointer-events:none; }
   .sb-node{ position:absolute; width:190px; background:#fff; border:1.5px solid var(--border); border-radius:12px; overflow:hidden; cursor:pointer; box-shadow:0 4px 14px rgba(3,17,76,0.08); transition:border-color .15s, transform .15s; }
@@ -221,7 +235,8 @@
   let restoring = false;
 
   function load(){ try { return JSON.parse(localStorage.getItem(STORE_KEY)); } catch(e){ return null; } }
-  function persist(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(story)); } catch(e){} }
+  var onPersist;   // set by the undo history below (var: may be called before it is assigned)
+  function persist(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(story)); } catch(e){} if(onPersist) onPersist(); }
   const cur  = () => story.scenes.find(s => s.id === curId) || null;
   const byId = id => story.scenes.find(s => s.id === id) || null;
   const idx  = id => story.scenes.findIndex(s => s.id === id);
@@ -1046,4 +1061,123 @@
     nameEl.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); nameEl.blur(); } });
   }
   if(loadedTpl) toast(`“${loadedTpl.title}” loaded — ${story.scenes.length} starter scenes with a choice and a quiz. Edit anything.`, 4200);
+
+  /* ------------------------------------------------------------------ undo / redo
+     Every save (persist) records the whole story. Quick bursts (typing, dragging)
+     merge into one step. Undo/redo restores the story and the scene it happened in. */
+  const H = { list:[], idx:-1, applying:false, last:0 };
+  const undoBtn = $('#undoBtn'), redoBtn = $('#redoBtn');
+  function syncUndoBtns(){
+    if(undoBtn){ undoBtn.disabled = H.idx <= 0; undoBtn.title = 'Undo (Ctrl+Z)'; }
+    if(redoBtn){ redoBtn.disabled = H.idx >= H.list.length - 1; redoBtn.title = 'Redo (Ctrl+Y)'; }
+  }
+  function record(){
+    if(H.applying) return;
+    const json = JSON.stringify(story);
+    if(H.idx >= 0 && H.list[H.idx].json === json) return;
+    const now = Date.now();
+    H.list.length = H.idx + 1;                                  // a new change drops the redo branch
+    if(H.idx > 0 && now - H.last < 600) H.list[H.idx] = { json, cur:curId };
+    else { H.list.push({ json, cur:curId }); if(H.list.length > 100) H.list.shift(); H.idx = H.list.length - 1; }
+    H.last = now;
+    syncUndoBtns();
+  }
+  function flush(){ clearTimeout(saveT); syncFromCanvas(); snapshot(); persist(); }
+  function applyHist(entry){
+    H.applying = true; H.last = 0;
+    if(typeof deselect === 'function') deselect();
+    story = JSON.parse(entry.json);
+    const id = byId(entry.cur) ? entry.cur : byId(curId) ? curId : story.scenes[0].id;
+    curId = null; switchScene(id);
+    if(nameEl) nameEl.textContent = story.title || 'Untitled Project';
+    refreshCounts(); if(view === 'map') renderMap();
+    H.applying = false; syncUndoBtns();
+  }
+  function undo(){ flush(); if(H.idx > 0){ H.idx--; applyHist(H.list[H.idx]); toast('Undone'); } else toast('Nothing to undo'); }
+  function redo(){ flush(); if(H.idx < H.list.length - 1){ H.idx++; applyHist(H.list[H.idx]); toast('Redone'); } else toast('Nothing to redo'); }
+  onPersist = record;
+  record();                                                     // the starting point
+  if(undoBtn) undoBtn.addEventListener('click', undo);
+  if(redoBtn) redoBtn.addEventListener('click', redo);
+
+  /* ------------------------------------------------------------------ copy / cut / paste
+     Works across scenes. The dialogue box isn't copied (one per scene). */
+  let clip = null;
+  const DEL_BTN = `<div class="placed-del" title="Delete"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"/></svg></div>`;
+  function copySel(cut){
+    if(!selectedEl || view !== 'canvas') return false;
+    if(selectedEl.classList.contains('p-dialogue')){ toast('Each scene has one dialogue box — add more lines in the Dialogue tab instead.'); return true; }
+    clip = JSON.parse(JSON.stringify(serialize(selectedEl)));
+    if(cut){ selectedEl.querySelector('.placed-del').click(); toast('Cut — press Ctrl+V to paste (works in other scenes too)'); }
+    else toast('Copied — press Ctrl+V to paste (works in other scenes too)');
+    return true;
+  }
+  function paste(){
+    if(view !== 'canvas') return;
+    if(!clip){ toast('Nothing copied yet — select something and press Ctrl+C'); return; }
+    if(/\bp-choice\b/.test(clip.cls) && cur() && cur().choices.length >= MAX_CHOICES){ toast(`A scene can have up to ${MAX_CHOICES} choices`); return; }
+    clip.left += 20; clip.top += 20;                            // each paste lands a little further along
+    const el = document.createElement('div');
+    el.className = clip.cls;
+    Object.entries(clip.data || {}).forEach(([k, v]) => el.dataset[k] = v);
+    el.dataset.id = uid('el');
+    el.style.left = clip.left + 'px'; el.style.top = clip.top + 'px';
+    el.innerHTML = DEL_BTN + clip.shell;
+    el.querySelectorAll('[contenteditable]').forEach(ed => ed.contentEditable = 'false');
+    ensureHandle(el); stage.appendChild(el); wirePlaced(el);
+    placedCount++; updateEmptyState();
+    selectPlaced(el); markDirty();
+  }
+
+  /* ------------------------------------------------------------------ shortcuts panel (press ?) */
+  const MAC = /Mac|iPhone|iPad/.test(navigator.platform);
+  const K = s => s.split(' ').map(k => `<kbd>${k === 'Ctrl' && MAC ? '⌘' : k}</kbd>`).join('');
+  const KEYS = [
+    ['General', [['Undo', 'Ctrl Z'], ['Redo', 'Ctrl Y'], ['Save (also automatic)', 'Ctrl S'], ['Preview the story', 'Ctrl Enter'], ['Canvas ⇄ Story map', 'M'], ['Previous / next scene', 'PgUp PgDn'], ['Show this list', '?']]],
+    ['Selected element', [['Copy', 'Ctrl C'], ['Cut', 'Ctrl X'], ['Paste', 'Ctrl V'], ['Duplicate', 'Ctrl D'], ['Delete', 'Del'], ['Edit text', 'Enter'], ['Deselect', 'Esc'], ['Nudge 1px (Shift = 10px)', '← ↑ → ↓'], ['Layer down / up', '[ ]'], ['To back / front', 'Ctrl [ ]']]],
+    ['Canvas', [['Zoom in / out', 'Ctrl + −'], ['Fit to screen', 'Ctrl 0'], ['Actual size (100%)', 'Ctrl 1'], ['Pan', 'Space drag'], ['Show grid', 'G'], ['Snap to grid', 'S']]],
+    ['Story map', [['Move around', 'drag'], ['Zoom', 'Ctrl wheel'], ['Zoom in / out', '+ −'], ['Fit whole story', '0']]],
+  ];
+  const keysBg = document.createElement('div');
+  keysBg.className = 'sb-keys-bg';
+  keysBg.innerHTML = `<div class="sb-keys" role="dialog" aria-modal="true" aria-labelledby="sbKeysTitle">
+      <button class="sb-keys-x" type="button" aria-label="Close">×</button>
+      <h3 id="sbKeysTitle">Keyboard shortcuts</h3>
+      <div class="sub">Shortcuts pause while you're typing in a text box.${MAC ? ' ⌘ = Command.' : ''}</div>
+      <div class="sb-keys-grid">${KEYS.map(([g, rows]) => `<div><h4>${g}</h4>${rows.map(([l, k]) => `<div class="sb-keys-row"><span>${l}</span><span>${K(k)}</span></div>`).join('')}</div>`).join('')}</div>
+    </div>`;
+  document.body.appendChild(keysBg);
+  const showKeys = on => keysBg.classList.toggle('show', on);
+  keysBg.addEventListener('click', e => { if(e.target === keysBg || e.target.closest('.sb-keys-x')) showKeys(false); });
+  const actions = $('.wtop-actions');
+  if(actions){
+    const kb = document.createElement('button');
+    kb.className = 'icon-btn'; kb.type = 'button'; kb.title = 'Keyboard shortcuts (?)'; kb.setAttribute('aria-label', 'Keyboard shortcuts');
+    kb.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>';
+    kb.addEventListener('click', () => showKeys(true));
+    actions.insertBefore(kb, actions.firstChild);
+  }
+
+  /* ------------------------------------------------------------------ keyboard */
+  document.addEventListener('keydown', e => {
+    const mod = e.ctrlKey || e.metaKey, k = e.key.toLowerCase();
+    if(keysBg.classList.contains('show')){ if(e.key === 'Escape' || e.key === '?'){ e.preventDefault(); showKeys(false); } return; }
+    if(mod && k === 's'){ e.preventDefault(); flush(); toast('Saved — Plotter also saves automatically'); return; }
+    const typing = e.target.closest && e.target.closest('input, textarea, select, [contenteditable="true"]');
+    if(typing) return;                                           // let text boxes keep their own Ctrl+Z / C / V
+    if(mod && k === 'z' && !e.shiftKey){ e.preventDefault(); undo(); return; }
+    if(mod && (k === 'y' || (k === 'z' && e.shiftKey))){ e.preventDefault(); redo(); return; }
+    if(mod && k === 'c'){ if(copySel(false)) e.preventDefault(); return; }
+    if(mod && k === 'x'){ if(copySel(true)) e.preventDefault(); return; }
+    if(mod && k === 'v'){ e.preventDefault(); paste(); return; }
+    if(mod && e.key === 'Enter'){ e.preventDefault(); window.open(window.plotterPreviewUrl(), '_blank'); return; }
+    if(mod || e.altKey) return;
+    if(e.key === '?'){ e.preventDefault(); showKeys(true); return; }
+    if(k === 'm'){ setView(view === 'map' ? 'canvas' : 'map'); return; }
+    if(e.key === 'PageDown' || e.key === 'PageUp'){
+      e.preventDefault();
+      const i = idx(curId) + (e.key === 'PageDown' ? 1 : -1);
+      if(story.scenes[i]){ switchScene(story.scenes[i].id); toast(`Scene ${i + 1} of ${story.scenes.length}: ${story.scenes[i].name}`); }
+    }
+  });
 })();
