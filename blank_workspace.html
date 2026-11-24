@@ -468,6 +468,24 @@
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis; outline: none;
   }
   .p-dialogue .txt{ font-size: 14px; line-height:1.55; color: #03114c; outline:none; min-height:22px; }
+  /* Scroll style: images/ui/textbox_scroll.png (1780×500). The parchment spans
+     ~10–95% across and ~52–91% down, so padding keeps the text on it. */
+  .p-dialogue.box-scroll{ padding-top:0; }
+  .p-dialogue.box-scroll .placed-shell{
+    width:600px; min-height:0; aspect-ratio:1780 / 500; box-sizing:border-box;
+    background:url('images/ui/textbox_scroll.png') center / 100% 100% no-repeat !important;
+    border:none !important; border-radius:0; box-shadow:none; backdrop-filter:none;
+    padding:14.6% 7% 2.4% 12%;
+  }
+  .p-dialogue.box-scroll .sp-chip{ bottom:auto; top:calc(52.4% - 25px); left:12%; border-radius:8px 8px 0 0; }
+  .p-dialogue.box-scroll .txt{ color:#3b2a14; }
+  .style-opts{ display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .style-opt{ display:flex; flex-direction:column; align-items:center; gap:6px; padding:8px 6px; border-radius:10px; border:1px solid #dfe3ea; background:#f7f8fa; cursor:pointer; font-size:11.5px; font-weight:600; color:#5c6675; }
+  .style-opt:hover{ border-color:#5b88c1; }
+  .style-opt.active{ border-color:#03114c; box-shadow:0 0 0 1px #03114c; background:#fff; color:#03114c; }
+  .style-opt .pv{ width:100%; height:34px; display:flex; align-items:center; justify-content:center; }
+  .style-opt .pv.classic::before{ content:""; width:86%; height:24px; border-radius:2px 7px 7px 7px; background:#fff; border:1px solid #c9d0da; box-shadow:0 2px 6px rgba(3,17,76,0.12); }
+  .style-opt .pv.scroll{ background:url('images/ui/textbox_scroll.png') center / contain no-repeat; }
   .p-choice .placed-shell{
     background: #eceff4; border:1px solid #c9d0da; color: var(--gold-bright);
     font-size: 12.5px; font-weight:600; padding: 9px 14px; border-radius: 9px; outline:none; white-space:nowrap;
@@ -743,6 +761,18 @@
   .arrange-btn svg{ width:15px; height:15px; }
   .arrange-btn:hover{ color:#03114c; border-color:#3c65a7; background:#ffffff; }
   .insp-hint{ font-size:11.5px; color:#8b95a3; line-height:1.5; margin-top:6px; }
+
+  /* Stretchable dialogue box / choice pills: width & height set independently */
+  .placed.sized .placed-shell{ box-sizing:border-box; }
+  .p-dialogue.sized .placed-shell{ display:flex; flex-direction:column; }
+  .p-dialogue.sized .txt{ flex:1; min-height:0; overflow:auto; }
+  .p-dialogue.sized.box-scroll .placed-shell{ aspect-ratio:auto; }
+  .p-choice.sized .placed-shell{ white-space:normal; display:flex; align-items:center; justify-content:center; text-align:center; overflow:hidden; }
+  .wh-row{ display:grid; grid-template-columns:1fr 1fr auto; gap:8px; align-items:center; }
+  .wh-row label{ display:flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; color:#8b95a3; }
+  .wh-row input{ width:100%; min-width:0; padding:6px 8px; border:1px solid #dfe3ea; border-radius:8px; font:inherit; font-size:12.5px; color:#03114c; background:#fff; }
+  .wh-row input:focus{ outline:none; border-color:#3c65a7; }
+  .wh-row .arrange-btn{ padding:6px 10px; }
 </style>
 </head>
 <body>
@@ -757,7 +787,7 @@
 
     <!-- Top bar -->
     <div class="wtop">
-      <button class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="back-btn" title="Back to projects" onclick="location.href='projects.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
       <div class="breadcrumb">
         <span class="story-name" contenteditable="true" spellcheck="false">Untitled Project</span>
         <!-- <span class="badge-mini">Draft</span> -->
@@ -895,6 +925,7 @@
             <span><kbd>Ctrl</kbd> + scroll to zoom</span>
             <span><kbd>Space</kbd> + drag to pan</span>
             <span><kbd>Ctrl</kbd> <kbd>D</kbd> duplicate</span>
+            <span>Double-click text to edit</span>
           </div>
           <div class="stage is-empty" id="stage">
             <div class="stage-empty" id="stageEmpty">
@@ -974,22 +1005,13 @@
         </div>
         <input type="file" id="hiddenFileInput" style="display:none;" />
         <div class="sidebar-nav">
-            <a class="nav-item" href="index.html" data-page="index.html">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
-                <span>Home</span>
-            </a>
-            <a class="nav-item" href="projects.html" data-page="projects.html">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>
-                <span>Projects</span>
-            </a>
-            <a class="nav-item" href="characters.html" data-page="characters.html">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
-                <span>Characters</span>
-            </a>
-            <a class="nav-item" href="scenes.html" data-page="scenes.html">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>
-                <span>Scenes</span>
-            </a>
+            <a class="nav-item" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg><span>Home</span></a>
+            <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Templates</span></a>
+            <a class="nav-item" href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg><span>Projects</span></a>
+            <a class="nav-item" href="characters.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Characters</span></a>
+            <a class="nav-item" href="scenes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg><span>Scenes</span></a>
+            <a class="nav-item" href="marketplace.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0V9Z"/><path d="M5 13v7h14v-7"/></svg><span>Market</span></a>
+            <a class="nav-item" href="analytics.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Analytics</span></a>
         </div>
         <div class="sidebar-bottom">
             <button class="bell-btn" id="sidebarBell" type="button" aria-label="Notifications">
@@ -1137,6 +1159,18 @@ const backgrounds = [
   { name:"Hallway", src: 'images/backgrounds/hallway.png' },
   { name:"Rooftop", src: 'images/backgrounds/rooftop.png' },
   { name:"Art Room", src: 'images/backgrounds/art_room.png' },
+  { name:"Art Room (Afternoon)", src: 'images/backgrounds/art_room_afternoon.png' },
+  { name:"Classroom (Blue)", src: 'images/backgrounds/classroom_blue.png' },
+  { name:"Outside Classroom", src: 'images/backgrounds/classroom_outside.png' },
+  { name:"Entrance", src: 'images/backgrounds/entrance.png' },
+  { name:"Campus Plaza", src: 'images/backgrounds/campus_plaza.png' },
+  { name:"Dept Building", src: 'images/backgrounds/dept_building.png' },
+  { name:"Library", src: 'images/backgrounds/library_outside.png' },
+  { name:"Student Center", src: 'images/backgrounds/student_center.png' },
+  { name:"SSC Office", src: 'images/backgrounds/ssc_office.png' },
+  { name:"Bleachers", src: 'images/backgrounds/bleachers.png' },
+  { name:"Desk at Night", src: 'images/backgrounds/desk_night.png' },
+  { name:"Sky", src: 'images/backgrounds/sky.png' },
 ];
 document.getElementById('bgSwatchList').innerHTML = backgrounds.map((b,i) => `
   <div class="bg-swatch" draggable="true" data-type="background" data-idx="${i}">
@@ -1304,14 +1338,14 @@ function createPlaced(type, x, y, charIndex){
     }
   } else if(type === 'dialogue'){
     shellHTML = `<div class="placed-shell">
-        <span class="sp-chip" contenteditable="true" spellcheck="false">Speaker</span>
-        <div class="txt" contenteditable="true" spellcheck="false">Type a line of dialogue…</div>
+        <span class="sp-chip" contenteditable="false" spellcheck="false">Speaker</span>
+        <div class="txt" contenteditable="false" spellcheck="false">Type a line of dialogue…</div>
       </div>`;
     el.dataset.label = 'Speaker';
   } else if(type === 'choice'){
-    shellHTML = `<div class="placed-shell" contenteditable="true" spellcheck="false">"A choice the player can make…"</div>`;
+    shellHTML = `<div class="placed-shell" contenteditable="false" spellcheck="false">"A choice the player can make…"</div>`;
   } else if(type === 'text'){
-    shellHTML = `<div class="placed-shell" contenteditable="true" spellcheck="false">Text label</div>`;
+    shellHTML = `<div class="placed-shell" contenteditable="false" spellcheck="false">Text label</div>`;
   } else if(type === 'prop'){
     shellHTML = `<div class="placed-shell"></div>`;
   } else if(type === 'box'){
@@ -1328,14 +1362,17 @@ function createPlaced(type, x, y, charIndex){
   updateEmptyState();
 
   // position centered on drop point, clamped
-  requestAnimationFrame(() => {
+  // place right away (so it's saved in the right spot), then once more after layout settles
+  const place = () => {
     const w = el.offsetWidth, h = el.offsetHeight;
     const sw = stage.clientWidth, sh = stage.clientHeight;
     let left = Math.min(Math.max(0, x - w/2), Math.max(0, sw - w));
     let top  = Math.min(Math.max(0, y - h/2), Math.max(0, sh - h));
     el.style.left = left + 'px';
     el.style.top = top + 'px';
-  });
+  };
+  place();
+  requestAnimationFrame(place);
 
   wirePlaced(el);
   selectPlaced(el);
@@ -1377,6 +1414,29 @@ function setSize(el, s){
   if(el === selectedEl) syncSel();
 }
 
+/* Dialogue boxes and choice pills stretch: width and height change independently
+   (in canvas px, before the Size scale). Pass w = null to go back to automatic size. */
+const isStretchy = el => el.dataset.type === 'dialogue' || el.dataset.type === 'choice';
+const BOX_MIN_W = 60, BOX_MIN_H = 28;
+function setBoxDims(el, w, h){
+  const sh = el.querySelector('.placed-shell');
+  if(w == null){
+    delete el.dataset.bw; delete el.dataset.bh; el.classList.remove('sized');
+    sh.style.width = ''; sh.style.height = ''; sh.style.minHeight = '';
+  } else {
+    w = Math.round(Math.min(1200, Math.max(BOX_MIN_W, w)));
+    h = Math.round(Math.min(800, Math.max(BOX_MIN_H, h)));
+    el.dataset.bw = w; el.dataset.bh = h; el.classList.add('sized');
+    sh.style.width = w + 'px'; sh.style.height = h + 'px'; sh.style.minHeight = '0';
+  }
+  if(el === selectedEl){
+    const fw = document.getElementById('fW'), fh = document.getElementById('fH');
+    if(fw && document.activeElement !== fw) fw.value = el.dataset.bw || Math.round(sh.offsetWidth);
+    if(fh && document.activeElement !== fh) fh.value = el.dataset.bh || Math.round(sh.offsetHeight);
+    syncSel();
+  }
+}
+
 function wirePlaced(el){
   let mode = null, sx=0, sy=0, ox=0, oy=0, s0=1;
 
@@ -1416,8 +1476,39 @@ function wirePlaced(el){
   });
   el.querySelectorAll('[contenteditable]').forEach(ed => {
     ed.addEventListener('input', () => { markDirty(); syncTextFields(el); });
-    ed.addEventListener('pointerdown', e => { if(el.classList.contains('selected')) e.stopPropagation(); });
+    // only while text is being edited does a click place the caret instead of dragging
+    ed.addEventListener('pointerdown', e => { if(ed.isContentEditable) e.stopPropagation(); });
   });
+  el.addEventListener('dblclick', e => {
+    const hit = e.target.closest && e.target.closest('[contenteditable]');
+    const ed = (hit && el.contains(hit) && !hit.dataset.noedit) ? hit
+             : el.querySelector('.txt') || el.querySelector('.placed-shell[contenteditable]');
+    if(ed) startEditing(el, ed);
+  });
+}
+
+/* Double-click (or Enter on a selected element) turns a text element into an editor.
+   Click outside, Esc, or Enter (single-line elements) finishes editing. */
+function startEditing(el, ed){
+  ed = ed || el.querySelector('.txt') || el.querySelector('.placed-shell[contenteditable]');
+  if(!ed) return;
+  selectPlaced(el);
+  ed.contentEditable = 'true';
+  ed.focus();
+  const r = document.createRange(); r.selectNodeContents(ed);
+  const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+  const singleLine = el.dataset.type === 'choice' || el.dataset.type === 'text' || ed.classList.contains('sp-chip');
+  const onKey = e => {
+    if(e.key === 'Escape' || (e.key === 'Enter' && !e.shiftKey && singleLine)){ e.preventDefault(); ed.blur(); }
+  };
+  const stop = () => {
+    ed.contentEditable = 'false';
+    ed.removeEventListener('keydown', onKey);
+    window.getSelection().removeAllRanges();
+    markDirty();
+  };
+  ed.addEventListener('keydown', onKey);
+  ed.addEventListener('blur', stop, { once:true });
 }
 
 function ensureHandle(el){
@@ -1482,6 +1573,19 @@ selBox.querySelectorAll('.sel-h').forEach(h => {
     if(!rs) return;
     const { el, dir, w0, h0, ox, oy, s0 } = rs;
     const dx = (e.clientX - rs.sx) / zoom, dy = (e.clientY - rs.sy) / zoom;
+    if(isStretchy(el)){
+      // stretch: sides change one dimension, corners both; the opposite edge stays put
+      let nw = w0, nh = h0;
+      if(dir.includes('e')) nw = w0 + dx; else if(dir.includes('w')) nw = w0 - dx;
+      if(dir.includes('s')) nh = h0 + dy; else if(dir.includes('n')) nh = h0 - dy;
+      setBoxDims(el, nw / s0, nh / s0);
+      const rw = el.dataset.bw * s0, rh = el.dataset.bh * s0;
+      el.style.left = (dir.includes('w') ? ox + (w0 - rw) : ox) + 'px';
+      el.style.top  = (dir.includes('n') ? oy + (h0 - rh) : oy) + 'px';
+      updatePosReadout(el);
+      syncSel();
+      return;
+    }
     const fx = dir.includes('e') ? (w0 + dx) / w0 : dir.includes('w') ? (w0 - dx) / w0 : null;
     const fy = dir.includes('s') ? (h0 + dy) / h0 : dir.includes('n') ? (h0 - dy) / h0 : null;
     const f = fx !== null && fy !== null ? Math.max(fx, fy) : (fx !== null ? fx : fy);
@@ -1683,6 +1787,11 @@ function renderInspector(el){
   } else if(type === 'dialogue'){
     html += section('Speaker', `<div class="field"><input type="text" id="fSpeaker" value="${esc(el.querySelector('.sp-chip').textContent)}"></div>`);
     html += section('Line', `<div class="field"><textarea id="fTxt">${esc(el.querySelector('.txt').textContent)}</textarea></div>`);
+    const bs = el.dataset.boxStyle || 'classic';
+    html += section('Box style', `<div class="style-opts" id="fBoxStyle">
+        <button class="style-opt ${bs === 'classic' ? 'active' : ''}" data-style="classic"><span class="pv classic"></span>Classic</button>
+        <button class="style-opt ${bs === 'scroll' ? 'active' : ''}" data-style="scroll"><span class="pv scroll"></span>Scroll</button>
+      </div>`);
   } else if(type === 'choice' || type === 'text'){
     html += section(type === 'choice' ? 'Choice text' : 'Text content',
       `<div class="field"><textarea id="fTxt">${esc(el.querySelector('.placed-shell').textContent)}</textarea></div>`);
@@ -1697,6 +1806,16 @@ function renderInspector(el){
   // --- size & opacity ---
   const size = getSize(el), op = parseFloat(el.dataset.opacity || 1);
   html += section('Size', `<div class="insp-range"><input type="range" id="fSize" min="0.3" max="3" step="0.05" value="${size}"><output id="fSizeOut">${Math.round(size*100)}%</output></div>`);
+  if(isStretchy(el)){
+    const sh = el.querySelector('.placed-shell');
+    const bw = el.dataset.bw || Math.round(sh.offsetWidth), bh = el.dataset.bh || Math.round(sh.offsetHeight);
+    html += section('Width & height', `<div class="wh-row">
+        <label>W<input type="number" id="fW" min="${BOX_MIN_W}" max="1200" step="1" value="${bw}" aria-label="Width in pixels"></label>
+        <label>H<input type="number" id="fH" min="${BOX_MIN_H}" max="800" step="1" value="${bh}" aria-label="Height in pixels"></label>
+        <button class="arrange-btn" id="fWHAuto" type="button" title="Back to automatic size">Auto</button>
+      </div>
+      <div class="insp-hint">Drag a side handle to stretch only the width or height; corners change both. Size above scales text and box together.</div>`);
+  }
   html += section('Opacity', `<div class="insp-range"><input type="range" id="fOpacity" min="0.1" max="1" step="0.05" value="${op}"><output id="fOpacityOut">${Math.round(op*100)}%</output></div>`);
 
   // --- arrange ---
@@ -1739,10 +1858,26 @@ function renderInspector(el){
     fTxt.addEventListener('input', () => { target.textContent = fTxt.value; markDirty(); });
   }
 
+  const fBoxStyle = document.getElementById('fBoxStyle');
+  if(fBoxStyle) fBoxStyle.querySelectorAll('.style-opt').forEach(b => b.addEventListener('click', () => {
+    el.dataset.boxStyle = b.dataset.style;
+    el.classList.toggle('box-scroll', b.dataset.style === 'scroll');
+    fBoxStyle.querySelectorAll('.style-opt').forEach(x => x.classList.toggle('active', x === b));
+    syncSel(); markDirty();
+  }));
+
   const fColors = document.getElementById('fColors');
   if(fColors) wireColorFields(fColors, (key, val) => { el.dataset[dkey(key)] = val; applyColors(el); markDirty(); });
 
   document.getElementById('fSize').addEventListener('input', e => { setSize(el, parseFloat(e.target.value)); markDirty(); });
+  const fW = document.getElementById('fW'), fH = document.getElementById('fH');
+  if(fW && fH){
+    const applyWH = () => { if(fW.value && fH.value){ setBoxDims(el, +fW.value, +fH.value); markDirty(); } };
+    fW.addEventListener('input', applyWH);
+    fH.addEventListener('input', applyWH);
+    [fW, fH].forEach(f => f.addEventListener('change', () => { if(el.dataset.bw) f.value = f === fW ? el.dataset.bw : el.dataset.bh; }));  // show clamped value
+    document.getElementById('fWHAuto').addEventListener('click', () => { setBoxDims(el, null); renderInspector(el); markDirty(); });
+  }
   document.getElementById('fOpacity').addEventListener('input', e => {
     el.dataset.opacity = e.target.value;
     el.querySelector('.placed-shell').style.opacity = e.target.value;
@@ -1925,6 +2060,7 @@ document.addEventListener('keydown', e => {
   if(!selectedEl){ return; }
 
   if(e.key === 'Delete' || e.key === 'Backspace'){ e.preventDefault(); selectedEl.querySelector('.placed-del').click(); return; }
+  if(e.key === 'Enter' && selectedEl.querySelector('[contenteditable]')){ e.preventDefault(); startEditing(selectedEl); return; }
   if(e.key === 'Escape'){ deselect(); return; }
   if(mod && (e.key === 'd' || e.key === 'D')){ e.preventDefault(); duplicatePlaced(selectedEl); return; }
   if(e.key === ']'){ moveLayer(selectedEl, mod ? 'front' : 'up'); return; }
@@ -2013,5 +2149,9 @@ inspToggle.addEventListener('click', () => {
   inspectorOpen ? closeInspector() : openInspector();
 });
 </script>
+<script src="templates.js?v=3"></script>
+<script src="story-builder.js?v=3"></script>
+<script src="publish.js"></script>
+<script src="soon.js"></script>
 </body>
 </html>

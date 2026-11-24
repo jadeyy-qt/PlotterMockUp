@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plotter — Play: The Scientific Method</title>
+<link rel="icon" href="images/sidebar-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#03114c; --blue:#3c65a7; --blue-2:#5b88c1;
+    --text-dim:#5c6675; --text-faint:#8b95a3; --border:#dfe3ea;
+    --good:#2f8f5b; --good-bg:#e7f4ec; --bad:#c2414b; --bad-bg:#fbeaec;
+    --font-display:'Fraunces', Georgia, serif;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html,body{ height:100%; }
+  body{ background:#020920; color:var(--navy); font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased; overflow:hidden; }
+  button{ font-family:inherit; cursor:pointer; border:none; background:none; color:inherit; }
+  a{ color:inherit; text-decoration:none; }
+  :focus-visible{ outline:2px solid var(--blue-2); outline-offset:2px; border-radius:8px; }
+
+  .player{ position:fixed; inset:0; display:flex; flex-direction:column; }
+
+  /* ---------- HUD ---------- */
+  .hud{
+    position:absolute; top:0; left:0; right:0; z-index:20;
+    display:flex; align-items:center; gap:14px; padding:14px 18px;
+    background:linear-gradient(180deg, rgba(2,9,32,0.75), transparent);
+    color:#fff;
+  }
+  .hud-btn{ width:38px; height:38px; border-radius:10px; display:grid; place-items:center; background:rgba(255,255,255,0.12); backdrop-filter:blur(8px); flex-shrink:0; }
+  .hud-btn:hover{ background:rgba(255,255,255,0.22); }
+  .hud-btn svg{ width:18px; height:18px; }
+  .hud-title{ font-family:var(--font-display); font-weight:600; font-size:16px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hud-sub{ font-size:11.5px; opacity:.7; }
+  .hud-mid{ flex:1; min-width:0; }
+  .progress{ height:5px; border-radius:99px; background:rgba(255,255,255,0.2); margin-top:6px; max-width:360px; overflow:hidden; }
+  .progress i{ display:block; height:100%; width:0; background:#fff; border-radius:99px; transition:width .4s ease; }
+  .score-chip{ display:flex; align-items:center; gap:7px; background:rgba(255,255,255,0.14); backdrop-filter:blur(8px); padding:8px 14px; border-radius:999px; font-weight:600; font-size:13.5px; flex-shrink:0; }
+  .score-chip svg{ width:16px; height:16px; color:#ffd36b; }
+  .score-chip.bump{ animation:bump .5s ease; }
+  @keyframes bump{ 40%{ transform:scale(1.15); } }
+  .preview-tag{ font-size:11px; font-weight:700; letter-spacing:.06em; background:#fff; color:var(--navy); padding:4px 9px; border-radius:6px; flex-shrink:0; }
+
+  /* ---------- Stage ---------- */
+  .stage{ position:relative; flex:1; overflow:hidden; background:#000; cursor:pointer; }
+  .bg{ position:absolute; inset:0; background-size:cover; background-position:center; transition:opacity .6s ease; }
+  .bg.next{ opacity:0; }
+  .chars{ position:absolute; inset:0; pointer-events:none; }
+  .actor{
+    position:absolute; bottom:0; transform:translateX(-50%);
+    filter:drop-shadow(0 14px 30px rgba(0,0,0,0.35));
+    transition:opacity .35s ease, filter .35s ease, left .35s ease;
+    opacity:0;
+  }
+  .actor.plain{ height:88%; }
+  .actor.plain img{ height:100%; width:auto; max-width:none; display:block; }
+  .actor.crop{ overflow:hidden; }
+  .actor.crop img{ position:absolute; max-width:none; }
+  .actor.on{ opacity:1; }
+  .actor.dim{ filter:drop-shadow(0 14px 30px rgba(0,0,0,0.35)) brightness(.62) saturate(.8); }
+
+  /* ---------- Scenes built in the editor: a scaled copy of the 640×400 canvas ---------- */
+  .layout{ position:absolute; left:50%; top:50%; width:640px; height:400px; transform-origin:center center; background:#f7f8fa center/cover no-repeat; transition:opacity .5s ease; overflow:hidden; }
+  .layout.fade{ opacity:0; }
+  .layout .placed{ position:absolute; }
+  .layout .placed-shell{ position:relative; }
+  .layout .char-frame{ position:relative; overflow:hidden; }
+  .layout .char-frame img{ position:absolute; max-width:none; height:auto; display:block; }
+  .layout .p-sprite .placed-shell{ width:110px; height:200px; border-radius:10px 10px 0 0; display:flex; align-items:flex-end; justify-content:center; padding-bottom:8px; font-size:11px; font-weight:700; color:#03114c; border:1px dashed #dfe3ea; }
+  .layout .p-sprite.has-img .placed-shell{ width:auto; height:auto; border:none; background:none !important; padding:0; filter:drop-shadow(0 6px 10px rgba(60,101,167,0.16)); }
+  .layout .p-sprite{ transition:filter .35s ease; }
+  .layout .p-sprite.dim{ filter:brightness(.62) saturate(.8); }
+  .layout .p-text .placed-shell{ font-size:15px; font-weight:600; color:#03114c; min-width:30px; padding:2px 4px; }
+  .layout .p-prop .placed-shell{ width:64px; height:64px; border-radius:50%; opacity:.9; }
+  .layout .p-box .placed-shell{ width:120px; height:80px; border-radius:10px; }
+  .dialogue{
+    position:absolute; left:50%; bottom:24px; transform:translateX(-50%);
+    width:min(880px, calc(100% - 32px)); z-index:5;
+    background:rgba(255,255,255,0.97); border-radius:16px; padding:26px 28px 20px;
+    box-shadow:0 20px 50px rgba(0,0,0,0.35); min-height:120px;
+  }
+  .dialogue.narration{ background:rgba(3,17,76,0.88); color:#fff; text-align:center; font-style:italic; }
+  .speaker{
+    position:absolute; top:-15px; left:24px; background:var(--navy); color:#fff;
+    font-family:var(--font-display); font-weight:600; font-size:14px; padding:5px 16px; border-radius:8px;
+    box-shadow:0 6px 14px rgba(3,17,76,0.3);
+  }
+  .dialogue.narration .speaker{ display:none; }
+  /* Scroll-style dialogue box (images/ui/textbox_scroll.png, 1780×500) — text sits on the parchment */
+  .dialogue.scroll{
+    --w: min(880px, calc(100vw - 32px));      /* padding % would follow the screen, so size from the box width */
+    background:url('images/ui/textbox_scroll.png') center / 100% 100% no-repeat !important;
+    width:var(--w); height:calc(var(--w) * 0.2809); min-height:0; border-radius:0; box-shadow:none;
+    padding:calc(var(--w) * 0.152) calc(var(--w) * 0.08) calc(var(--w) * 0.03) calc(var(--w) * 0.12);
+    color:#3b2a14 !important; text-align:left;
+    filter:drop-shadow(0 12px 24px rgba(0,0,0,0.35));
+  }
+  .dialogue.scroll .speaker{ top:calc(52.4% - 30px); left:12%; border-radius:8px 8px 0 0; }
+  .dialogue.scroll.narration .speaker{ display:none; }
+  .dialogue.scroll .advance{ position:absolute; right:7%; bottom:11%; margin:0; color:#7a6243; }
+  .dialogue.scroll .line{ min-height:0; }
+  .line{ font-size:17px; line-height:1.6; min-height:54px; }
+  .advance{ display:flex; justify-content:flex-end; align-items:center; gap:6px; margin-top:8px; font-size:12px; color:var(--text-faint); font-weight:500; }
+  .dialogue.narration .advance{ color:rgba(255,255,255,0.6); justify-content:center; }
+  .advance svg{ width:14px; height:14px; animation:nudge 1.2s ease-in-out infinite; }
+  @keyframes nudge{ 50%{ transform:translateY(3px); } }
+
+  /* ---------- Overlay panels (choice / quiz / end) ---------- */
+  .overlay{
+    position:absolute; inset:0; z-index:10; display:none; align-items:center; justify-content:center; padding:80px 16px 24px;
+    background:rgba(2,9,32,0.45); backdrop-filter:blur(3px); cursor:default;
+  }
+  .overlay.show{ display:flex; animation:fade .25s ease; }
+  @keyframes fade{ from{ opacity:0; } }
+
+  .panel{ width:min(620px, 100%); background:#fff; border-radius:18px; padding:26px; box-shadow:0 30px 80px rgba(0,0,0,0.4); max-height:100%; overflow:auto; }
+  .panel-tag{ display:inline-flex; align-items:center; gap:6px; font-size:11.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--blue); background:rgba(60,101,167,0.1); padding:5px 10px; border-radius:6px; }
+  .panel-tag svg{ width:13px; height:13px; }
+  .panel h2{ font-family:var(--font-display); font-size:22px; font-weight:600; margin:12px 0 18px; line-height:1.3; }
+  .opts{ display:flex; flex-direction:column; gap:10px; }
+  .opt{
+    display:flex; align-items:center; gap:12px; text-align:left; width:100%;
+    padding:14px 16px; border-radius:12px; border:1.5px solid var(--border); background:#fff;
+    font-size:15px; font-weight:500; color:var(--navy); transition:border-color .15s, background .15s, transform .15s;
+  }
+  .opt:hover:not(:disabled){ border-color:var(--blue); background:#f5f8fc; transform:translateX(2px); }
+  .opt .key{ width:28px; height:28px; border-radius:8px; display:grid; place-items:center; background:#eceff4; font-size:12.5px; font-weight:700; color:var(--text-dim); flex-shrink:0; }
+  .opt .mark{ margin-left:auto; display:none; align-items:center; gap:5px; font-size:12px; font-weight:700; flex-shrink:0; }
+  .opt .mark svg{ width:16px; height:16px; }
+  .opt:disabled{ cursor:default; }
+  .opt.correct{ border-color:var(--good); background:var(--good-bg); }
+  .opt.correct .key{ background:var(--good); color:#fff; }
+  .opt.correct .mark{ display:flex; color:var(--good); }
+  .opt.wrong{ border-color:var(--bad); background:var(--bad-bg); }
+  .opt.wrong .key{ background:var(--bad); color:#fff; }
+  .opt.wrong .mark{ display:flex; color:var(--bad); }
+  .opt.faded{ opacity:.55; }
+
+  .feedback{ display:none; margin-top:16px; padding:14px 16px; border-radius:12px; font-size:14px; line-height:1.55; }
+  .feedback.show{ display:block; animation:fade .25s ease; }
+  .feedback.good{ background:var(--good-bg); color:#1d5e3b; }
+  .feedback.bad{ background:var(--bad-bg); color:#8a2a32; }
+  .feedback strong{ display:flex; align-items:center; gap:6px; margin-bottom:4px; font-size:14.5px; }
+  .feedback strong svg{ width:17px; height:17px; }
+  .panel-foot{ display:none; justify-content:flex-end; margin-top:16px; }
+  .panel-foot.show{ display:flex; }
+
+  .btn{ display:inline-flex; align-items:center; gap:8px; padding:11px 20px; border-radius:11px; font-size:14px; font-weight:600; }
+  .btn svg{ width:16px; height:16px; }
+  .btn-primary{ background:linear-gradient(135deg,var(--blue),#2f548f); color:#fff; box-shadow:0 8px 20px rgba(60,101,167,0.3); }
+  .btn-primary:hover{ filter:brightness(1.06); }
+  .btn-secondary{ background:#fff; border:1px solid var(--border); color:var(--navy); }
+  .btn-secondary:hover{ border-color:var(--blue); color:var(--blue); }
+
+  /* ---------- End screen ---------- */
+  .end{ text-align:center; }
+  .end .ring{ width:132px; height:132px; margin:4px auto 14px; position:relative; }
+  .end .ring svg{ width:100%; height:100%; transform:rotate(-90deg); }
+  .end .ring .val{ position:absolute; inset:0; display:grid; place-items:center; font-family:var(--font-display); font-size:32px; font-weight:700; }
+  .end h2{ margin:0 0 6px; }
+  .end p.lead{ color:var(--text-dim); font-size:14.5px; }
+  .end-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 0; }
+  .end-stats div{ background:#f7f8fa; border:1px solid #e8ebf0; border-radius:12px; padding:12px 8px; }
+  .end-stats b{ display:block; font-family:var(--font-display); font-size:20px; }
+  .end-stats span{ font-size:12px; color:var(--text-dim); }
+  .review{ text-align:left; border-top:1px solid #e8ebf0; padding-top:14px; margin-top:4px; }
+  .review h3{ font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--text-faint); margin-bottom:8px; }
+  .review li{ list-style:none; display:flex; gap:10px; align-items:flex-start; font-size:13.5px; padding:6px 0; color:var(--navy); }
+  .review li svg{ width:17px; height:17px; flex-shrink:0; margin-top:1px; }
+  .review li .ok{ color:var(--good); } .review li .no{ color:var(--bad); }
+  .sent{ display:flex; align-items:center; justify-content:center; gap:7px; font-size:12.5px; color:var(--text-dim); margin-top:14px; }
+  .sent svg{ width:15px; height:15px; color:var(--good); }
+  .end-actions{ display:flex; justify-content:center; gap:10px; margin-top:18px; flex-wrap:wrap; }
+
+  @media (max-width:640px){
+    .actor{ bottom:150px; }
+    .actor.plain{ height:62%; }
+    .line{ font-size:15px; }
+    .dialogue{ padding:22px 18px 14px; bottom:14px; }
+    .hud-sub, .preview-tag{ display:none; }
+    .panel{ padding:20px; }
+    .panel h2{ font-size:19px; }
+  }
+  @media (prefers-reduced-motion: reduce){ *{ animation:none !important; transition:none !important; } }
+</style>
+</head>
+<body>
+
+<div class="player">
+  <div class="hud">
+    <a class="hud-btn" href="workspace.html" aria-label="Exit to editor" id="exitBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </a>
+    <div class="hud-mid">
+      <div class="hud-title">The Scientific Method</div>
+      <div class="hud-sub">Science · Grade 7 · by Ms. Reyes</div>
+      <div class="progress"><i id="progress"></i></div>
+    </div>
+    <span class="preview-tag" id="previewTag">PREVIEW</span>
+    <div class="score-chip" id="scoreChip" aria-live="polite">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7-6.2-3.4-6.2 3.4 1.2-7-5-4.9 7.1-.7L12 2z"/></svg>
+      <span id="scoreVal">0</span> pts
+    </div>
+    <button class="hud-btn" id="restartBtn" aria-label="Restart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg>
+    </button>
+  </div>
+
+  <div class="stage" id="stage" tabindex="0" aria-label="Story stage. Click or press space to continue.">
+    <div class="bg" id="bgA"></div>
+    <div class="bg next" id="bgB"></div>
+    <div id="layouts"></div>
+    <div class="chars" id="chars">
+
+    </div>
+
+    <div class="dialogue" id="dialogue">
+      <span class="speaker" id="speaker"></span>
+      <p class="line" id="line" aria-live="polite"></p>
+      <div class="advance" id="advance">Click or press Space
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+    </div>
+
+    <div class="overlay" id="overlay"><div class="panel" id="panel"></div></div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   STORY DATA
+   Step types:
+     line   { bg?, who, pose?, text }      who = 'Radwer' | 'Suzy' | 'Narrator'
+     choice { prompt, options:[{ text, next }] }   — branching, ungraded
+     quiz   { question, points, options:[{ text, correct? }], right, wrong }
+     end
+   Steps run in order unless a `next` id is given; `id` marks jump targets.
+   ===================================================================== */
+const CAST = {
+  Radwer: { name:'Mr. Radwer', side:'left',  path:p => `images/characters/Radwer/radwer-${p}.png` },
+  Suzy:   { name:'Suzy',       side:'right', path:p => `images/characters/Suzy/suzy-${p}.png` },
+};
+const BG = n => `images/backgrounds/${n}`;
+
+let STORY = [
+  { type:'line', bg:'schoolgate.png', who:'Narrator', text:'Monday morning. Your science class has a surprise waiting for you.' },
+  { type:'line', bg:'classroom.png', who:'Radwer', pose:'neutral', text:"Good morning, everyone. Today you're not taking notes — you're running a real experiment." },
+  { type:'line', who:'Radwer', pose:'focused-pointing', text:'Our class plant has stopped growing. Your job is to figure out why, the way a scientist would.' },
+  { type:'line', who:'Suzy', pose:'holdingtumbler-down-curious', text:'So… where do we even start?' },
+  { type:'choice', prompt:'What should the class do first?', options:[
+      { text:'Ask a clear question we can test', next:'askq' },
+      { text:'Start changing things and see what happens', next:'rush' },
+  ]},
+  { id:'rush', type:'line', who:'Radwer', pose:'thinking', text:"Hold on. If we change everything at once, how will we know what actually made the difference?", next:'askq' },
+  { id:'askq', type:'line', who:'Radwer', pose:'approved', text:'Every good investigation begins with a question we can actually test.' },
+  { type:'quiz', points:10, question:'Which of these is a testable question?', options:[
+      { text:'Why are plants so nice to look at?' },
+      { text:'Does the amount of sunlight affect how tall the plant grows?', correct:true },
+      { text:'Is this the best plant in the school?' },
+    ],
+    right:'It links something we can change (sunlight) to something we can measure (height).',
+    wrong:'That one is hard to measure. A testable question connects something you change to something you can measure.' },
+
+  { type:'line', bg:'art_room.png', who:'Suzy', pose:'holdingtumbler-down-normal', text:"I think it needs more sunlight. It's been stuck in the corner for weeks." },
+  { type:'line', who:'Radwer', pose:'amused', text:"That's a hypothesis — a prediction we can test. Let's phrase it like a scientist." },
+  { type:'quiz', points:10, question:'Which is the best-written hypothesis?', options:[
+      { text:'If the plant gets more sunlight, then it will grow taller.', correct:true },
+      { text:'Plants are green because of sunlight.' },
+      { text:'I hope the plant starts growing again.' },
+    ],
+    right:'An "if… then…" statement makes a clear, testable prediction.',
+    wrong:'A hypothesis should make a testable prediction. Try the "if… then…" format: if we change X, then Y will happen.' },
+
+  { type:'line', bg:'clubroom.png', who:'Radwer', pose:'writing', text:"We'll use two identical plants. One goes by the window, the other stays in the corner." },
+  { type:'quiz', points:10, question:'To keep the test fair, what should stay the same for both plants?', options:[
+      { text:'The amount of sunlight' },
+      { text:'Water, soil, and pot size', correct:true },
+      { text:"Nothing — it doesn't matter" },
+    ],
+    right:'Right! Sunlight is the one thing we change. Everything else is controlled so the test is fair.',
+    wrong:"Sunlight is the variable we're testing, so it has to differ. Everything else — water, soil, pot — must stay the same." },
+
+  { type:'line', who:'Narrator', text:'Two weeks later…' },
+  { type:'line', bg:'classroom.png', who:'Suzy', pose:'holdingtumbler-down-amused', text:'The window plant grew 6 cm! The corner plant barely grew at all.' },
+  { type:'choice', prompt:'What can the class conclude?', options:[
+      { text:'Sunlight helped the plant grow — our hypothesis was supported.', next:'good' },
+      { text:'Sunlight is the only thing a plant needs.', next:'over' },
+  ]},
+  { id:'over', type:'line', who:'Radwer', pose:'serious', text:"Careful — we only tested sunlight. We can say it helped, not that it's the only thing plants need.", next:'wrap' },
+  { id:'good', type:'line', who:'Radwer', pose:'approved', text:'Well reasoned. Our data supports the hypothesis — for this test.' },
+  { id:'wrap', type:'line', who:'Radwer', pose:'neutral-pose4', text:"Question, hypothesis, experiment, conclusion. That's the scientific method — and you just used it." },
+  { type:'end' },
+];
+
+/* =====================================================================
+   ENGINE
+   ===================================================================== */
+const $ = id => document.getElementById(id);
+const params = new URLSearchParams(location.search);
+
+/* A story built in the blank workspace arrives via localStorage (?story=local). */
+const LOCAL = params.get('story') === 'local' ? (() => {
+  try { return JSON.parse(localStorage.getItem('plotter.playStory')); } catch(e){ return null; }
+})() : null;
+if(LOCAL && Array.isArray(LOCAL.steps) && LOCAL.steps.length){
+  STORY = LOCAL.steps;
+  document.querySelector('.hud-title').textContent = LOCAL.title || 'Untitled story';
+  document.querySelector('.hud-sub').textContent = LOCAL.subtitle || '';
+  document.title = 'Plotter — Play: ' + (LOCAL.title || 'Untitled story');
+}
+// Template previews (Templates page) pass where to go back to and which template it was.
+const FROM = /^[\w-]+\.html$/.test(params.get('from') || '') ? params.get('from') : null;
+const TPL = /^[a-z0-9-]+$/.test(params.get('tpl') || '') ? params.get('tpl') : null;
+const EDITOR_URL = FROM || (LOCAL ? 'blank_workspace.html' : 'workspace.html');
+
+const ids = Object.fromEntries(STORY.map((s,i)=>[s.id, i]).filter(([k])=>k));
+const quizTotal = STORY.filter(s=>s.type==='quiz').length;
+const isPreview = params.get('mode') !== 'student';
+if(!isPreview){ $('previewTag').style.display='none'; $('exitBtn').href='index.html'; }
+else {
+  $('exitBtn').href = EDITOR_URL;
+  // Preview opens in its own tab — closing it returns to the editor.
+  $('exitBtn').addEventListener('click', e => { if(window.history.length <= 1){ e.preventDefault(); window.close(); setTimeout(() => location.href = EDITOR_URL, 150); } });
+}
+
+let i, score, possible, answers, choicesMade, typing, typeTimer, bgFront, stageCast;
+const ICON = {
+  ok:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>',
+  no:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  branch:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="6" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="8" r="2"/><path d="M6 8v8M18 10c0 4-6 3-11.2 6.6"/></svg>',
+  quiz:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .9-1 1.6V14M12 17h.01"/></svg>',
+};
+
+function start(){
+  i = 0; score = 0; possible = 0; answers = []; choicesMade = []; stageCast = {};
+  $('scoreVal').textContent = 0;
+  $('chars').innerHTML = '';
+  $('layouts').innerHTML = ''; curUi = null;
+  hideOverlay();
+  run();
+}
+
+/* ---- characters on stage ----
+   Each actor: { key, src, pos:'left'|'center'|'right', crop? }
+   `crop` (from the character library) frames the drawing on its page so
+   different characters stay at a consistent scale. */
+const POS_X = { left:22, center:50, right:78 };
+function renderCast(speakerKey){
+  const wrap = $('chars');
+  const list = Object.values(stageCast);
+  const keep = new Set(list.map(a => a.key));
+  [...wrap.children].forEach(el => { if(!keep.has(el.dataset.key)){ el.classList.remove('on'); setTimeout(() => el.remove(), 350); el.dataset.key = ''; } });
+  list.forEach(a => {
+    let el = [...wrap.children].find(x => x.dataset.key === a.key);
+    if(!el){
+      el = document.createElement('div'); el.dataset.key = a.key;
+      el.innerHTML = '<img alt="">'; wrap.appendChild(el);
+      requestAnimationFrame(() => el.classList.add('on'));
+    }
+    const img = el.firstChild;
+    if(a.crop){
+      const k = a.crop;
+      el.className = 'actor crop' + (el.classList.contains('on') ? ' on' : '');
+      el.style.height = (100 * k.h / k.imgH * 1.02) + '%';
+      el.style.aspectRatio = `${k.w} / ${k.h}`;
+      img.style.width = (k.imgW / k.w * 100) + '%';
+      img.style.left = (-k.x / k.w * 100) + '%';
+      img.style.top = (-k.y / k.h * 100) + '%';
+    } else {
+      el.className = 'actor plain' + (el.classList.contains('on') ? ' on' : '');
+    }
+    el.style.left = POS_X[a.pos] + '%';
+    if(img.getAttribute('src') !== a.src) img.src = a.src;
+    el.classList.toggle('dim', !!speakerKey && a.key !== speakerKey && keep.has(speakerKey));
+  });
+}
+
+function setBg(file){
+  const front = bgFront || $('bgA'), back = front === $('bgA') ? $('bgB') : $('bgA');
+  const url = `url('${file.includes('/') ? file : BG(file)}')`;
+  if(front.style.backgroundImage === url) return;
+  back.style.backgroundImage = url;
+  back.classList.remove('next'); front.classList.add('next');
+  bgFront = back;
+}
+
+function setProgress(){ $('progress').style.width = Math.min(100, (i / (STORY.length-1)) * 100) + '%'; }
+
+let hops = 0;
+/* ---- scenes designed on the editor canvas ---- */
+let curUi = null;
+function fitLayouts(){
+  const st = $('stage'), sc = Math.max(st.clientWidth / 640, st.clientHeight / 400);
+  document.querySelectorAll('.layout').forEach(l => l.style.transform = `translate(-50%,-50%) scale(${sc})`);
+}
+window.addEventListener('resize', fitLayouts);
+function showLayout(L){
+  const wrap = $('layouts');
+  const el = document.createElement('div');
+  el.className = 'layout fade';
+  el.style.background = L.image ? `url('${L.image}') center / cover no-repeat, ${L.color}` : L.color;
+  el.innerHTML = L.els.map(e => `<div class="${e.cls}" ${e.key ? `data-key="${e.key}"` : ''} style="left:${e.left}px;top:${e.top}px">${e.shell}</div>`).join('');
+  wrap.appendChild(el);
+  fitLayouts();
+  requestAnimationFrame(() => requestAnimationFrame(() => el.classList.remove('fade')));
+  [...wrap.children].slice(0, -1).forEach(old => { old.classList.add('fade'); setTimeout(() => old.remove(), 500); });
+  // the editor scene uses its own layout, so hide the legacy cast layer
+  stageCast = {}; $('chars').innerHTML = '';
+}
+function applyUi(narr){
+  const box = $('dialogue'), tag = $('speaker');
+  const scroll = !!curUi && curUi.style === 'scroll';
+  box.classList.toggle('scroll', scroll);
+  if(scroll){                                   // the artwork is the background; keep the tag colours
+    box.style.background = ''; box.style.color = '';
+    tag.style.background = curUi.chip; tag.style.color = curUi.chipText;
+  } else if(curUi && !narr){
+    box.style.background = curUi.bg; box.style.color = curUi.text;
+    tag.style.background = curUi.chip; tag.style.color = curUi.chipText;
+  } else { box.style.background = ''; box.style.color = ''; tag.style.background = ''; tag.style.color = ''; }
+  sizeBox();
+}
+/* A dialogue box stretched in the editor keeps its width share and proportions here. */
+function sizeBox(){
+  const box = $('dialogue'), st = $('stage');
+  if(curUi && curUi.boxW){
+    const w = Math.min(st.clientWidth * curUi.boxW, st.clientWidth - 32);
+    box.style.width = w + 'px';
+    box.style.minHeight = Math.max(90, w * curUi.boxAspect) + 'px';
+  } else { box.style.width = ''; box.style.minHeight = ''; }
+}
+window.addEventListener('resize', sizeBox);
+
+function run(){
+  const s = STORY[i];
+  if(!s) return showEnd({ title:'The End' });
+  setProgress();
+  if(s.bg) setBg(s.bg);
+  if(s.layout){ showLayout(s.layout); curUi = s.ui || null; }
+  if(s.cast){                                   // a built scene sets its whole cast at once
+    stageCast = {};
+    s.cast.forEach(a => stageCast[a.key] = a);
+    renderCast(null);
+  }
+  if(s.type === 'goto'){                        // scene with no lines that just moves on
+    if(++hops > 50) return showEnd({ title:'The End' });
+    return jump(s.next);
+  }
+  hops = 0;
+  if(s.type === 'line') return showLine(s);
+  if(s.type === 'choice') return showChoice(s);
+  if(s.type === 'quiz') return showQuiz(s);
+  if(s.type === 'end') return showEnd(s);
+}
+
+function jump(id){
+  i = ids[id] !== undefined ? ids[id] : STORY.length;   // unknown target -> end
+  run();
+}
+
+function goNext(){
+  const s = STORY[i];
+  if(s.next !== undefined) return jump(s.next);
+  i = i + 1; run();
+}
+
+/* ---- dialogue ---- */
+function showLine(s){
+  const box = $('dialogue');
+  box.style.display = '';
+  applyUi(s.who === 'Narrator');
+  box.classList.toggle('narration', s.who === 'Narrator');
+  if(s.who !== 'Narrator'){
+    const c = CAST[s.who];
+    if(c){                                       // built-in demo cast
+      const prev = stageCast[s.who];
+      stageCast[s.who] = { key:s.who, pos:c.side, src: s.pose ? c.path(s.pose) : prev ? prev.src : c.path('neutral') };
+    }
+    $('speaker').textContent = c ? c.name : (s.name || (stageCast[s.who] || {}).name || '');
+    renderCast(s.who);
+    // highlight the speaker among characters placed on an editor canvas
+    const live = document.querySelector('#layouts .layout:last-child');
+    if(live) live.querySelectorAll('.p-sprite[data-key]').forEach(c => c.classList.toggle('dim', c.dataset.key !== s.who && !!live.querySelector(`[data-key="${s.who}"]`)));
+  }
+  typeText(s.text);
+}
+
+function typeText(text){
+  const el = $('line'); clearInterval(typeTimer);
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent = text; typing=false; return; }
+  let n = 0; typing = true; el.textContent = '';
+  $('advance').style.visibility = 'hidden';
+  typeTimer = setInterval(() => {
+    n += 2; el.textContent = text.slice(0, n);
+    if(n >= text.length){ finishTyping(text); }
+  }, 18);
+  el.dataset.full = text;
+}
+function finishTyping(text){
+  clearInterval(typeTimer); typing = false;
+  $('line').textContent = text ?? $('line').dataset.full;
+  $('advance').style.visibility = '';
+}
+
+function onAdvance(){
+  if($('overlay').classList.contains('show')) return;
+  if(STORY[i].type !== 'line') return;
+  if(typing) return finishTyping();
+  goNext();
+}
+
+/* ---- overlays ---- */
+function showOverlay(html){ $('panel').innerHTML = html; $('overlay').classList.add('show'); $('dialogue').style.display='none'; }
+function hideOverlay(){ $('overlay').classList.remove('show'); }
+const keyOf = n => String.fromCharCode(65 + n);
+const esc = t => t.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+
+function showChoice(s){
+  showOverlay(`
+    <span class="panel-tag">${ICON.branch}Your choice</span>
+    <h2>${esc(s.prompt)}</h2>
+    <div class="opts">${s.options.map((o,n)=>`
+      <button class="opt" data-n="${n}"><span class="key">${keyOf(n)}</span>${esc(o.text)}</button>`).join('')}
+    </div>`);
+  $('panel').querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => {
+    const o = s.options[+b.dataset.n];
+    choicesMade.push({ prompt:s.prompt, picked:o.text });
+    hideOverlay();
+    jump(o.next);
+  }));
+  focusFirst();
+}
+
+function showQuiz(s){
+  const qn = STORY.slice(0, i+1).filter(x=>x.type==='quiz').length;
+  showOverlay(`
+    <span class="panel-tag">${ICON.quiz}${LOCAL ? 'Quiz question' : `Question ${qn} of ${quizTotal}`} · ${s.points} pts</span>
+    <h2>${esc(s.question)}</h2>
+    <div class="opts">${s.options.map((o,n)=>`
+      <button class="opt" data-n="${n}"><span class="key">${keyOf(n)}</span><span>${esc(o.text)}</span><span class="mark"></span></button>`).join('')}
+    </div>
+    <div class="feedback" id="fb"></div>
+    <div class="panel-foot" id="foot"><button class="btn btn-primary" id="contBtn">Continue ${ICON.arrow}</button></div>`);
+
+  const btns = [...$('panel').querySelectorAll('.opt')];
+  btns.forEach(b => b.addEventListener('click', () => {
+    const n = +b.dataset.n, ok = !!s.options[n].correct;
+    btns.forEach((x,k) => {
+      x.disabled = true;
+      if(s.options[k].correct){ x.classList.add('correct'); x.querySelector('.mark').innerHTML = ICON.ok + 'Correct'; }
+      else if(k === n){ x.classList.add('wrong'); x.querySelector('.mark').innerHTML = ICON.no + 'Your answer'; }
+      else x.classList.add('faded');
+    });
+    answers.push({ q:s.question, ok }); possible += s.points;
+    if(ok){
+      score += s.points; $('scoreVal').textContent = score;
+      $('scoreChip').classList.remove('bump'); void $('scoreChip').offsetWidth; $('scoreChip').classList.add('bump');
+    }
+    const fb = $('fb');
+    fb.className = 'feedback show ' + (ok ? 'good' : 'bad');
+    fb.innerHTML = `<strong>${ok ? ICON.ok + 'Nice work! +' + s.points + ' pts' : ICON.no + 'Not quite'}</strong>${esc(s.options[n].fb || (ok ? s.right : s.wrong) || '')}`;
+    $('foot').classList.add('show');
+    $('contBtn').focus();
+    $('contBtn').addEventListener('click', () => {
+      hideOverlay();
+      const nx = s.options[n].next;
+      if(nx !== undefined) jump(nx); else goNext();     // built stories: each answer can lead somewhere different
+    });
+  }));
+  focusFirst();
+}
+
+function showEnd(s = {}){
+  $('progress').style.width = '100%';
+  $('dialogue').style.display = 'none';
+  const correct = answers.filter(a=>a.ok).length;
+  const title = document.querySelector('.hud-title').textContent;
+  const hasQuiz = possible > 0;
+  const pct = hasQuiz ? Math.round((score / possible) * 100) : 0;
+  const C = 2 * Math.PI * 56;
+  const msg = !hasQuiz ? (s.title || 'The End')
+    : pct === 100 ? (LOCAL ? 'Perfect score!' : 'Perfect score — you think like a scientist!')
+    : pct >= 60 ? 'Great job! Review what you missed below.' : 'Good effort! Play again to strengthen your understanding.';
+  const flag = '<svg viewBox="0 0 24 24" fill="none" stroke="#3c65a7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:56px;height:56px"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></svg>';
+  showOverlay(`
+    <div class="end">
+      <span class="panel-tag">${LOCAL && s.title ? esc(s.title) : 'Lesson complete'}</span>
+      ${hasQuiz ? `<div class="ring">
+        <svg viewBox="0 0 132 132"><circle cx="66" cy="66" r="56" fill="none" stroke="#eceff4" stroke-width="12"/>
+          <circle cx="66" cy="66" r="56" fill="none" stroke="#3c65a7" stroke-width="12" stroke-linecap="round"
+            stroke-dasharray="${C}" stroke-dashoffset="${C * (1 - pct/100)}" style="transition:stroke-dashoffset 1s ease"/></svg>
+        <div class="val">${pct}%</div>
+      </div>` : `<div style="margin:14px auto 10px;width:96px;height:96px;border-radius:50%;background:#eef3fa;display:grid;place-items:center">${flag}</div>`}
+      <h2>${esc(msg)}</h2>
+      <p class="lead">You finished <strong>${esc(title)}</strong>.</p>
+      <div class="end-stats">
+        <div><b>${hasQuiz ? `${score}/${possible}` : '—'}</b><span>Points</span></div>
+        <div><b>${hasQuiz ? `${correct}/${answers.length}` : '—'}</b><span>Correct</span></div>
+        <div><b>${choicesMade.length}</b><span>Choices made</span></div>
+      </div>
+      ${answers.length ? `<div class="review">
+        <h3>Your answers</h3>
+        <ul>${answers.map(a=>`<li><span class="${a.ok?'ok':'no'}">${a.ok?ICON.ok:ICON.no}</span>${esc(a.q)}</li>`).join('')}</ul>
+      </div>` : ''}
+      ${choicesMade.length && !answers.length ? `<div class="review">
+        <h3>Your path</h3>
+        <ul>${choicesMade.map(c=>`<li><span class="ok">${ICON.arrow}</span>${esc(c.picked)}</li>`).join('')}</ul>
+      </div>` : ''}
+      <div class="sent">${ICON.ok}${isPreview ? 'Preview mode — results are not saved.' : 'Your results were sent to your teacher.'}</div>
+      <div class="end-actions">
+        <button class="btn btn-secondary" id="againBtn">Play again</button>
+        ${TPL ? `<a class="btn btn-primary" href="blank_workspace.html?template=${TPL}">Use this template ${ICON.arrow}</a>`
+          : isPreview ? `<a class="btn btn-primary" href="${EDITOR_URL}">${FROM ? 'Back' : 'Back to editor'} ${ICON.arrow}</a>` : `<a class="btn btn-primary" href="index.html">Done</a>`}
+      </div>
+    </div>`);
+  $('againBtn').addEventListener('click', start);
+}
+
+function focusFirst(){ const b = $('panel').querySelector('.opt'); if(b) b.focus({ preventScroll:true }); }
+
+/* ---- input ---- */
+$('stage').addEventListener('click', e => { if(!e.target.closest('.overlay')) onAdvance(); });
+document.addEventListener('keydown', e => {
+  if(e.code === 'Space' || e.code === 'Enter'){
+    if(document.activeElement && document.activeElement.closest('.panel, .hud')) return;
+    e.preventDefault(); onAdvance();
+  }
+  const opts = [...document.querySelectorAll('#panel .opt:not(:disabled)')];
+  const k = e.key.toUpperCase().charCodeAt(0) - 65;
+  if(opts.length && e.key.length === 1 && k >= 0 && k < opts.length) opts[k].click();
+});
+$('restartBtn').addEventListener('click', start);
+
+/* preload images */
+[...new Set(STORY.flatMap(s => [
+  s.bg && (s.bg.includes('/') ? s.bg : BG(s.bg)),
+  s.pose && CAST[s.who] && CAST[s.who].path(s.pose),
+  ...(s.cast || []).map(a => a.src),
+]).filter(Boolean))]
+  .forEach(src => { const im = new Image(); im.src = src; });
+
+start();
+</script>
+</body>
+</html>

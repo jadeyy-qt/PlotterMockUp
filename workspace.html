@@ -586,6 +586,35 @@
   }
   .add-choice-btn:hover{ color: var(--gold-bright); border-color: var(--gold); }
 
+  /* ---------- Quiz mode ---------- */
+  .quiz-card{ background:#fff; border:1px solid var(--border); border-radius:12px; padding:12px; margin-bottom:12px; }
+  .quiz-card.on{ border-color: var(--accent); background: rgba(60,101,167,0.04); }
+  .quiz-row{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .quiz-row .t{ font-size:13px; font-weight:600; color:var(--text); }
+  .quiz-row small{ display:block; font-size:11.5px; color:var(--text-faint); font-weight:400; margin-top:1px; }
+  .q-sw{ position:relative; width:36px; height:20px; flex-shrink:0; }
+  .q-sw input{ position:absolute; inset:0; opacity:0; margin:0; cursor:pointer; }
+  .q-sw i{ position:absolute; inset:0; border-radius:999px; background:#d5dbe4; transition:background .15s; pointer-events:none; }
+  .q-sw i::after{ content:""; position:absolute; top:3px; left:3px; width:14px; height:14px; border-radius:50%; background:#fff; transition:transform .15s; box-shadow:0 1px 2px rgba(0,0,0,.2); }
+  .q-sw input:checked + i{ background: var(--accent); }
+  .q-sw input:checked + i::after{ transform:translateX(16px); }
+  .quiz-extra{ display:none; margin-top:10px; padding-top:10px; border-top:1px solid var(--border-soft); }
+  .quiz-card.on .quiz-extra{ display:flex; align-items:center; justify-content:space-between; gap:8px; font-size:12px; color:var(--text-dim); }
+  .quiz-extra select{ background: var(--panel-2); border:1px solid var(--border); border-radius:7px; padding:5px 8px; font-size:12px; color:var(--text); }
+  .ce-correct{ display:none; align-items:center; gap:5px; font-size:11px; font-weight:600; color:var(--text-faint); cursor:pointer; }
+  .ce-correct input{ accent-color:#2f8f5b; margin:0; }
+  .quiz-on .ce-correct{ display:inline-flex; }
+  .ce-correct:has(input:checked){ color:#2f8f5b; }
+  .ce-del{ border:none; background:none; cursor:pointer; width:22px; height:22px; border-radius:6px; color:var(--text-faint); display:grid; place-items:center; font-size:15px; line-height:1; }
+  .ce-del:hover{ background:#eceff4; color:var(--text); }
+  .ce-top-r{ display:flex; align-items:center; gap:6px; }
+  .ce-feedback{ display:none; }
+  .quiz-on .ce-feedback{ display:block; }
+  .choice-edit.is-correct{ border-color:#2f8f5b; }
+  .stage-quiz-tag{ display:none; align-self:flex-start; font-size:10.5px; font-weight:700; letter-spacing:.05em; color:#fff; background:var(--accent); padding:3px 8px; border-radius:5px; margin-top:10px; }
+  .quiz-on-stage .stage-quiz-tag{ display:inline-block; }
+  .choice-pill.correct{ border-color:#2f8f5b !important; box-shadow: inset 3px 0 0 #2f8f5b; }
+
 
   .panel-back-btn{
     width:24px; height:24px; border-radius:7px; flex-shrink:0;
@@ -637,12 +666,15 @@
     <div class="logo">
       <svg viewBox="0 0 24 24" fill="none"><path d="M4 5.5C4 4.67 4.67 4 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13Z" fill="#ffffff" opacity=".9"/><path d="M13 4h5.5A1.5 1.5 0 0 1 20 5.5v13a1.5 1.5 0 0 1-1.5 1.5H13V4Z" fill="#ffffff" opacity=".55"/></svg>
     </div>
-    <button class="create-btn" title="Create">+</button>
+    <button class="create-btn" title="Create a new story" onclick="location.href='blank_workspace.html'">+</button>
     <nav class="nav">
-      <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
+      <a class="nav-item" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>Home</a>
+      <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Templates</a>
       <a class="nav-item active" href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>Projects</a>
-      <a class="nav-item" href="#"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
+      <a class="nav-item" href="characters.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>Characters</a>
       <a class="nav-item" href="scenes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg>Scenes</a>
+      <a class="nav-item" href="marketplace.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0V9Z"/><path d="M5 13v7h14v-7"/></svg>Market</a>
+      <a class="nav-item" href="analytics.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Analytics</a>
     </nav>
     <div class="side-avatar">A</div>
   </aside>
@@ -652,7 +684,7 @@
 
     <!-- Top bar -->
     <div class="wtop">
-      <button class="back-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="back-btn" title="Back to projects" onclick="location.href='projects.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
       <div class="breadcrumb">
         <span class="story-name" contenteditable="true" spellcheck="false">Ancient Egypt: The Pharaoh's Court</span>
         <!-- <span class="badge-mini">History</span> -->
@@ -662,8 +694,8 @@
       <div class="save-status saved" id="saveStatus"><span class="dot"></span>Saved</div>
 
       <div class="wtop-actions">
-        <button class="icon-btn" id="undoBtn" title="Undo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 7 4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-1"/></svg></button>
-        <button class="icon-btn" id="redoBtn" title="Redo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 7 5 5-5 5"/><path d="M20 12H9a5 5 0 0 0 0 10h1"/></svg></button>
+        <button class="icon-btn" id="undoBtn" title="Undo" data-soon="Undo is coming soon in the full editor."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 7 4 12l5 5"/><path d="M4 12h11a5 5 0 0 1 0 10h-1"/></svg></button>
+        <button class="icon-btn" id="redoBtn" title="Redo" data-soon="Redo is coming soon in the full editor."><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 7 5 5-5 5"/><path d="M20 12H9a5 5 0 0 0 0 10h1"/></svg></button>
         <button class="btn-ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3l14 9-14 9V3z"/></svg>Preview</button>
         <button class="btn-primary-sm"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12l5 5L20 7"/></svg>Publish</button>
       </div>
@@ -676,8 +708,8 @@
       <!-- Scene list -->
       <div class="scene-panel">
         
-        <div class="panel-head"><button class="panel-back-btn" id="sceneBackBtn" title="Back to Stage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
-          <h3>Scenes · 16</h3><button class="add-scene-btn">+</button></div>
+        <div class="panel-head"><button class="panel-back-btn" id="sceneBackBtn" title="Back to Stage" data-soon><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <h3>Scenes · 16</h3><button class="add-scene-btn" data-soon="This is the demo lesson — use “Create new” (+) to build your own scenes.">+</button></div>
         <div class="scene-search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg>
           <input type="text" placeholder="Find a scene…">
@@ -689,7 +721,7 @@
       <div class="canvas-wrap">
         <div class="canvas-toolbar">
           <div class="mode-btn-group">
-            <button class="mode-btn">Stage</button>
+            <button class="mode-btn" data-soon="Stage view is available in the story editor (Create new → blank project).">Stage</button>
             <button class="mode-btn active">Scene</button>
           </div>
           <div class="spacer"></div>
@@ -698,7 +730,7 @@
             Clear canvas
           </button>
           <div class="zoom-ctrl">
-            <button>−</button><span>100%</span><button>+</button>
+            <button data-soon="Zoom is available in the story editor (Create new → blank project).">−</button><span>100%</span><button data-soon="Zoom is available in the story editor (Create new → blank project).">+</button>
           </div>
         </div>
 
@@ -713,6 +745,7 @@
             <div class="dialogue-box">
               <span class="speaker-chip" id="speakerChip">Horemheb</span>
               <div class="dialogue-text" id="dialogueText" contenteditable="true">"The Pharaoh grows suspicious of the priesthood's counsel. Tell me truly, advisor — where does your loyalty lie?"</div>
+              <span class="stage-quiz-tag" id="stageQuizTag">QUIZ · 10 PTS</span>
               <div class="choice-list" id="choiceList">
                 <div class="choice-pill">"With the throne, always."</div>
                 <div class="choice-pill">"I serve Ma'at — truth above all."</div>
@@ -772,7 +805,7 @@
                 Characters in scene
               </div>
               <div id="castList"></div>
-              <button class="add-char-btn">+ Add character to scene</button>
+              <button class="add-char-btn" data-soon="This is the demo lesson — add characters by dragging them in the story editor.">+ Add character to scene</button>
             </div>
           </div>
 
@@ -807,6 +840,16 @@
               <div class="insp-label">
                 <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 5h18v2H3V5zm0 6h12v2H3v-2zm0 6h18v2H3v-2z"/></svg>
                 Player choices
+              </div>
+              <div class="quiz-card" id="quizCard">
+                <div class="quiz-row">
+                  <div class="t">Grade as quiz question<small>Mark the correct answer and give feedback</small></div>
+                  <label class="q-sw"><input type="checkbox" id="quizToggle" aria-label="Grade as quiz question"><i></i></label>
+                </div>
+                <div class="quiz-extra">
+                  <span>Points for correct answer</span>
+                  <select id="quizPoints"><option>5</option><option selected>10</option><option>20</option></select>
+                </div>
               </div>
               <div id="choiceEditList"></div>
               <button class="add-choice-btn">+ Add choice</button>
@@ -956,11 +999,24 @@ function renderCast(){
 }
 
 /* ---------------- Render: choices editor ---------------- */
+/* Quiz mode: when on, the choice point is graded — one choice is marked
+   correct, each choice can carry feedback, and students earn points. */
+const quiz = { on:false, points:10, correct:0 };
+
 function renderChoiceEditor(){
-  document.getElementById('choiceEditList').innerHTML = choices.map((c,i) => `
-    <div class="choice-edit">
-      <div class="ce-top"><span class="ce-num">Choice ${i+1}</span></div>
-      <input type="text" value="${c.text.replace(/"/g,'&quot;')}">
+  const list = document.getElementById('choiceEditList');
+  list.classList.toggle('quiz-on', quiz.on);
+  list.innerHTML = choices.map((c,i) => `
+    <div class="choice-edit ${quiz.on && quiz.correct===i ? 'is-correct' : ''}" data-i="${i}">
+      <div class="ce-top">
+        <span class="ce-num">Choice ${i+1}</span>
+        <div class="ce-top-r">
+          <label class="ce-correct"><input type="radio" name="ceCorrect" ${quiz.correct===i?'checked':''}>Correct answer</label>
+          ${choices.length > 2 ? `<button class="ce-del" title="Remove choice" aria-label="Remove choice ${i+1}">×</button>` : ''}
+        </div>
+      </div>
+      <input type="text" class="ce-text" value="${c.text.replace(/"/g,'&quot;')}">
+      <input type="text" class="ce-feedback" placeholder="${quiz.correct===i ? 'Feedback if correct (optional)' : 'Feedback if wrong (optional)'}" value="${(c.feedback||'').replace(/"/g,'&quot;')}">
       <div class="ce-link">
         Leads to
         <select>
@@ -968,6 +1024,47 @@ function renderChoiceEditor(){
         </select>
       </div>
     </div>`).join('');
+
+  list.querySelectorAll('.choice-edit').forEach(el => {
+    const i = +el.dataset.i;
+    el.querySelector('.ce-text').addEventListener('input', e => { choices[i].text = e.target.value; renderStageChoices(); markDirty(); });
+    el.querySelector('.ce-feedback').addEventListener('input', e => { choices[i].feedback = e.target.value; markDirty(); });
+    el.querySelector('select').addEventListener('change', e => { choices[i].target = e.target.value; markDirty(); });
+    el.querySelector('.ce-correct input').addEventListener('change', () => { quiz.correct = i; renderChoiceEditor(); renderStageChoices(); markDirty(); });
+    const del = el.querySelector('.ce-del');
+    if(del) del.addEventListener('click', () => {
+      choices.splice(i, 1);
+      if(quiz.correct >= choices.length || quiz.correct === i) quiz.correct = 0;
+      else if(quiz.correct > i) quiz.correct--;
+      renderChoiceEditor(); renderStageChoices(); markDirty();
+    });
+  });
+}
+
+function renderStageChoices(){
+  const box = document.querySelector('.dialogue-box');
+  if(!box) return;
+  box.classList.toggle('quiz-on-stage', quiz.on);
+  document.getElementById('stageQuizTag').textContent = `QUIZ · ${quiz.points} PTS`;
+  document.getElementById('choiceList').innerHTML = choices.map((c,i) =>
+    `<div class="choice-pill ${quiz.on && quiz.correct===i ? 'correct' : ''}">${c.text.replace(/</g,'&lt;')}</div>`).join('');
+}
+
+function initQuizMode(){
+  const card = document.getElementById('quizCard');
+  document.getElementById('quizToggle').addEventListener('change', e => {
+    quiz.on = e.target.checked;
+    card.classList.toggle('on', quiz.on);
+    renderChoiceEditor(); renderStageChoices(); markDirty();
+  });
+  document.getElementById('quizPoints').addEventListener('change', e => { quiz.points = +e.target.value; renderStageChoices(); markDirty(); });
+  document.querySelector('.add-choice-btn').addEventListener('click', () => {
+    if(choices.length >= 4) return;
+    choices.push({ text:'New choice', target: scenes[0].title, feedback:'' });
+    renderChoiceEditor(); renderStageChoices(); markDirty();
+    const inputs = document.querySelectorAll('#choiceEditList .ce-text');
+    inputs[inputs.length-1].select();
+  });
 }
 
 /* ---------------- Tabs ---------------- */
@@ -1040,11 +1137,15 @@ renderFlow();
 renderBackgrounds();
 renderCast();
 renderChoiceEditor();
+renderStageChoices();
+initQuizMode();
 initTabs();
 initSprites();
 initDialogueSync();
 initDirtyTracking();
 initClearCanvas();
 </script>
+<script src="publish.js"></script>
+<script src="soon.js"></script>
 </body>
 </html>

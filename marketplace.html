@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plotter — Creator Marketplace</title>
+<link rel="icon" href="images/sidebar-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="app-shell.css">
+<style>
+  .banner{
+    position:relative; overflow:hidden; border-radius:20px; background:var(--navy); color:#fff;
+    padding:32px 36px; margin-bottom:22px; display:flex; align-items:center; justify-content:space-between; gap:24px; min-height:180px;
+  }
+  .banner::before{ content:""; position:absolute; inset:0; background:url('images/backgrounds/hallway.png') center/cover; opacity:.22; }
+  .banner::after{ content:""; position:absolute; inset:0; background:linear-gradient(90deg, var(--navy) 35%, transparent); }
+  .banner > *{ position:relative; z-index:1; }
+  .banner h2{ font-family:var(--font-display); font-size:28px; font-weight:600; letter-spacing:-0.02em; line-height:1.15; }
+  .banner p{ color:rgba(255,255,255,0.75); margin-top:8px; max-width:480px; font-size:14.5px; }
+  .banner .split{ display:flex; gap:10px; flex-shrink:0; }
+  .split-box{ background:rgba(255,255,255,0.1); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,0.18); border-radius:14px; padding:14px 18px; text-align:center; min-width:110px; }
+  .split-box b{ display:block; font-family:var(--font-display); font-size:30px; font-weight:700; }
+  .split-box span{ font-size:12px; color:rgba(255,255,255,0.75); }
+  .split-box.you{ background:#fff; color:var(--navy); }
+  .split-box.you span{ color:var(--text-dim); }
+
+  .toolbar{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:18px; }
+  .toolbar .spacer{ flex:1; }
+  .search{ display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--border); border-radius:12px; padding:9px 14px; min-width:240px; }
+  .search svg{ width:16px; height:16px; color:var(--text-faint); }
+  .search input{ border:none; outline:none; background:none; font-size:14px; color:var(--navy); width:100%; }
+
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:18px; }
+  .item{ background:#fff; border:1px solid var(--border-soft); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:transform .2s, box-shadow .2s, border-color .2s; text-align:left; }
+  .item:hover{ transform:translateY(-3px); box-shadow:var(--shadow-md); border-color:#c9d0da; }
+  .thumb{ aspect-ratio:16/10; position:relative; background:linear-gradient(135deg,#e9eef6,#d6dfec); overflow:hidden; }
+  .thumb img.cover{ width:100%; height:100%; object-fit:cover; }
+  .thumb.chars{ display:flex; align-items:flex-end; justify-content:center; }
+  .thumb.chars img{ height:94%; width:auto; filter:drop-shadow(0 8px 14px rgba(3,17,76,0.2)); }
+  .thumb.pack{ display:grid; grid-template-columns:1fr 1fr; gap:2px; background:#fff; }
+  .thumb.pack img{ width:100%; height:100%; object-fit:cover; }
+  .type{ position:absolute; top:10px; left:10px; background:rgba(3,17,76,0.8); color:#fff; font-size:11px; font-weight:600; padding:4px 9px; border-radius:6px; backdrop-filter:blur(6px); }
+  .item-body{ padding:14px 16px 16px; display:flex; flex-direction:column; gap:4px; flex:1; }
+  .item-title{ font-family:var(--font-display); font-weight:600; font-size:15.5px; line-height:1.3; }
+  .item-by{ font-size:12.5px; color:var(--text-faint); }
+  .item-foot{ display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:10px; }
+  .rating{ display:flex; align-items:center; gap:4px; font-size:12.5px; color:var(--text-dim); font-weight:500; }
+  .rating svg{ width:13px; height:13px; color:#e0a526; }
+  .price{ font-weight:700; font-size:15px; }
+  .price.free{ color:var(--good); }
+  .owned{ font-size:12px; font-weight:600; color:var(--good); display:flex; align-items:center; gap:4px; }
+  .owned svg{ width:14px; height:14px; }
+  .empty{ grid-column:1/-1; text-align:center; padding:50px 20px; color:var(--text-dim); }
+
+  /* ---------- Sell tab ---------- */
+  .kpis{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:16px; }
+  .kpi{ background:#fff; border:1px solid var(--border-soft); border-radius:16px; padding:18px 20px; }
+  .kpi .lbl{ font-size:12.5px; color:var(--text-dim); font-weight:500; }
+  .kpi .val{ font-family:var(--font-display); font-size:28px; font-weight:700; margin-top:6px; letter-spacing:-0.02em; }
+  .kpi .delta{ font-size:12px; color:var(--text-faint); margin-top:2px; }
+  .kpi .delta b{ color:var(--good); }
+  .sell-grid{ display:grid; grid-template-columns:1fr 1.5fr; gap:16px; }
+
+  .calc label{ display:flex; justify-content:space-between; font-size:13px; font-weight:600; color:var(--text-dim); margin:16px 0 8px; }
+  .calc label b{ color:var(--navy); }
+  input[type=range]{ width:100%; accent-color:var(--blue); }
+  .split-bar{ display:flex; height:36px; border-radius:10px; overflow:hidden; margin-top:20px; gap:2px; }
+  .split-bar div{ display:flex; align-items:center; justify-content:center; font-size:12.5px; font-weight:600; }
+  .split-bar .you{ flex:70; background:var(--blue); color:#fff; }
+  .split-bar .us{ flex:30; background:var(--panel-3); color:var(--text-dim); }
+  .calc-result{ display:flex; justify-content:space-between; align-items:flex-end; margin-top:16px; padding-top:16px; border-top:1px solid var(--border-soft); }
+  .calc-result .big{ font-family:var(--font-display); font-size:32px; font-weight:700; color:var(--navy); line-height:1; }
+  .calc-result .small{ font-size:12.5px; color:var(--text-faint); text-align:right; }
+
+  table{ width:100%; border-collapse:collapse; font-size:13.5px; }
+  th{ text-align:left; font-size:11.5px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--text-faint); padding:10px 10px; border-bottom:1px solid var(--border-soft); }
+  td{ padding:11px 10px; border-bottom:1px solid var(--border-soft); }
+  tr:last-child td{ border-bottom:none; }
+  .lst{ display:flex; align-items:center; gap:10px; font-weight:600; }
+  .lst img{ width:44px; height:30px; object-fit:cover; border-radius:6px; }
+  .num{ text-align:right; font-variant-numeric:tabular-nums; }
+  th.num{ text-align:right; }
+  .chip{ display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; padding:3px 9px; border-radius:999px; }
+  .chip.live{ background:#e7f4ec; color:#1d5e3b; }
+  .chip.review{ background:#fdf3e1; color:#7a5212; }
+  .chip i{ width:6px; height:6px; border-radius:50%; background:currentColor; }
+  .payout{ display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--panel-2); border:1px solid var(--border-soft); border-radius:12px; padding:12px 14px; margin-top:16px; font-size:13px; color:var(--text-dim); }
+  .payout b{ color:var(--navy); }
+
+  /* ---------- Modal ---------- */
+  .modal-bg{ position:fixed; inset:0; background:rgba(3,17,76,0.45); backdrop-filter:blur(3px); z-index:150; display:none; align-items:center; justify-content:center; padding:20px; }
+  .modal-bg.show{ display:flex; }
+  .modal{ background:#fff; border-radius:20px; width:min(760px,100%); max-height:calc(100vh - 40px); overflow:auto; box-shadow:0 40px 100px rgba(3,17,76,0.35); position:relative; }
+  .modal-close{ position:absolute; top:14px; right:14px; width:34px; height:34px; border-radius:50%; background:rgba(255,255,255,0.9); display:grid; place-items:center; z-index:2; box-shadow:var(--shadow-sm); }
+  .modal-close svg{ width:16px; height:16px; }
+  .detail{ display:grid; grid-template-columns:1.1fr 1fr; }
+  .detail .thumb{ aspect-ratio:auto; min-height:320px; }
+  .detail-body{ padding:26px; display:flex; flex-direction:column; gap:10px; }
+  .detail-body h3{ font-family:var(--font-display); font-size:22px; font-weight:600; line-height:1.25; }
+  .detail-body p{ color:var(--text-dim); font-size:14px; line-height:1.55; }
+  .includes{ list-style:none; display:flex; flex-direction:column; gap:6px; font-size:13.5px; }
+  .includes li{ display:flex; gap:8px; align-items:center; }
+  .includes svg{ width:15px; height:15px; color:var(--blue); flex-shrink:0; }
+  .buy-row{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:auto; padding-top:14px; border-top:1px solid var(--border-soft); }
+  .buy-row .price{ font-family:var(--font-display); font-size:26px; }
+  .note{ font-size:12px; color:var(--text-faint); display:flex; gap:6px; align-items:center; }
+  .note svg{ width:14px; height:14px; color:var(--blue); flex-shrink:0; }
+
+  .form{ padding:26px; }
+  .form h3{ font-family:var(--font-display); font-size:22px; font-weight:600; }
+  .form .sub{ color:var(--text-dim); font-size:13.5px; margin:4px 0 18px; }
+  .f-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+  .f{ display:flex; flex-direction:column; gap:6px; }
+  .f.full{ grid-column:1/-1; }
+  .f label{ font-size:12.5px; font-weight:600; color:var(--text-dim); }
+  .f input, .f select, .f textarea{ border:1px solid var(--border); border-radius:10px; padding:10px 12px; font-size:14px; color:var(--navy); background:var(--panel-2); outline:none; font-family:inherit; }
+  .f input:focus, .f select:focus, .f textarea:focus{ border-color:var(--blue); background:#fff; }
+  .f textarea{ min-height:80px; resize:vertical; }
+  .drop{ border:1.5px dashed var(--border); border-radius:12px; padding:22px; text-align:center; color:var(--text-faint); font-size:13px; cursor:pointer; }
+  .drop:hover{ border-color:var(--blue); color:var(--blue); }
+  .drop svg{ width:24px; height:24px; display:block; margin:0 auto 6px; }
+  .earn-box{ display:flex; justify-content:space-between; align-items:center; background:var(--blue-tint); border:1px solid rgba(60,101,167,0.2); border-radius:12px; padding:12px 14px; font-size:13px; color:var(--text-dim); }
+  .earn-box b{ font-family:var(--font-display); font-size:20px; color:var(--navy); }
+  .form-foot{ display:flex; justify-content:flex-end; gap:10px; margin-top:20px; }
+
+  @media (max-width:1100px){ .kpis{ grid-template-columns:repeat(2,1fr); } .sell-grid{ grid-template-columns:1fr; } }
+  @media (max-width:700px){
+    .banner{ flex-direction:column; align-items:flex-start; padding:24px; }
+    .detail{ grid-template-columns:1fr; } .detail .thumb{ min-height:200px; }
+    .f-grid{ grid-template-columns:1fr; }
+    .search{ min-width:0; flex:1; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <nav class="sidebar" aria-label="Main navigation">
+    <div class="sidebar-logo"><img src="images/sidebar-logo.png" alt="Plotter"></div>
+    <a class="sidebar-create" href="blank_workspace.html" title="Create new">+</a>
+    <div class="sidebar-nav">
+      <a class="nav-item" href="index.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg><span>Home</span></a>
+      <a class="nav-item" href="homepage.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg><span>Templates</span></a>
+      <a class="nav-item" href="projects.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg><span>Projects</span></a>
+      <a class="nav-item" href="characters.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg><span>Characters</span></a>
+      <a class="nav-item" href="scenes.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="14" height="12" rx="1.5"/><path d="M20 8l-4 2.5v3L20 16V8Z"/></svg><span>Scenes</span></a>
+      <a class="nav-item active" href="marketplace.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l1.5-5h15L21 9"/><path d="M3 9h18v2a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0V9Z"/><path d="M5 13v7h14v-7"/></svg><span>Market</span></a>
+      <a class="nav-item" href="analytics.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Analytics</span></a>
+    </div>
+    <div class="sidebar-bottom"><div class="avatar">MR</div></div>
+  </nav>
+
+  <main class="main">
+    <div class="page-head">
+      <div>
+        <h1>Creator Marketplace</h1>
+        <p>Story templates, characters, and backgrounds made by educators and artists.</p>
+      </div>
+      <div class="tabs" role="tablist">
+        <button class="active" data-view="browse" role="tab">Browse</button>
+        <button data-view="sell" role="tab">Sell</button>
+      </div>
+    </div>
+
+    <!-- ================= BROWSE ================= -->
+    <section id="view-browse">
+      <div class="toolbar">
+        <label class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.35-4.35"/></svg><input id="q" type="text" placeholder="Search templates and assets…" aria-label="Search marketplace"></label>
+        <div id="cats" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+        <div class="spacer"></div>
+        <select class="select" id="sort" aria-label="Sort">
+          <option value="pop">Most popular</option>
+          <option value="rating">Highest rated</option>
+          <option value="low">Price: low to high</option>
+          <option value="high">Price: high to low</option>
+        </select>
+      </div>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <!-- ================= SELL ================= -->
+    <section id="view-sell" hidden>
+      <div class="banner">
+        <div>
+          <h2>Turn your lessons into income</h2>
+          <p>List story templates, characters, or background packs. You keep 70% of every sale — Plotter handles hosting, payments, and delivery.</p>
+          <button class="btn btn-primary" style="margin-top:18px;background:#fff;color:var(--navy);box-shadow:none" id="newListingBtn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>New listing
+          </button>
+        </div>
+        <div class="split">
+          <div class="split-box you"><b>70%</b><span>to you</span></div>
+          <div class="split-box"><b>30%</b><span>to Plotter</span></div>
+        </div>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><div class="lbl">Earnings this month</div><div class="val">$186.20</div><div class="delta"><b>+24%</b> vs October</div></div>
+        <div class="kpi"><div class="lbl">Total sales</div><div class="val">142</div><div class="delta">across all listings</div></div>
+        <div class="kpi"><div class="lbl">Active listings</div><div class="val" id="kListings">3</div><div class="delta" id="kReview">none in review</div></div>
+        <div class="kpi"><div class="lbl">Average rating</div><div class="val">4.8</div><div class="delta">from 61 reviews</div></div>
+      </div>
+
+      <div class="sell-grid">
+        <div class="card calc">
+          <h2>Earnings calculator</h2>
+          <div class="sub">Estimate what a listing could earn you each month.</div>
+          <label for="cPrice">Price <b id="cPriceV">$5.00</b></label>
+          <input type="range" id="cPrice" min="1" max="20" step="0.5" value="5">
+          <label for="cSales">Sales per month <b id="cSalesV">40</b></label>
+          <input type="range" id="cSales" min="0" max="300" step="5" value="40">
+          <div class="split-bar"><div class="you" id="cYou">You · $140.00</div><div class="us" id="cUs">$60.00</div></div>
+          <div class="calc-result">
+            <div><div style="font-size:12.5px;color:var(--text-dim);margin-bottom:4px">You'd earn per month</div><div class="big" id="cTotal">$140.00</div></div>
+            <div class="small">Per sale: <b id="cPer" style="color:var(--navy)">$3.50</b><br>Yearly: <b id="cYear" style="color:var(--navy)">$1,680</b></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:8px">
+            <div><h2>My listings</h2><div class="sub">Your items on the marketplace</div></div>
+          </div>
+          <div style="overflow-x:auto">
+            <table>
+              <thead><tr><th>Listing</th><th class="num">Price</th><th class="num">Sales</th><th class="num">You earned</th><th>Status</th></tr></thead>
+              <tbody id="myListings"></tbody>
+            </table>
+          </div>
+          <div class="payout">
+            <span>Next payout <b>Dec 1, 2026</b> to bank account ••42</span>
+            <b>$186.20</b>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!-- detail modal -->
+<div class="modal-bg" id="detailModal"><div class="modal" role="dialog" aria-modal="true" id="detailBody"></div></div>
+
+<!-- new listing modal -->
+<div class="modal-bg" id="listModal">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="listTitle">
+    <button class="modal-close" data-close aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    <form class="form" id="listForm">
+      <h3 id="listTitle">New listing</h3>
+      <p class="sub">Share your work with educators everywhere. Listings are reviewed within 2 business days.</p>
+      <div class="f-grid">
+        <div class="f full"><label for="lName">Title</label><input id="lName" required placeholder="e.g. Photosynthesis Lab Story"></div>
+        <div class="f"><label for="lType">Type</label>
+          <select id="lType"><option>Story template</option><option>Character pack</option><option>Background pack</option></select></div>
+        <div class="f"><label for="lSubject">Subject</label>
+          <select id="lSubject"><option>Science</option><option>Math</option><option>History</option><option>Literature</option><option>Languages</option><option>General</option></select></div>
+        <div class="f full"><label for="lDesc">Description</label><textarea id="lDesc" placeholder="What's included, grade level, learning goals…"></textarea></div>
+        <div class="f"><label for="lPrice">Price (USD)</label><input id="lPrice" type="number" min="0" step="0.5" value="5"></div>
+        <div class="f" style="justify-content:flex-end"><div class="earn-box"><span>You earn per sale</span><b id="lEarn">$3.50</b></div></div>
+        <div class="f full"><label>Files</label><div class="drop" id="drop"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></svg><span id="dropTxt">Choose a project from your library, or drop PNG files here</span></div></div>
+      </div>
+      <div class="form-foot">
+        <button type="button" class="btn btn-secondary" data-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit for review</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="templates.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const toast = msg => { const t = $('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), 2400); };
+const money = n => '$' + n.toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 });
+const ICON = {
+  star:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.6L22 9.3l-5 4.9 1.2 7-6.2-3.4-6.2 3.4 1.2-7-5-4.9 7.1-.7L12 2z"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>',
+  close:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/></svg>',
+};
+
+/* ---------------- Catalogue ---------------- */
+const BGP = n => 'images/backgrounds/' + n;
+const ITEMS = [
+  { id:1, cat:'Story templates', title:'The Scientific Method', by:'Ms. Reyes', price:4, rating:4.9, sales:312, img:BGP('classroom.png'),
+    desc:'A complete Grade 7 lesson: students design a fair test to find out why the class plant stopped growing.', includes:['21 scenes with branching choices','3 graded quiz questions with feedback','Teacher guide (PDF)'] },
+  { id:2, cat:'Story templates', title:'Ancient Rome: Rise & Fall', by:'History Hub', price:6, rating:4.8, sales:204, img:'images/rome.jpg',
+    desc:'Advise the Senate through key moments of the Republic and Empire. Every decision shapes Rome\'s fate.', includes:['18 scenes, 4 endings','5 quiz checkpoints','Vocabulary glossary'] },
+  { id:3, cat:'Story templates', title:'Algebra Adventures', by:'Mr. Bautista', price:5, rating:4.7, sales:188, img:'images/algeb.jpg',
+    desc:'Solve for x to unlock each door in a puzzle quest. Covers one- and two-step equations.', includes:['15 scenes','10 equation puzzles','Answer key'] },
+  { id:4, cat:'Story templates', title:'Pythagoras and the Lost Temple', by:'Geometry Guild', price:5, rating:4.6, sales:97, img:'images/pyt.jpg',
+    desc:'Navigate an ancient temple full of right-triangle puzzles.', includes:['12 scenes','6 geometry challenges'] },
+  { id:5, cat:'Story templates', title:'Journey Through the Solar System', by:'Plotter Team', price:0, rating:4.9, sales:1240, img:'images/journeytothesolarsystem.jpg',
+    desc:'A voyage from Mercury to Neptune with a branching path for each planet.', includes:['14 scenes','8 quiz questions'] },
+  { id:6, cat:'Story templates', title:'The Fraction Kingdom', by:'Plotter Team', price:0, rating:4.5, sales:860, img:'images/fraction.jpg',
+    desc:'A kingdom divided — restore order using fractions and ratios.', includes:['9 scenes','6 quiz questions'] },
+  { id:7, cat:'Background packs', title:'School Life Backgrounds', by:'Kaito Studio', price:8, rating:4.9, sales:421, pack:['classroom.png','hallway.png','art_room.png','clubroom.png'],
+    desc:'Hand-painted school interiors for any classroom story. Day lighting, 1920×1080.', includes:['8 backgrounds','Day & afternoon variants','Commercial license for lessons'] },
+  { id:8, cat:'Background packs', title:'School Grounds Pack', by:'Kaito Studio', price:7, rating:4.8, sales:233, pack:['schoolgate.png','rooftop.png','stairs.png','classroom_outside.png'],
+    desc:'Outdoor school locations — gate, rooftop, stairs, and courtyard.', includes:['6 backgrounds','1920×1080 PNG'] },
+  { id:9, cat:'Character packs', title:'Suzy — Student', by:'Lumen Art', price:3, rating:4.9, sales:518, chars:['Suzy/suzy-holdingtumbler-down-normal.png','Suzy/suzy-holdingtumbler-down-amused.png'],
+    desc:'A cheerful student character with seven expressions.', includes:['7 expressions','Transparent PNG sprites'] },
+  { id:10, cat:'Character packs', title:'Mr. Radwer — Teacher', by:'Lumen Art', price:3, rating:4.8, sales:476, chars:['Radwer/radwer-neutral.png','Radwer/radwer-focused-pointing.png'],
+    desc:'A friendly teacher with eight poses, including pointing and writing.', includes:['8 poses','Transparent PNG sprites'] },
+  { id:11, cat:'Character packs', title:'Justin — Student', by:'Lumen Art', price:3, rating:4.7, sales:301, chars:['Justin/justin-normal-onehanddown.png','Justin/justin-smirk-onehanddown.png'],
+    desc:'A laid-back student with headphones and nine expressions.', includes:['9 expressions','Transparent PNG sprites'] },
+  { id:12, cat:'Character packs', title:'Royal Guard', by:'Pixel Forge', price:2, rating:4.5, sales:142, chars:['Miek/GuardHappy-b.png','Miek/GuardStop-b.png'],
+    desc:'A palace guard for historical and fantasy stories.', includes:['4 poses'] },
+];
+const owned = new Set([5]);
+const CATS = ['All', 'Story templates', 'Character packs', 'Background packs', 'Free'];
+let cat = 'All', q = '', sort = 'pop';
+
+function thumbHTML(it){
+  if(it.pack) return `<div class="thumb pack">${it.pack.map(p => `<img src="${BGP(p)}" alt="" loading="lazy">`).join('')}<span class="type">${it.cat.replace(/s$/,'')}</span></div>`;
+  if(it.chars) return `<div class="thumb chars">${it.chars.map(c => `<img src="images/characters/_thumbs/${c}" alt="" loading="lazy">`).join('')}<span class="type">${it.cat.replace(/s$/,'')}</span></div>`;
+  return `<div class="thumb"><img class="cover" src="${it.img}" alt="" loading="lazy"><span class="type">${it.cat.replace(/s$/,'')}</span></div>`;
+}
+const priceHTML = it => owned.has(it.id) ? `<span class="owned">${ICON.check}In library</span>` : it.price === 0 ? '<span class="price free">Free</span>' : `<span class="price">${money(it.price)}</span>`;
+
+function renderCats(){
+  $('cats').innerHTML = CATS.map(c => `<button class="pill ${c===cat?'active':''}" data-c="${c}">${c}</button>`).join('');
+  $('cats').querySelectorAll('button').forEach(b => b.addEventListener('click', () => { cat = b.dataset.c; renderCats(); renderGrid(); }));
+}
+function renderGrid(){
+  let list = ITEMS.filter(it => (cat === 'All' || (cat === 'Free' ? it.price === 0 : it.cat === cat))
+    && (it.title + ' ' + it.by).toLowerCase().includes(q));
+  const S = { pop:(a,b)=>b.sales-a.sales, rating:(a,b)=>b.rating-a.rating, low:(a,b)=>a.price-b.price, high:(a,b)=>b.price-a.price };
+  list.sort(S[sort]);
+  $('grid').innerHTML = list.length ? list.map(it => `
+    <button class="item" data-id="${it.id}">
+      ${thumbHTML(it)}
+      <div class="item-body">
+        <div class="item-title">${it.title}</div>
+        <div class="item-by">by ${it.by}</div>
+        <div class="item-foot"><span class="rating">${ICON.star}${it.rating} · ${it.sales.toLocaleString()} sold</span>${priceHTML(it)}</div>
+      </div>
+    </button>`).join('') : '<div class="empty">No items match your search.</div>';
+  $('grid').querySelectorAll('.item').forEach(b => b.addEventListener('click', () => openDetail(+b.dataset.id)));
+}
+$('q').addEventListener('input', e => { q = e.target.value.toLowerCase(); renderGrid(); });
+$('sort').addEventListener('change', e => { sort = e.target.value; renderGrid(); });
+
+function openDetail(id){
+  const it = ITEMS.find(x => x.id === id);
+  const have = owned.has(id);
+  $('detailBody').innerHTML = `
+    <button class="modal-close" data-close aria-label="Close">${ICON.close}</button>
+    <div class="detail">
+      ${thumbHTML(it)}
+      <div class="detail-body">
+        <span class="rating">${ICON.star}${it.rating} · ${it.sales.toLocaleString()} sold</span>
+        <h3>${it.title}</h3>
+        <div class="item-by">by ${it.by}</div>
+        <p>${it.desc}</p>
+        <ul class="includes">${it.includes.map(x => `<li>${ICON.check}${x}</li>`).join('')}</ul>
+        <div class="buy-row">
+          ${have ? `<span class="owned">${ICON.check}In your library</span>` : `<span class="price ${it.price===0?'free':''}">${it.price===0?'Free':money(it.price)}</span>`}
+          ${have ? `<a class="btn btn-primary" href="${it.cat!=='Story templates' ? 'blank_workspace.html' : PlotterTemplates.get(it.title) ? 'blank_workspace.html?template=' + PlotterTemplates.slug(it.title) : 'workspace.html'}">Use in a project</a>`
+                 : `<button class="btn btn-primary" id="buyBtn">${it.price===0?'Add to library':'Buy for ' + money(it.price)}</button>`}
+        </div>
+        ${it.price > 0 ? `<div class="note">${ICON.info}${it.by} receives ${money(it.price*0.7)} (70%) from this purchase.</div>` : ''}
+      </div>
+    </div>`;
+  open('detailModal');
+  const buy = $('buyBtn');
+  if(buy) buy.addEventListener('click', () => {
+    owned.add(id); renderGrid(); openDetail(id);
+    toast(it.price === 0 ? `"${it.title}" added to your library` : `Purchased "${it.title}" — it's in your library`);
+  });
+}
+
+/* ---------------- Modals ---------------- */
+function open(id){ $(id).classList.add('show'); const f = $(id).querySelector('input, button:not([data-close])'); if(f) f.focus(); }
+function close(m){ m.classList.remove('show'); }
+document.querySelectorAll('.modal-bg').forEach(m => m.addEventListener('click', e => { if(e.target === m || e.target.closest('[data-close]')) close(m); }));
+document.addEventListener('keydown', e => { if(e.key === 'Escape') document.querySelectorAll('.modal-bg.show').forEach(close); });
+
+/* ---------------- Tabs ---------------- */
+function setView(v){
+  document.querySelectorAll('.tabs button').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  $('view-browse').hidden = v !== 'browse';
+  $('view-sell').hidden = v !== 'sell';
+  history.replaceState(null, '', v === 'sell' ? '#sell' : location.pathname);
+}
+document.querySelectorAll('.tabs button').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+
+/* ---------------- Sell: calculator ---------------- */
+function calc(){
+  const p = +$('cPrice').value, s = +$('cSales').value;
+  const gross = p * s, you = gross * 0.7;
+  $('cPriceV').textContent = money(p); $('cSalesV').textContent = s;
+  $('cYou').textContent = 'You · ' + money(you); $('cUs').textContent = money(gross - you);
+  $('cTotal').textContent = money(you); $('cPer').textContent = money(p * 0.7);
+  $('cYear').textContent = '$' + Math.round(you * 12).toLocaleString();
+}
+['cPrice','cSales'].forEach(id => $(id).addEventListener('input', calc));
+calc();
+
+/* ---------------- Sell: my listings ---------------- */
+const MINE = [
+  { title:'The Scientific Method', img:BGP('classroom.png'), price:4, sales:58, status:'live' },
+  { title:'Photosynthesis Lab', img:BGP('art_room.png'), price:4, sales:41, status:'live' },
+  { title:'Lab Safety Basics', img:BGP('clubroom.png'), price:3, sales:43, status:'live' },
+];
+function renderMine(){
+  $('myListings').innerHTML = MINE.map(m => `<tr>
+    <td><div class="lst"><img src="${m.img}" alt="">${m.title}</div></td>
+    <td class="num">${money(m.price)}</td>
+    <td class="num">${m.sales}</td>
+    <td class="num"><b>${money(m.price * m.sales * 0.7)}</b></td>
+    <td><span class="chip ${m.status}"><i></i>${m.status === 'live' ? 'Live' : 'In review'}</span></td>
+  </tr>`).join('');
+  $('kListings').textContent = MINE.filter(m => m.status === 'live').length;
+  const r = MINE.filter(m => m.status === 'review').length; $('kReview').textContent = r ? r + ' in review' : 'none in review';
+}
+renderMine();
+
+/* ---------------- Sell: new listing ---------------- */
+$('newListingBtn').addEventListener('click', () => open('listModal'));
+$('lPrice').addEventListener('input', e => $('lEarn').textContent = money(Math.max(0, +e.target.value || 0) * 0.7));
+$('drop').addEventListener('click', () => { $('dropTxt').textContent = '✓ 3 files attached (demo)'; });
+$('listForm').addEventListener('submit', e => {
+  e.preventDefault();
+  MINE.push({ title:$('lName').value, img:BGP('stairs.png'), price:Math.max(0, +$('lPrice').value || 0), sales:0, status:'review' });
+  renderMine(); close($('listModal')); e.target.reset(); $('lEarn').textContent = '$3.50'; $('dropTxt').textContent = 'Choose a project from your library, or drop PNG files here';
+  toast('Listing submitted — we\'ll review it within 2 business days');
+});
+
+renderCats(); renderGrid();
+if(location.hash === '#sell') setView('sell');
+</script>
+<script src="soon.js"></script>
+</body>
+</html>

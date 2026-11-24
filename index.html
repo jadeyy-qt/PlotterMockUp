@@ -429,6 +429,35 @@
   .stat-value{ font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; color: var(--navy); letter-spacing: -0.02em; line-height: 1.1; }
   .stat-label{ color: var(--text-dim); font-size: 0.9rem; margin-top: 6px; }
 
+  /* ---------- Community ---------- */
+  .community{ max-width: var(--max-width); margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .comm-card{ background: var(--bg); border: 1px solid var(--border-soft); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; }
+  .comm-art{ height: 170px; background-size: cover; background-position: center; position: relative; display: flex; justify-content: center; align-items: flex-end; }
+  .comm-art::before{ content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(3,17,76,0.05), rgba(3,17,76,0.35)); }
+  .comm-art img{ position: relative; height: 92%; width: auto; filter: drop-shadow(0 8px 16px rgba(3,17,76,0.3)); }
+  .comm-body{ padding: 22px 24px 24px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .comm-tag{ align-self: flex-start; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--blue); background: var(--blue-tint); padding: 4px 10px; border-radius: 999px; }
+  .comm-body h3{ font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--navy); }
+  .comm-body p{ color: var(--text-dim); font-size: 0.95rem; }
+  .comm-body strong{ color: var(--navy); }
+  .comm-link{ margin-top: auto; padding-top: 6px; font-weight: 600; font-size: 0.92rem; color: var(--blue); }
+  .comm-link:hover{ text-decoration: underline; }
+
+  /* ---------- Pricing preview ---------- */
+  .price-row{ max-width: 1000px; margin: 0 auto; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
+  .price-card{ background: #fff; border: 1px solid var(--border-soft); border-radius: var(--radius-lg); padding: 28px 26px; display: flex; flex-direction: column; gap: 10px; position: relative; }
+  .price-card.featured{ border: 2px solid var(--blue); box-shadow: var(--shadow-md); }
+  .pc-ribbon{ position: absolute; top: -12px; left: 26px; background: var(--blue); color: #fff; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px; }
+  .pc-name{ font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; color: var(--navy); }
+  .pc-price{ display: flex; align-items: baseline; gap: 6px; }
+  .pc-price b{ font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; color: var(--navy); letter-spacing: -0.02em; line-height: 1.1; }
+  .pc-price span{ color: var(--text-dim); }
+  .price-card p{ color: var(--text-dim); font-size: 0.93rem; flex: 1; }
+  .price-card .btn{ margin-top: 8px; }
+  .price-more{ text-align: center; margin-top: 28px; }
+  .price-more a{ color: var(--blue); font-weight: 600; }
+  .price-more a:hover{ text-decoration: underline; }
+
   /* ---------- FAQ ---------- */
   .faq{ max-width: 780px; margin: 0 auto; }
   .faq details{ background: #fff; border: 1px solid var(--border-soft); border-radius: var(--radius-md); margin-bottom: 10px; transition: border-color .2s ease; }
@@ -495,6 +524,7 @@
     .editor-col.props{ display: none; }
     .features-grid, .stories-grid{ grid-template-columns: repeat(2, 1fr); }
     .steps{ grid-template-columns: 1fr 1fr; }
+    .community, .price-row{ grid-template-columns: 1fr; max-width: 520px; }
     .stats{ grid-template-columns: repeat(2, 1fr); }
     .stat:nth-child(2){ border-right: none; }
     .stat:nth-child(-n+2){ border-bottom: 1px solid var(--border-soft); }
@@ -551,8 +581,9 @@
       <nav class="nav-links" aria-label="Primary">
         <a href="#features">Features</a>
         <a href="#how">How it works</a>
-        <a href="#explore">Stories</a>
-        <a href="#faq">FAQ</a>
+        <a href="#community">Community</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="pricing.html">Pricing</a>
       </nav>
     </div>
     <div class="nav-actions">
@@ -566,8 +597,9 @@
   <div class="mobile-menu" id="mobileMenu">
     <a href="#features">Features</a>
     <a href="#how">How it works</a>
-    <a href="#explore">Stories</a>
-    <a href="#faq">FAQ</a>
+    <a href="#community">Community</a>
+    <a href="marketplace.html">Marketplace</a>
+    <a href="pricing.html">Pricing</a>
     <a href="signin.html">Sign in</a>
     <a href="signin.html" class="btn btn-primary">Get started free</a>
   </div>
@@ -584,7 +616,7 @@
         Start creating — it's free
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
-      <a href="homepage.html" class="btn btn-secondary btn-lg">Browse templates</a>
+      <a href="play.html?mode=student" class="btn btn-secondary btn-lg"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>Try a demo lesson</a>
     </div>
     <div class="hero-note">
       <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>No credit card</span>
@@ -857,6 +889,74 @@
     </div>
   </section>
 
+  <!-- ============ COMMUNITY ============ -->
+  <section class="block how" id="community">
+    <div class="section-head reveal">
+      <div class="eyebrow">The Plotter community</div>
+      <h2 class="section-title">Built for everyone in the learning loop</h2>
+      <p class="section-sub">Educators create, students play and learn, and creators share their work with classrooms everywhere.</p>
+    </div>
+    <div class="community">
+      <div class="comm-card reveal">
+        <div class="comm-art" style="background-image:url('images/backgrounds/classroom.png')"><img src="images/characters/_thumbs/Radwer/radwer-writing.png" alt=""></div>
+        <div class="comm-body">
+          <span class="comm-tag">Educators</span>
+          <h3>Customize, publish, and track</h3>
+          <p>Adapt templates to your class, share with one link, and see each student's scores and choices.</p>
+          <a href="analytics.html" class="comm-link">See class analytics →</a>
+        </div>
+      </div>
+      <div class="comm-card reveal">
+        <div class="comm-art" style="background-image:url('images/backgrounds/hallway.png')"><img src="images/characters/_thumbs/Suzy/suzy-holdingtumbler-down-curious.png" alt=""></div>
+        <div class="comm-body">
+          <span class="comm-tag">Students</span>
+          <h3>Learn by making choices</h3>
+          <p>Play through stories, make decisions, answer quiz questions, and get instant feedback along the way.</p>
+          <a href="play.html?mode=student" class="comm-link">Play a demo lesson →</a>
+        </div>
+      </div>
+      <div class="comm-card reveal">
+        <div class="comm-art" style="background-image:url('images/backgrounds/art_room.png')"><img src="images/characters/_thumbs/Justin/justin-smirk-onehanddown.png" alt=""></div>
+        <div class="comm-body">
+          <span class="comm-tag">Creators</span>
+          <h3>Sell templates and assets</h3>
+          <p>List stories, characters, and backgrounds on the Creator Marketplace and keep <strong>70%</strong> of every sale.</p>
+          <a href="marketplace.html#sell" class="comm-link">Start selling →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRICING PREVIEW ============ -->
+  <section class="block" id="pricing">
+    <div class="section-head reveal">
+      <div class="eyebrow">Pricing</div>
+      <h2 class="section-title">Start free. Upgrade when you're ready.</h2>
+    </div>
+    <div class="price-row">
+      <div class="price-card reveal">
+        <div class="pc-name">Freemium</div>
+        <div class="pc-price"><b>Free</b></div>
+        <p>Up to 3 stories, branching choices, basic quizzes, and link sharing.</p>
+        <a href="signin.html" class="btn btn-secondary">Start free</a>
+      </div>
+      <div class="price-card featured reveal">
+        <span class="pc-ribbon">Most popular</span>
+        <div class="pc-name">Pro</div>
+        <div class="pc-price"><b>$13</b><span>/ month</span></div>
+        <p>Unlimited stories, graded quizzes, class analytics, and marketplace selling.</p>
+        <a href="signin.html" class="btn btn-primary">Upgrade to Pro</a>
+      </div>
+      <div class="price-card reveal">
+        <div class="pc-name">School</div>
+        <div class="pc-price"><b>$150</b><span>/ year</span></div>
+        <p>Everything in Pro for your whole school, with shared libraries and admin tools.</p>
+        <a href="pricing.html" class="btn btn-secondary">Learn more</a>
+      </div>
+    </div>
+    <p class="price-more reveal"><a href="pricing.html">Compare all plan features →</a></p>
+  </section>
+
   <!-- ============ FAQ ============ -->
   <section class="block how" id="faq">
     <div class="section-head reveal">
@@ -916,6 +1016,8 @@
       <a href="#features">Features</a>
       <a href="#how">How it works</a>
       <a href="homepage.html">Templates</a>
+      <a href="marketplace.html">Marketplace</a>
+      <a href="pricing.html">Pricing</a>
     </div>
     <div class="footer-col">
       <h4>Resources</h4>
@@ -936,7 +1038,7 @@
   </div>
 </footer>
 
-<button class="help-fab" aria-label="Help">?</button>
+<button class="help-fab" aria-label="Help" data-soon="Help center coming soon — questions? support@plotter.com">?</button>
 
 <script>
   // Header shadow on scroll
@@ -967,5 +1069,6 @@
     els.forEach(el => el.classList.add('in'));
   }
 </script>
+<script src="soon.js"></script>
 </body>
 </html>

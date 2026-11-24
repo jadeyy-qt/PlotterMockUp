@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plotter — Pricing</title>
+<meta name="description" content="Simple pricing for teachers and schools. Start free, upgrade when you need more.">
+<link rel="icon" href="images/sidebar-logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#f3f5f8; --border:#dfe3ea; --border-soft:#e8ebf0; --panel-2:#f7f8fa; --panel-3:#eceff4;
+    --navy:#03114c; --blue:#3c65a7; --blue-3:#6397d0; --blue-tint:rgba(60,101,167,0.08);
+    --text-dim:#5c6675; --text-faint:#8b95a3; --good:#2f8f5b;
+    --font-display:'Fraunces', Georgia, serif; --max-width:1200px;
+    --shadow-sm:0 2px 6px rgba(3,17,76,0.05); --shadow-md:0 14px 32px rgba(3,17,76,0.10);
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html{ scroll-behavior:smooth; }
+  body{ background:var(--bg); color:var(--navy); font-family:'Inter',system-ui,sans-serif; line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+  ::selection{ background:rgba(60,101,167,0.22); color:var(--navy); }
+  a{ color:inherit; text-decoration:none; }
+  button{ font-family:inherit; cursor:pointer; }
+  img{ display:block; max-width:100%; }
+  :focus-visible{ outline:2px solid var(--blue); outline-offset:3px; border-radius:6px; }
+
+  .btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 20px; border-radius:10px; font-size:.92rem; font-weight:600; white-space:nowrap; border:1px solid transparent; transition:transform .15s, box-shadow .15s, border-color .15s, color .15s; }
+  .btn-primary{ background:linear-gradient(135deg,var(--blue),#2f548f); color:#fff; box-shadow:0 6px 18px rgba(60,101,167,0.28); }
+  .btn-primary:hover{ transform:translateY(-1px); box-shadow:0 10px 26px rgba(60,101,167,0.36); }
+  .btn-secondary{ background:#fff; color:var(--navy); border-color:var(--border); }
+  .btn-secondary:hover{ border-color:var(--blue); color:var(--blue); }
+  .btn-block{ width:100%; padding:13px 20px; }
+
+  header{ position:sticky; top:0; z-index:50; background:rgba(255,255,255,0.85); backdrop-filter:saturate(160%) blur(14px); border-bottom:1px solid var(--border); }
+  .nav{ display:flex; align-items:center; justify-content:space-between; gap:24px; max-width:var(--max-width); margin:0 auto; padding:14px 32px; }
+  .nav-left{ display:flex; align-items:center; gap:40px; }
+  .logo{ display:flex; align-items:center; gap:10px; font-weight:800; font-size:1.2rem; letter-spacing:-0.03em; }
+  .logo img{ width:32px; height:32px; object-fit:contain; }
+  .nav-links{ display:flex; gap:30px; }
+  .nav-links a{ color:var(--text-dim); font-size:.93rem; font-weight:500; }
+  .nav-links a:hover, .nav-links a.active{ color:var(--blue); }
+  .nav-actions{ display:flex; align-items:center; gap:20px; }
+  .nav-actions .signin{ color:var(--text-dim); font-size:.93rem; font-weight:500; }
+
+  .hero{ text-align:center; padding:80px 32px 48px; }
+  .eyebrow{ display:inline-flex; align-items:center; gap:8px; font-size:.78rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--blue); margin-bottom:14px; }
+  .eyebrow::before{ content:""; width:18px; height:2px; background:var(--blue); border-radius:2px; }
+  h1{ font-family:var(--font-display); font-size:clamp(2.3rem,5.5vw,3.8rem); font-weight:700; letter-spacing:-0.025em; line-height:1.08; }
+  h1 em{ font-style:italic; font-weight:600; background:linear-gradient(90deg,var(--blue),var(--blue-3)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .hero p{ max-width:560px; margin:18px auto 0; color:var(--text-dim); font-size:1.1rem; }
+
+  .plans{ max-width:1080px; margin:0 auto; padding:0 32px; display:grid; grid-template-columns:repeat(3,1fr); gap:20px; align-items:stretch; }
+  .plan{ background:#fff; border:1px solid var(--border-soft); border-radius:20px; padding:30px 28px; display:flex; flex-direction:column; position:relative; }
+  .plan.featured{ border:2px solid var(--blue); box-shadow:0 30px 70px rgba(3,17,76,0.14); transform:translateY(-8px); }
+  .ribbon{ position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:var(--blue); color:#fff; font-size:.74rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:5px 14px; border-radius:999px; white-space:nowrap; }
+  .plan-icon{ width:46px; height:46px; border-radius:12px; display:grid; place-items:center; background:var(--blue-tint); color:var(--blue); margin-bottom:16px; }
+  .plan-icon svg{ width:24px; height:24px; }
+  .plan h2{ font-family:var(--font-display); font-size:1.4rem; font-weight:600; }
+  .plan .for{ color:var(--text-dim); font-size:.92rem; margin-top:2px; min-height:2.9em; }
+  .price{ display:flex; align-items:baseline; gap:6px; margin:18px 0 4px; }
+  .price b{ font-family:var(--font-display); font-size:3rem; font-weight:700; letter-spacing:-0.03em; line-height:1; }
+  .price span{ color:var(--text-dim); font-size:.95rem; }
+  .price-note{ font-size:.82rem; color:var(--text-faint); min-height:1.3em; margin-bottom:20px; }
+  .plan ul{ list-style:none; display:flex; flex-direction:column; gap:10px; margin:22px 0 0; padding-top:22px; border-top:1px solid var(--border-soft); font-size:.93rem; }
+  .plan li{ display:flex; gap:10px; align-items:flex-start; }
+  .plan li svg{ width:17px; height:17px; color:var(--blue); flex-shrink:0; margin-top:2px; }
+  .plan li.head{ font-weight:600; color:var(--text-dim); font-size:.85rem; }
+
+  section.block{ padding:96px 32px; }
+  .section-head{ text-align:center; max-width:640px; margin:0 auto 44px; }
+  .section-title{ font-family:var(--font-display); font-size:clamp(1.8rem,3.6vw,2.5rem); font-weight:700; letter-spacing:-0.02em; line-height:1.15; }
+
+  .compare-wrap{ max-width:1000px; margin:0 auto; background:#fff; border:1px solid var(--border); border-radius:20px; overflow:auto; }
+  table{ width:100%; border-collapse:collapse; min-width:640px; font-size:.93rem; }
+  th, td{ padding:14px 20px; text-align:center; border-bottom:1px solid var(--border-soft); }
+  th:first-child, td:first-child{ text-align:left; }
+  thead th{ font-family:var(--font-display); font-size:1.05rem; font-weight:600; background:var(--panel-2); }
+  thead th small{ display:block; font-family:'Inter',sans-serif; font-size:.8rem; color:var(--text-faint); font-weight:500; }
+  tbody tr.group td{ background:var(--panel-2); font-size:.76rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--text-faint); padding:10px 20px; }
+  tbody tr:last-child td{ border-bottom:none; }
+  td .y{ display:inline-grid; place-items:center; width:24px; height:24px; border-radius:50%; background:var(--blue-tint); color:var(--blue); }
+  td .y svg{ width:14px; height:14px; }
+  td .n{ color:#c3cad5; }
+  td.col-pro{ background:rgba(60,101,167,0.035); }
+
+  .creator{ max-width:1000px; margin:0 auto; background:var(--navy); color:#fff; border-radius:22px; overflow:hidden; display:grid; grid-template-columns:1.3fr 1fr; }
+  .creator-copy{ padding:44px; }
+  .creator h3{ font-family:var(--font-display); font-size:1.8rem; font-weight:600; letter-spacing:-0.02em; line-height:1.2; }
+  .creator p{ color:rgba(255,255,255,0.72); margin-top:10px; }
+  .creator .split{ display:flex; gap:10px; margin:22px 0; }
+  .creator .split div{ background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:12px 18px; }
+  .creator .split div.you{ background:#fff; color:var(--navy); }
+  .creator .split b{ display:block; font-family:var(--font-display); font-size:1.7rem; line-height:1.1; }
+  .creator .split span{ font-size:.8rem; opacity:.75; }
+  .creator-art{ background:url('images/backgrounds/art_room.png') center/cover; position:relative; min-height:240px; }
+  .creator-art::before{ content:""; position:absolute; inset:0; background:linear-gradient(90deg,var(--navy),rgba(3,17,76,0.1)); }
+  .creator-art img{ position:absolute; bottom:0; right:14%; height:92%; width:auto; filter:drop-shadow(0 10px 24px rgba(0,0,0,0.3)); }
+
+  .faq{ max-width:780px; margin:0 auto; }
+  .faq details{ background:#fff; border:1px solid var(--border-soft); border-radius:12px; margin-bottom:10px; }
+  .faq details[open]{ border-color:#c9d0da; }
+  .faq summary{ list-style:none; cursor:pointer; padding:18px 22px; font-weight:600; display:flex; justify-content:space-between; gap:16px; }
+  .faq summary::-webkit-details-marker{ display:none; }
+  .faq summary::after{ content:"+"; font-size:1.3rem; font-weight:400; color:var(--blue); transition:transform .2s; line-height:1; }
+  .faq details[open] summary::after{ transform:rotate(45deg); }
+  .faq details p{ padding:0 22px 20px; color:var(--text-dim); font-size:.95rem; }
+
+  footer{ background:#020b33; color:rgba(255,255,255,0.55); padding:28px 32px; font-size:.86rem; }
+  .footer-inner{ max-width:var(--max-width); margin:0 auto; display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+  .footer-inner nav{ display:flex; gap:20px; }
+  .footer-inner a:hover{ color:#fff; }
+
+  @media (max-width:900px){
+    .plans{ grid-template-columns:1fr; max-width:480px; }
+    .plan.featured{ transform:none; }
+    .creator{ grid-template-columns:1fr; }
+    .creator-copy{ padding:32px 26px; }
+  }
+  @media (max-width:760px){
+    .nav{ padding:12px 20px; } .nav-links{ display:none; } .nav-actions .signin{ display:none; }
+    .hero{ padding:56px 20px 36px; } .plans{ padding:0 20px; } section.block{ padding:72px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="nav-left">
+      <a href="index.html" class="logo"><img src="images/sidebar-logo.png" alt=""><span>plotter</span></a>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="index.html#features">Features</a>
+        <a href="index.html#community">Community</a>
+        <a href="marketplace.html">Marketplace</a>
+        <a href="pricing.html" class="active">Pricing</a>
+      </nav>
+    </div>
+    <div class="nav-actions">
+      <a href="signin.html" class="signin">Sign in</a>
+      <a href="signin.html" class="btn btn-primary">Get started free</a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">Pricing</div>
+    <h1>Start free.<br><em>Grow with your class.</em></h1>
+    <p>Every plan includes the no-code story builder, the character and background library, and branching storylines.</p>
+  </section>
+
+  <div class="plans">
+    <div class="plan">
+      <div class="plan-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 1 1 .9-8.9A6 6 0 0 1 19.5 11 3.5 3.5 0 0 1 18 18H7Z"/></svg></div>
+      <h2>Freemium</h2>
+      <p class="for">For teachers trying Plotter in their classroom.</p>
+      <div class="price"><b>$0</b><span>forever</span></div>
+      <div class="price-note">No credit card required</div>
+      <a href="signin.html" class="btn btn-secondary btn-block">Start for free</a>
+      <ul>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Up to 3 published stories</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Drag-and-drop scene editor</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Branching choices</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Basic quizzes</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Share with a link</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Free marketplace templates</li>
+      </ul>
+    </div>
+
+    <div class="plan featured">
+      <span class="ribbon">Most popular</span>
+      <div class="plan-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8Z"/></svg></div>
+      <h2>Pro</h2>
+      <p class="for">For teachers who build stories every week.</p>
+      <div class="price"><b>$13</b><span>/ month</span></div>
+      <div class="price-note">Cancel anytime</div>
+      <a href="signin.html" class="btn btn-primary btn-block">Upgrade to Pro</a>
+      <ul>
+        <li class="head">Everything in Freemium, plus:</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Unlimited stories</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Graded quizzes with feedback</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Class analytics &amp; CSV export</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Full character &amp; background library</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Sell on the Creator Marketplace</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Priority support</li>
+      </ul>
+    </div>
+
+    <div class="plan">
+      <div class="plan-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9l10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c2 2 10 2 12 0v-5"/></svg></div>
+      <h2>School</h2>
+      <p class="for">For departments and whole schools.</p>
+      <div class="price"><b>$150</b><span>/ year</span></div>
+      <div class="price-note">Billed annually per school</div>
+      <a href="signin.html" class="btn btn-secondary btn-block">Get School plan</a>
+      <ul>
+        <li class="head">Everything in Pro, plus:</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Multiple teacher accounts</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Shared school story library</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>School-wide analytics</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Admin controls &amp; class rosters</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>Onboarding session for staff</li>
+      </ul>
+    </div>
+  </div>
+
+  <section class="block">
+    <div class="section-head">
+      <div class="eyebrow">Compare plans</div>
+      <h2 class="section-title">Everything side by side</h2>
+    </div>
+    <div class="compare-wrap">
+      <table>
+        <thead><tr><th>Feature</th><th>Freemium<small>$0</small></th><th>Pro<small>$13 / month</small></th><th>School<small>$150 / year</small></th></tr></thead>
+        <tbody id="cmp"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0">
+    <div class="creator">
+      <div class="creator-copy">
+        <div class="eyebrow" style="color:#9fb8e0">Creator Marketplace</div>
+        <h3>Made something great? Sell it.</h3>
+        <p>Publish story templates, characters, and backgrounds on the marketplace. You keep the majority of every sale.</p>
+        <div class="split">
+          <div class="you"><b>70%</b><span>to creators</span></div>
+          <div><b>30%</b><span>to Plotter</span></div>
+        </div>
+        <a href="marketplace.html#sell" class="btn btn-primary" style="background:#fff;color:var(--navy);box-shadow:none">Start selling</a>
+      </div>
+      <div class="creator-art" aria-hidden="true"><img src="images/characters/Justin/justin-smirk-onehanddown.png" alt=""></div>
+    </div>
+  </section>
+
+  <section class="block" style="padding-top:0">
+    <div class="section-head"><div class="eyebrow">FAQ</div><h2 class="section-title">Billing questions</h2></div>
+    <div class="faq">
+      <details open><summary>Can I switch plans later?</summary><p>Yes. Upgrade or downgrade anytime from your account settings. Your stories are never deleted — if you go over the Freemium limit, extra stories are simply unpublished until you upgrade.</p></details>
+      <details><summary>Do my students need to pay?</summary><p>Never. Students play stories for free through a share link, on any plan.</p></details>
+      <details><summary>How do marketplace payouts work?</summary><p>Creators receive 70% of each sale. Earnings are paid out monthly once your balance reaches the minimum payout amount.</p></details>
+      <details><summary>Is there a discount for schools?</summary><p>The School plan covers your whole school for $150 per year. Contact us if you'd like a quote for a district.</p></details>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span>&copy; 2026 Plotter. All rights reserved.</span>
+    <nav aria-label="Footer"><a href="index.html">Home</a><a href="marketplace.html">Marketplace</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a></nav>
+  </div>
+</footer>
+
+<script>
+  const Y = '<span class="y" aria-label="Included"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>';
+  const N = '<span class="n" aria-label="Not included">—</span>';
+  const ROWS = [
+    ['Create'],
+    ['Published stories', '3', 'Unlimited', 'Unlimited'],
+    ['No-code drag-and-drop builder', 1, 1, 1],
+    ['Branching storylines', 1, 1, 1],
+    ['Character &amp; background library', 'Starter set', 'Full library', 'Full library'],
+    ['Quizzes', 'Basic', 'Graded + feedback', 'Graded + feedback'],
+    ['Share &amp; track'],
+    ['Share via link', 1, 1, 1],
+    ['Student results &amp; class analytics', 0, 1, 1],
+    ['CSV export', 0, 1, 1],
+    ['School-wide reporting', 0, 0, 1],
+    ['Marketplace'],
+    ['Use free templates', 1, 1, 1],
+    ['Sell templates &amp; assets (70% share)', 0, 1, 1],
+    ['Team'],
+    ['Teacher accounts', '1', '1', 'Multiple'],
+    ['Shared school library', 0, 0, 1],
+    ['Support', 'Community', 'Priority', 'Priority + onboarding'],
+  ];
+  const cell = (v, k) => `<td class="${k===2?'col-pro':''}">${v === 1 ? Y : v === 0 ? N : v}</td>`;
+  document.getElementById('cmp').innerHTML = ROWS.map(r => r.length === 1
+    ? `<tr class="group"><td colspan="4">${r[0]}</td></tr>`
+    : `<tr><td>${r[0]}</td>${r.slice(1).map((v,k) => cell(v, k+1)).join('')}</tr>`).join('');
+</script>
+<script src="soon.js"></script>
+</body>
+</html>
